@@ -5,11 +5,11 @@ import java.util.{Calendar, Date}
 import com.ssic.report.Platoon.format1
 import com.ssic.service.{GongcanStat, PlatoonStat}
 import com.ssic.utils.{JPools, Tools}
-import com.ssic.utils.Tools._
-import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.commons.lang3.time._
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
+import com.ssic.utils.Tools._
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -57,17 +57,25 @@ object Platoon {
       val date = format.format(time)
       val year = format1.format(time)
 
+      var term_year="null"
+      if (format.parse(date).getTime <= format.parse(year+"-08-31").getTime){
+        term_year=(year.toInt-1).toString
+      }else{
+        term_year=year
+      }
+
+
       val holiday = sc.broadcast(Tools.holiday(session, date))
       val calen = sc.broadcast(Tools.calenda(session, date))
-      val schoolTerm = sc.broadcast(Tools.schoolTerm(session,date))
-      val schoolTermSys = sc.broadcast(Tools.schoolTermSys(session,date))
+      val schoolTerm = sc.broadcast(Tools.schoolTerm(session,date,term_year))
+      val schoolTermSys = sc.broadcast(Tools.schoolTermSys(session,date,term_year))
 
       val jedis = JPools.getJedis
       val platoon_feed = jedis.hgetAll(date + "_platoon-feed")
       val plaData = sc.parallelize(platoon_feed.asScala.toList) //redis中存的供餐数据
       val platoondata: mutable.Set[String] = jedis.hkeys(date + "_platoon").asScala //排菜表的key
 
-      new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,year,platoondata)
+      new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,term_year,platoondata)
 
     }
 

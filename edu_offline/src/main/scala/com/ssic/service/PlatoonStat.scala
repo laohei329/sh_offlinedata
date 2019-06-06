@@ -5,7 +5,7 @@ import java.util.Calendar
 import com.ssic.impl.PlatoonFunc
 import com.ssic.report.Platoon.format
 import com.ssic.utils.{JPools, Tools}
-import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
@@ -78,13 +78,13 @@ class PlatoonStat extends PlatoonFunc{
                   }else if("0".equals(schoolTermData)){
                     //有学期设置但是过期，不供餐
                     val value = new GongcanStat().nogongcan()
-
                     jedis.hset(date + "_platoon-feed", k, value)
 
                   }else{
                     //没有设置学期设置，查询系统学期设置
                     if("1".equals(schoolTermSysData)){
                       //在系统学期设置内，供餐
+
                       val value = new GongcanStat().gongcan(platoondata,k,jedis,date)
 
                       jedis.hset(date + "_platoon-feed", k, value)
@@ -109,10 +109,9 @@ class PlatoonStat extends PlatoonFunc{
                     }else if("0".equals(schoolTermData)){
                       //有学期设置但是过期，不供餐
                       val value = new GongcanStat().nogongcan()
-
                       jedis.hset(date + "_platoon-feed", k, value)
 
-                    }else{
+                    } else{
                       //没有设置学期设置，查询系统学期设置
                       if("1".equals(schoolTermSysData)){
                         //在系统学期设置内，供餐
@@ -127,6 +126,7 @@ class PlatoonStat extends PlatoonFunc{
                       }
 
                     }
+
                   }else{
                     //周末默认不供餐
                     val value = new GongcanStat().nogongcan()

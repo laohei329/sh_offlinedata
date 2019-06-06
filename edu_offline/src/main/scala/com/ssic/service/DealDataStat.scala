@@ -95,12 +95,27 @@ class DealDataStat extends DealDataFunc{
         val value = data._2.value.getOrElse(area + "_" + schoolid, "null")
 
         var status ="null"
+        var valuedata ="null"
         if(x._2.contains("_").equals(true)){
-          status =x._2.split("_")(0)
+          if("4".equals(x._2.split("_")(0))){
+            status = "-1"
+            valuedata= "-1"+"_"+x._2.split("_")(1)
+          }else{
+            status = x._2.split("_")(0)
+            valuedata=x._2
+          }
+
         }else{
-          status = x._2
+          if("4".equals(x._2)){
+            status = "-1"
+            valuedata = "-1"
+          }else{
+            status = x._2
+            valuedata = x._2
+          }
         }
-        (area, value, x._2, schoolid, x._1,status)
+
+        (area, value, valuedata, schoolid, x._1,status)
     }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐"))
 
     distribution

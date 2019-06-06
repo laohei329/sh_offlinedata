@@ -246,17 +246,6 @@ object TargetTotal {
     val areareLevelSchoolStatusData = retentiondealtotaldata.filter(x => !x._13._1.equals("null")).map(_._13)
     new RetentionTotalStat().arealevelreretentionschoolstatus(retentionchildData,date,areareLevelSchoolStatusData,schoolData)
 
-
-
-
-
-
-
-
-
-
-
-
     sc.stop()
 
   }

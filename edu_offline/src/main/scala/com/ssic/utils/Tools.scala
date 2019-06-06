@@ -122,9 +122,9 @@ object Tools {
 
   }
 
-  def schoolTerm(session: (SparkSession,String)):Map[String,String] ={
+  def schoolTerm(session: (SparkSession,String,String)):Map[String,String] ={
     //查询学校的学期设置是否是有效的的
-    val schoolterm = session._1.sql("select school_id,first_start_date,first_end_date,second_start_date,second_end_date from t_edu_schoolterm where stat =1")
+    val schoolterm = session._1.sql(s"select school_id,first_start_date,first_end_date,second_start_date,second_end_date,term_year from t_edu_schoolterm where stat =1 and term_year='${session._3}'")
     schoolterm.rdd.map({
       row =>
         val school_id = row.getAs[String]("school_id")
@@ -154,74 +154,80 @@ object Tools {
         } else{
           second_end=second_end_date
         }
-        (school_id, first_start, first_end, second_start_date, second_end)
-    }).filter(x => !x._2.equals("20170901")).filter(x => !x._3.equals("2018.1")).filter(x => !x._2.equals("2017年2月13日")).filter(x => !x._2.equals("20170216")).map({
-      x =>
-        var first ="-"
-        if(x._2.size <=7 && x._2.contains("-")){
-          first=x._2+"-"+"01"
-        }else{
-          first=x._2
-        }
-
-        var firstend ="-"
-        if(x._3.size <=7 && x._3.contains("-")){
-          firstend=x._3+"-"+"01"
-        }else{
-          firstend=x._3
-        }
-        var second ="-"
-        if(x._4.size <=7 && x._4.contains("-")){
-          second=x._4+"-"+"01"
-        }else{
-          second=x._4
-        }
-        var secondend ="-"
-        if(x._5.size <=7 && x._5.contains("-")){
-          secondend=x._5+"-"+"01"
-        }else{
-          secondend=x._5
-        }
-        (x._1,first,firstend,second,secondend)
+        val term_year = row.getAs[String]("term_year")
+        //(school_id, first_start, first_end, second_start_date, second_end,term_year)
+        (school_id, first_start_date, first_end_date, second_start_date, second_end_date,term_year)
     })
+      //.filter(x => !x._2.equals("20170901")).filter(x => !x._3.equals("2018.1")).filter(x => !x._2.equals("2017年2月13日")).filter(x => !x._2.equals("20170216"))
+      .filter(x => (session._3).equals(x._6))
+//      .map({
+//      x =>
+//        var first ="-"
+//        if(x._2.size <=7 && x._2.contains("-")){
+//          first=x._2+"-"+"01"
+//        }else{
+//          first=x._2
+//        }
+//
+//        var firstend ="-"
+//        if(x._3.size <=7 && x._3.contains("-")){
+//          firstend=x._3+"-"+"01"
+//        }else{
+//          firstend=x._3
+//        }
+//        var second ="-"
+//        if(x._4.size <=7 && x._4.contains("-")){
+//          second=x._4+"-"+"01"
+//        }else{
+//          second=x._4
+//        }
+//        var secondend ="-"
+//        if(x._5.size <=7 && x._5.contains("-")){
+//          secondend=x._5+"-"+"01"
+//        }else{
+//          secondend=x._5
+//        }
+//        (x._1,first,firstend,second,secondend)
+//    })
+//      .map({
+//        x =>
+//          var first =0.toLong
+//          if(x._2.matches("[0-9]*").equals(true)){
+//            first=format1.parse(x._2).getTime
+//          } else{
+//            first=format.parse(x._2.replaceAll("\\D", "-")).getTime
+//          }
+//
+//          var first_en =0.toLong
+//          if(x._3.matches("[0-9]*").equals(true)){
+//            first_en=format1.parse(x._3).getTime
+//          }else{
+//            first_en=format.parse(x._3.replaceAll("\\D", "-")).getTime
+//          }
+//
+//          var second=0.toLong
+//          if(x._4.matches("[0-9]*").equals(true)){
+//            second=format1.parse(x._4).getTime
+//          }else{
+//            second=format.parse(x._4.replaceAll("\\D", "-")).getTime
+//          }
+//
+//          var second_en=0.toLong
+//          if(x._5.matches("[0-9]*").equals(true)){
+//            second_en=format1.parse(x._5).getTime
+//          }else{
+//            second_en=format.parse(x._5.replaceAll("\\D", "-")).getTime
+//          }
+//
+//          (x._1,first,first_en,second,second_en)
+//
+//      })
       .map({
-        x =>
-          var first =0.toLong
-          if(x._2.matches("[0-9]*").equals(true)){
-            first=format1.parse(x._2).getTime
-          } else{
-            first=format.parse(x._2.replaceAll("\\D", "-")).getTime
-          }
-
-          var first_en =0.toLong
-          if(x._3.matches("[0-9]*").equals(true)){
-            first_en=format1.parse(x._3).getTime
-          }else{
-            first_en=format.parse(x._3.replaceAll("\\D", "-")).getTime
-          }
-
-          var second=0.toLong
-          if(x._4.matches("[0-9]*").equals(true)){
-            second=format1.parse(x._4).getTime
-          }else{
-            second=format.parse(x._4.replaceAll("\\D", "-")).getTime
-          }
-
-          var second_en=0.toLong
-          if(x._5.matches("[0-9]*").equals(true)){
-            second_en=format1.parse(x._5).getTime
-          }else{
-            second_en=format.parse(x._5.replaceAll("\\D", "-")).getTime
-          }
-
-          (x._1,first,first_en,second,second_en)
-
-      }).map({
       x =>
         val date1 = session._2//format.format(new Date())
-        if (x._2.toLong <= format.parse(date1).getTime && format.parse(date1).getTime <= x._3.toLong ){
+        if (format.parse(x._2).getTime <= format.parse(date1).getTime && format.parse(date1).getTime <= format.parse(x._3).getTime ){
           (x._1,"1")
-        }else if(x._4.toLong <= format.parse(date1).getTime && format.parse(date1).getTime <= x._5.toLong){
+        }else if(format.parse(x._4).getTime <= format.parse(date1).getTime && format.parse(date1).getTime <= format.parse(x._5).getTime){
           (x._1,"1")
         }else{
           (x._1,"0")
@@ -230,11 +236,10 @@ object Tools {
   }
 
 
-  def schoolTermSys(session: (SparkSession,String)):Map[String,String] = {
+  def schoolTermSys(session: (SparkSession,String,String)):Map[String,String] = {
     //查询当天是否在系统学期设置内
     val date = new Date()
-    val year = format2.format(date)
-    val schoolTermSys = session._1.sql(s"select term_year,first_start_date,first_end_date,second_start_date,second_end_date from t_edu_schoolterm_system where stat=1 and term_year='$year'")
+    val schoolTermSys = session._1.sql(s"select term_year,first_start_date,first_end_date,second_start_date,second_end_date from t_edu_schoolterm_system where stat=1 and term_year='${session._3}'")
     schoolTermSys.rdd.map({
       row =>
         val term_year = row.getAs[String]("term_year")
