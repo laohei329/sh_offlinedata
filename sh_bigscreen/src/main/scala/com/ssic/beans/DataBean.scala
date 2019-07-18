@@ -103,7 +103,7 @@ class DataBean(
                 var reserved: Int,
 
                 //t_pro_supplier
-                var company_type: Int,
+                var company_type: String,
                 var scope_id: String,
                 var scope_name: String,
                 var address: String,

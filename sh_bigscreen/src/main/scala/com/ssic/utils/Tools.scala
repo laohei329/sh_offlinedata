@@ -171,7 +171,7 @@ select id,school_name from t_edu_school
 
   //supplierid -> supplierName
   def supplierid2supplierName(session: SparkSession):Map[String,String] = {
-    val result = session.sql("select id,supplier_name from t_pro_supplier where stat=1")
+    val result = session.sql("select id,supplier_name from t_pro_supplier")
     result.rdd.map(x => (x.getAs[String]("id"),x.getAs[String]("supplier_name"))).collect().toMap
   }
 

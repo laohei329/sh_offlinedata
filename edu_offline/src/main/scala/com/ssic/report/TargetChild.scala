@@ -56,6 +56,9 @@ object TargetChild {
     val distributionPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_Distribution-Detail")
     val distributionData = sc.parallelize(distributionPlanDetail.asScala.toList)    //已存在的配送计划数据
 
+    val distributionChild: util.Map[String, String] = jedis.hgetAll(date + "_DistributionTotal_child")
+    val distributionChildData = sc.parallelize(distributionChild.asScala.toList)    //已存在的配送计划子页面数据
+
     val retentionDetail = jedis.hgetAll(date + "_gc-retentiondish")
     val retentionData = sc.parallelize(retentionDetail.asScala.toList)    //已存在的留样计划数据
 
@@ -74,7 +77,7 @@ object TargetChild {
     val distributionDealData = new DealDataStat().distributiondealdata(distributionData,gongcanSchool)
     //配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
     val disValue = distributionDealData.map(x => (x._1+"_"+x._4,x._6))
-    new TargetChildStat().distributionchild(platoonData,disValue,date)
+    new TargetChildStat().distributionchild(platoonData,disValue,date,distributionChildData)
 
     //留样计划处理后的数据
     val reValue = new DealDataStat().retentiondealdata(retentionData)

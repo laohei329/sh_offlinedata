@@ -38,8 +38,7 @@ object BigScreenModel {
     sparkConf.set("spark.debug.maxToStringFields", "200")
     val session: SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
     val ssc = new StreamingContext(session.sparkContext, Seconds(8))
-
-
+    
 
     val school2CommiteeBro = ssc.sparkContext.broadcast(Tools.school2Commitee(session))
     val projid2CommiteeBro = ssc.sparkContext.broadcast(Tools.projid2Area(session))
@@ -167,9 +166,9 @@ object BigScreenModel {
 //        WarnHive.masterupdatedelete(filterData)
 //        WarnHive.warnrelation(filterData)
 
-        Warn.warnInsert(filterData, supplierid2district, supplierid2companytype,supplierid2Schoolmaster,commiteeid2commiteename)
-        Warn.warnInsertPeople(filterData, supplierid2district, supplierid2companytype,schoolid2masterid,commiteeid2commiteename)
-        Warn.warnUpdateDelete(filterData, supplierid2district, supplierid2companytype,supplierid2Schoolmaster,commiteeid2commiteename,schoolid2masterid)
+ //       Warn.warnInsert(filterData, supplierid2district, supplierid2companytype,supplierid2Schoolmaster,commiteeid2commiteename)
+  //      Warn.warnInsertPeople(filterData, supplierid2district, supplierid2companytype,schoolid2masterid,commiteeid2commiteename)
+   //     Warn.warnUpdateDelete(filterData, supplierid2district, supplierid2companytype,supplierid2Schoolmaster,commiteeid2commiteename,schoolid2masterid)
 
         //原料供应统计
         //        B2bMaterial.Material2Suppllier(filterData, school2CommiteeBro)

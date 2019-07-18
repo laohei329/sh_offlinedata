@@ -94,7 +94,7 @@ object MonthPlatoonTotal {
 
       //计算按照区属的排菜统计
       val masteridPlatoonTotal: RDD[(String, String)] = platoonTotalData.filter(x=> !x._8._1.equals("null")).map(_._8)
-      new PlatoonTotalStat().masteridplatoontotal(platoonData, areacanteenPlatoonTotal, date, schoolData,commiteeData)
+      new PlatoonTotalStat().masteridplatoontotal(platoonData, masteridPlatoonTotal, date, schoolData,commiteeData)
 
     }
 

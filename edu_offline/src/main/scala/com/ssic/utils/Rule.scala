@@ -1,6 +1,7 @@
 package com.ssic.utils
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3._
+
 
 object Rule {
 

@@ -60,9 +60,18 @@ object Tools {
       .rdd.map(row => (row.getAs[String]("holiday_day"), row.getAs[Int]("type"))).collect().toMap
   }
 
-  def schoolid(session: SparkSession): RDD[(String, String)] = {
+  def schoolid(session: (SparkSession)): RDD[(String, String)] = {
     //查询有效的schoolid
-    session.sql("select id ,area from t_edu_school where stat=1 and reviewed =1").rdd.map(row => {
+    session.sql(s"select id,area from t_edu_school where stat=1 and reviewed =1 ").rdd.map(row => {
+      val district_id = row.getAs[String]("area")
+      val id = row.getAs[String]("id")
+      (district_id + "_" + id, id)
+    })
+  }
+
+  def schoolidhive(session: (SparkSession,String)): RDD[(String, String)] = {
+    //查询有效的schoolid
+    session._1.sql(s"select id,area from t_edu_school where stat=1 and reviewed =1 and create_time <= '${session._2}'").rdd.map(row => {
       val district_id = row.getAs[String]("area")
       val id = row.getAs[String]("id")
       (district_id + "_" + id, id)

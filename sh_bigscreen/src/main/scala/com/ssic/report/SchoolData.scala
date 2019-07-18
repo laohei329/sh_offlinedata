@@ -2,7 +2,7 @@ package com.ssic.report
 
 import com.ssic.beans.SchoolBean
 import com.ssic.utils.{JPools, Rule, SchoolRule}
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
@@ -159,10 +159,10 @@ object SchoolData {
               jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,1)
               jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, 1)
 
-              if("3".equals(x._4._7)){
-                jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),1)
+              if("3".equals(x._2._8)){
+                jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),1)
               }else{
-                jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,1)
+                jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,1)
               }
 
             } else if ("delete".equals(x._1)) {
@@ -175,10 +175,10 @@ object SchoolData {
               jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,-1)
               jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, -1)
 
-              if("3".equals(x._4._7)){
-                jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),-1)
+              if("3".equals(x._2._8)){
+                jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),-1)
               }else{
-                jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,-1)
+                jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,-1)
               }
 
               jedis.hdel("schoolDetail",x._4._1)
@@ -198,10 +198,10 @@ object SchoolData {
                     jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,-1)
                     jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, -1)
 
-                    if("3".equals(x._4._7)){
-                      jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),-1)
+                    if("3".equals(x._2._8)){
+                      jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),-1)
                     }else{
-                      jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,-1)
+                      jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,-1)
                     }
 
                    // jedis.hdel("schoolDetail", x._4._1)
@@ -216,10 +216,10 @@ object SchoolData {
                     jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,1)
                     jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, 1)
 
-                    if("3".equals(x._4._7)){
-                      jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),1)
+                    if("3".equals(x._2._8)){
+                      jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),1)
                     }else{
-                      jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,1)
+                      jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,1)
                     }
                     jedis.hset("schoolDetail", x._4._1, "id" + ";" + x._4._1 + ";" + "schoolname" + ";" + x._4._2 + ";" + "isbranchschool" + ";" + x._4._3 + ";" + "parentid" + ";" + x._4._4 + ";" + "area" + ";" + x._2._1 + ";" + "address" + ";" + x._4._5 + ";" + "socialcreditcode" + ";" + x._4._6 + ";" + "level" + ";" + x._2._2 + ";" + "schoolnature" + ";" + x._2._3 + ";" + "schoolnaturesub" + ";" + x._2._7 + ";" + "departmentmasterid" + ";" + x._4._7 + ";" + "departmentslaveid" + ";" + x._4._8 + ";" + "canteenmode" + ";" + x._2._4 + ";" + "ledgertype" + ";" + x._2._6 + ";" + "studentsamount" + ";" + x._4._9 + ";" + "staffamount" + ";" + x._4._10 + ";" + "corporation" + ";" + x._4._11 + ";" + "corporationway" + ";" + x._4._12 + ";" + "corporationtelephone" + ";" + x._4._13 + ";" + "departmenthead" + ";" + x._4._14 + ";" + "departmentmobilephone" + ";" + x._4._15 + ";" + "departmenttelephone" + ";" + x._4._16 + ";" + "departmentfax" + ";" + x._4._17 + ";" + "departmentemail" + ";" + x._4._18 + ";" + "foodsafetypersion" + ";" + x._4._19 + ";" + "foodsafetymobilephone" + ";" + x._4._20 + ";" + "foodsafetytelephone" + ";" + x._4._21 + ";" + "gongcan" + ";" + filterData._2.value.getOrElse(x._4._1, 0) + ";" + "slictype" + v.split("slictype")(1))
 
@@ -237,10 +237,10 @@ object SchoolData {
                     jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,1)
                     jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, 1)
 
-                    if("3".equals(x._4._7)){
-                      jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),1)
+                    if("3".equals(x._2._8)){
+                      jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),1)
                     }else{
-                      jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,1)
+                      jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,1)
                     }
                   }else if("-1".equals(x._3._10) && "1".equals(x._2._10) && "1".equals(x._2._5)){
                     jedis.hincrBy("schoolData", "shanghai", 1)
@@ -252,10 +252,10 @@ object SchoolData {
                     jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,1)
                     jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, 1)
 
-                    if("3".equals(x._4._7)){
-                      jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),1)
+                    if("3".equals(x._2._8)){
+                      jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),1)
                     }else{
-                      jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,1)
+                      jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,1)
                     }
                   }else if("1".equals(x._3._10) && "2".equals(x._2._10) && "1".equals(x._2._5)){
                     jedis.hincrBy("schoolData", "shanghai", -1)
@@ -267,10 +267,10 @@ object SchoolData {
                     jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,-1)
                     jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, -1)
 
-                    if("3".equals(x._4._7)){
-                      jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),-1)
+                    if("3".equals(x._2._8)){
+                      jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),-1)
                     }else{
-                      jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,-1)
+                      jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,-1)
                     }
                   }else if("2".equals(x._3._10) && "1".equals(x._2._10) && "1".equals(x._2._5)){
                     jedis.hincrBy("schoolData", "shanghai", 1)
@@ -282,10 +282,10 @@ object SchoolData {
                     jedis.hincrBy("schoolData","area"+"_"+x._2._1+"_"+"canteenmode"+"_"+x._2._4+"_"+"ledgertype"+"_"+x._2._6,1)
                     jedis.hincrBy("schoolData", "area"+"_"+x._2._1+"_"+"nature" + "_" + x._2._3 + "_" + "nature-sub" + "_" + x._2._7, 1)
 
-                    if("3".equals(x._4._7)){
-                      jedis.hincrBy("schoolData","masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._4._8,"null"),1)
+                    if("3".equals(x._2._8)){
+                      jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),1)
                     }else{
-                      jedis.hincrBy("schoolData","masterid_"+x._4._7+"_slave"+"_"+x._4._8,1)
+                      jedis.hincrBy("schoolData", "masterid_"+x._2._8+"_slave"+"_"+x._2._9,1)
                     }
                   }
                 } else {
@@ -353,7 +353,7 @@ object SchoolData {
                       jedis.hincrBy("schoolData", "masterid_"+x._3._8+"_slave"+"_"+x._3._9,-1)
                     }
 
-                  } else if (StringUtils.isEmpty(x._3._8) && StringUtils.isNoneEmpty(x._3._9) && "null".equals(x._3._8) && !x._3._9.equals("null") && "1".equals(x._2._5) && "1".equals(x._2._10)) {
+                  } else if (StringUtils.isEmpty(x._3._8) && StringUtils.isEmpty(x._3._9) && "null".equals(x._3._8) && x._3._9.equals("null") && "1".equals(x._2._5) && "1".equals(x._2._10)) {
                     if("3".equals(x._2._8)){
                       jedis.hincrBy("schoolData", "masterid_"+"3"+"_slave"+"_"+filterData._3.value.getOrElse(x._2._9,"null"),1)
                     }else{

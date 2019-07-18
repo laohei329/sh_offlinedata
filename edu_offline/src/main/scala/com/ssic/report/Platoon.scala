@@ -77,6 +77,7 @@ object Platoon {
 
       new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,term_year,platoondata)
 
+
     }
 
 

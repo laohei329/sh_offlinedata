@@ -67,7 +67,7 @@ class TargetChildStat extends TargetChildFunc {
     })
   }
 
-  override def distributionchild(data: (RDD[(String, String)], RDD[(String, String)], String)): Unit = {
+  override def distributionchild(data: (RDD[(String, String)], RDD[(String, String)], String,RDD[(String, String)])): Unit = {
     val allSchoolUse = data._1.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(data._2).map({
       x =>
         val distributionList = x._2._2.getOrElse("null")
@@ -92,44 +92,52 @@ class TargetChildStat extends TargetChildFunc {
     val allSchoolUseTotal = allSchoolUse.map(x => (x._1, 1)).reduceByKey(_ + _)
     val allSchoolUseStatusTotal = allSchoolUse.map((_, 1)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
 
-    allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).map(x => (x._1, (x._2._1,x._2._2.getOrElse(("null",-1)) ))).filter(x => x._2._2._2 != -1).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), x._2))
-      .coalesce(1).sortBy(x=> x._2._2._1,false).foreachPartition({
+    allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).map(x => (x._1, (x._2._1,x._2._2.getOrElse(("null",-1)) ))).filter(x => x._2._2._2 != -1).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), x._2)).sortBy(x => x._2._2._1,false)
+     .foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
-          x =>
-              val value = jedis.hget(data._3 + "_DistributionTotal_child", x._1)
+          case (k, v) =>
+
+            //表示左边没有，右边有
+//            if (v._1.size == 0) {
+//
+//              jedis.hdel(data._3 + "_DistributionTotal_child", k)
+//
+//            }else{
+              val value = jedis.hget(data._3 + "_DistributionTotal_child",k)
               if(StringUtils.isNoneEmpty(value) && !value.equals("null")){
-                if("3".equals(x._2._2._1)){
 
-                    jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+x._2._2._2+"_"+"assign"+"_"+x._2._2._2+"_"+"shipp"+"_"+x._2._2._2+"_"+"status"+"_"+x._2._2._1)
+                if("3".equals(v._2._1)){
 
+                    jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+v._2._2 +"_"+"assign"+"_"+v._2._2 +"_"+"shipp"+"_"+v._2._2 +"_"+"status"+"_"+v._2._1)
 
-                }else if("2".equals(x._2._2._1)){
+                }else if("2".equals(v._2._1)){
                   //待验收
-                  jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+value.split("accept_")(1).split("_")(0)+"_"+"assign"+"_"+(value.split("accept_")(1).split("_")(0).toInt+x._2._2._2)+"_"+"shipp"+"_"+(value.split("accept_")(1).split("_")(0).toInt+x._2._2._2)+"_"+"status"+"_"+x._2._2._1)
+                  jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+value.split("accept_")(1).split("_")(0)+"_"+"assign"+"_"+(value.split("accept_")(1).split("_")(0).toInt+v._2._2)+"_"+"shipp"+"_"+(value.split("accept_")(1).split("_")(0).toInt+v._2._2)+"_"+"status"+"_"+v._2._1)
                 }
-                else if("0".equals(x._2._2._1)){
-                  jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+value.split("accept_")(1).split("_")(0)+"_"+"assign"+"_"+(value.split("shipp_")(1).split("_")(0).toInt+x._2._2._2)+"_"+"shipp"+"_"+value.split("shipp_")(1).split("_")(0)+"_"+"status"+"_"+x._2._2._1)
-                }else if("-1".equals(x._2._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", x._1, "total" + "_" + x._2._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("status")(0)+"status"+"_"+x._2._2._1)
-                }else if("-3".equals(x._2._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", x._1, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1")
+                else if("0".equals(v._2._1)){
+                  jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+value.split("accept_")(1).split("_")(0)+"_"+"assign"+"_"+(value.split("shipp_")(1).split("_")(0).toInt+v._2._2)+"_"+"shipp"+"_"+value.split("shipp_")(1).split("_")(0)+"_"+"status"+"_"+v._2._1)
+                }else if("-1".equals(v._2._1)) {
+                  jedis.hset(data._3 + "_DistributionTotal_child",k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("status")(0)+"status"+"_"+v._2._1)
+                }else if("-3".equals(v._2._1)) {
+                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1")
                 }
               }else{
-                if("3".equals(x._2._2._1)){
-                    jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+x._2._2._2+"_"+"assign"+"_"+x._2._2._2+"_"+"shipp"+"_"+x._2._2._2+"_"+"status"+"_"+x._2._2._1)
+                if("3".equals(v._2._1)){
+                    jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+v._2._2+"_"+"assign"+"_"+v._2._2+"_"+"shipp"+"_"+v._2._2+"_"+"status"+"_"+v._2._1)
 
-                }else if("2".equals(x._2._2._1)){
-                  jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+"0"+"_"+"assign"+"_"+x._2._2._2+"_"+"shipp"+"_"+x._2._2._2+"_"+"status"+"_"+x._2._2._1)
-                }else if("0".equals(x._2._2._1)){
-                  jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+"0"+"_"+"assign"+"_"+x._2._2._2+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+x._2._2._1)
-                }else if("-1".equals(x._2._2._1)){
-                  jedis.hset(data._3 + "_DistributionTotal_child",x._1,"total"+"_"+x._2._1+"_"+"accept"+"_"+"0"+"_"+"assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+x._2._2._1)
-                }else if("-3".equals(x._2._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", x._1, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1")
+                }else if("2".equals(v._2._1)){
+                  jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+"0"+"_"+"assign"+"_"+v._2._2+"_"+"shipp"+"_"+v._2._2+"_"+"status"+"_"+v._2._1)
+                }else if("0".equals(v._2._1)){
+                  jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+"0"+"_"+"assign"+"_"+v._2._2+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+v._2._1)
+                }else if("-1".equals(v._2._1)){
+                  jedis.hset(data._3 + "_DistributionTotal_child",k,"total"+"_"+v._1+"_"+"accept"+"_"+"0"+"_"+"assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+v._2._1)
+                }else if("-3".equals(v._1)) {
+                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1")
                 }
               }
+   //         }
 
         })
     }

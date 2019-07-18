@@ -4,8 +4,8 @@ import java.util
 
 import com.ssic.beans.SchoolBean
 import com.ssic.utils.JPools
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.commons.lang3._
+import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
@@ -64,11 +64,19 @@ object Receyler {
   def wastedata(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])) = {
     val data = waste(filterData._1).distinct().filter(x => !x._1.equals("null")).map({
       x =>
-        if (x._9.matches("[0-9]*").equals(true)) {
-          (x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8, x._9, x._10, x._11, x._12, x._13, x._14, x._15, x._16)
-        } else {
-          ("null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null")
+        var recyclerNumber = 0.toDouble
+        try {
+          recyclerNumber = x._9.toDouble
+        } catch {
+          case e: Exception =>
+            recyclerNumber
         }
+        (x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8, recyclerNumber, x._10, x._11, x._12, x._13, x._14, x._15, x._16,x._9)
+      //        if (x._9.matches("[0-9]*").equals(true)) {
+      //          (x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8, x._9, x._10, x._11, x._12, x._13, x._14, x._15, x._16)
+      //        } else {
+      //          ("null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null")
+      //        }
     }).filter(x => !x._1.equals("null"))
     data.foreachPartition({
       itr =>
@@ -83,7 +91,7 @@ object Receyler {
                   jedis.hincrBy(x._10 + "_" + "schoolwastetotal", filterData._3.value.getOrElse(x._4, "null") + "_" + "total", 1)
                   logger.info(x._10 + "_" + x._9 + "_" + x._4 + "_" + filterData._3.value.getOrElse(x._4, "null") + "学校回收垃圾的插入数据-------------")
                   jedis.hincrByFloat(x._10 + "_" + "schoolwastetotal", filterData._3.value.getOrElse(x._4, "null"), x._9.toDouble)
-                  jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                  jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
 
                   //教属的垃圾回收数据
                   val masterid = filterData._4.value.getOrElse(x._4, List("null"))
@@ -101,7 +109,7 @@ object Receyler {
                   jedis.hincrBy(x._10 + "_" + "supplierwastetotal", filterData._2.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                   jedis.hincrByFloat(x._10 + "_" + "supplierwastetotal", filterData._2.value.getOrElse(x._4, "null"), x._9.toDouble)
-                  jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                  jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
                 }
               } else {
                 //废弃油脂
@@ -110,7 +118,7 @@ object Receyler {
                   jedis.hincrBy(x._10 + "_" + "schooloiltotal", filterData._3.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                   jedis.hincrByFloat(x._10 + "_" + "schooloiltotal", filterData._3.value.getOrElse(x._4, "null"), x._9.toDouble)
-                  jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                  jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
 
                   //教属的废弃油脂回收数据
                   val masterid = filterData._4.value.getOrElse(x._4, List("null"))
@@ -126,7 +134,7 @@ object Receyler {
                   jedis.hincrBy(x._10 + "_" + "supplieroiltotal", filterData._2.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                   jedis.hincrByFloat(x._10 + "_" + "supplieroiltotal", filterData._2.value.getOrElse(x._4, "null"), x._9.toDouble)
-                  jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                  jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
                 }
               }
             } else if ("delete".equals(x._1)) {
@@ -225,7 +233,7 @@ object Receyler {
                         logger.info("这个学校餐厨垃圾更新不计算，不是无效数据的更新")
                       }
                     } else {
-                      jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                      jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
                     }
                   } else {
                     if (StringUtils.isNoneEmpty(x._16) && !x._16.equals("null")) {
@@ -233,7 +241,7 @@ object Receyler {
                         jedis.hincrBy(x._10 + "_" + "schoolwastetotal", filterData._3.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "schoolwastetotal", filterData._3.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                        jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
 
 
                         //教属的垃圾回收数据
@@ -254,7 +262,7 @@ object Receyler {
                         jedis.hincrByFloat(x._10 + "_" + "schoolwastetotal", filterData._3.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "schoolwastetotal", filterData._3.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                        jedis.hset(x._10 + "_" + "schoolwaste", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
 
                         //教属的垃圾回收数据
                         val masterid = filterData._4.value.getOrElse(x._4, List("null"))
@@ -304,7 +312,7 @@ object Receyler {
                         logger.info("这个团餐公司餐厨垃圾更新不计算，不是无效数据的更新")
                       }
                     } else {
-                      jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                      jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
                     }
                   } else {
                     if (StringUtils.isNoneEmpty(x._16) && !x._16.equals("null")) {
@@ -312,7 +320,7 @@ object Receyler {
                         jedis.hincrBy(x._10 + "_" + "supplierwastetotal", filterData._2.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "supplierwastetotal", filterData._2.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                        jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
                       } else {
                         logger.info("这个团餐公司餐厨垃圾更新不计算，是无效数据到有效数据的更新")
                       }
@@ -322,7 +330,7 @@ object Receyler {
                         jedis.hincrBy(x._10 + "_" + "supplierwastetotal", filterData._2.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "supplierwastetotal", filterData._2.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
+                        jedis.hset(x._10 + "_" + "supplierwaste", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13)
 
                         val hkeys3 = jedis.hkeys(x._10 + "_" + "supplieroil")
                         if (hkeys3.asScala.contains(x._2).equals(true)) {
@@ -367,7 +375,7 @@ object Receyler {
                         logger.info("这个团餐公司废弃油脂更新不计算，是有效数据到无效数据")
                       }
                     } else {
-                      jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                      jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
                     }
                   } else {
                     if (StringUtils.isNoneEmpty(x._16) && !x._16.equals("null")) {
@@ -375,7 +383,7 @@ object Receyler {
                         jedis.hincrBy(x._10 + "_" + "schooloiltotal", filterData._3.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "schooloiltotal", filterData._3.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                        jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
 
 
                         //教属的废弃油脂回收数据
@@ -396,7 +404,7 @@ object Receyler {
                         jedis.hincrBy(x._10 + "_" + "schooloiltotal", filterData._3.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "schooloiltotal", filterData._3.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                        jedis.hset(x._10 + "_" + "schooloil", x._2, "area" + "_" + filterData._3.value.getOrElse(x._4, "null") + "_" + "schoolid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
 
 
                         //教属的废弃油脂回收数据
@@ -448,7 +456,7 @@ object Receyler {
                         logger.info("这个团餐公司废弃油脂更新不计算，是有效数据到无效数据")
                       }
                     } else {
-                      jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                      jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
                     }
                   } else {
                     if (StringUtils.isNoneEmpty(x._16) && !x._16.equals("null")) {
@@ -456,7 +464,7 @@ object Receyler {
                         jedis.hincrByFloat(x._10 + "_" + "supplieroiltotal", filterData._2.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "supplieroiltotal", filterData._2.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                        jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
                       } else {
                         logger.info("这个团餐公司废弃油脂更新不计算，是有效数据到无效数据")
                       }
@@ -466,7 +474,7 @@ object Receyler {
                         jedis.hincrByFloat(x._10 + "_" + "supplieroiltotal", filterData._2.value.getOrElse(x._4, "null") + "_" + "total", 1)
 
                         jedis.hincrByFloat(x._10 + "_" + "supplieroiltotal", filterData._2.value.getOrElse(x._4, "null"), x._9.toDouble)
-                        jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._9 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
+                        jedis.hset(x._10 + "_" + "supplieroil", x._2, "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "supplierid" + "_" + x._4 + "_" + "number" + "_" + x._17 + "_" + "receivername" + "_" + x._8 + "_" + "contact" + "_" + x._11 + "_" + "documents" + "_" + x._13 + "_" + "seconttype" + "_" + x._7)
 
                         val hkeys4 = jedis.hkeys(x._10 + "_" + "supplierwastetotal")
                         if (hkeys4.asScala.contains(x._2).equals(true)) {
@@ -490,55 +498,55 @@ object Receyler {
     })
   }
 
-   def wasteSchool(filterData: (RDD[SchoolBean],Broadcast[Map[String, String]],Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) ={
-     //platform_type, source_id, types,date
-     waste(filterData._1).filter(x => x._1.equals("insert")).map(x => (x._3,x._4,x._6,x._10)).distinct()//.map(x=> ((x._1,x._2,x._3),1)).reduceByKey(_+_)
-       .foreachPartition({
-         itr =>
-           val jedis = JPools.getJedis
-           itr.foreach({
-             x =>
-               //教委端
-               if(x._1 == 3){
-                 //餐厨垃圾
-                 if(x._3 == 1){
-                   jedis.hincrBy(x._4+"_"+"schoolwastetotal","school"+"_area_"+filterData._2.value.getOrElse(x._4,"null"),1)
-                   //教属的
-                   val masterid = filterData._3.value.getOrElse(x._2,List("null"))
-                   if (StringUtils.isNoneEmpty(masterid(0)) && !masterid(0).equals("null")) {
-                     if ("3".equals(masterid(1))) {
-                       jedis.hincrBy(x._4 + "_" + "schoolwastetotal", "school"+"_"+"masterid" + "_" + masterid(1) + "_" + "slave" + "_" + filterData._4.value.getOrElse(masterid(2), "null"), 1)
-                     } else {
-                       jedis.hincrBy(x._4 + "_" + "schoolwastetotal", "school"+"_"+"masterid" + "_" + masterid(1) + "_" + "slave" + "_" + masterid(2), 1)
-                     }
-                   }
-                 }else{
-                   //废弃油脂
-                   jedis.hincrBy(x._4+"_"+"schooloiltotal","school"+"_area_"+filterData._2.value.getOrElse(x._4,"null"),1)
-                   //教属的
-                   val masterid = filterData._3.value.getOrElse(x._2,List("null"))
-                   if (StringUtils.isNoneEmpty(masterid(0)) && !masterid(0).equals("null")) {
-                     if ("3".equals(masterid(1))) {
-                       jedis.hincrBy(x._4 + "_" + "schooloiltotal", "school"+"_"+"masterid" + "_" + masterid(1) + "_" + "slave" + "_" + filterData._4.value.getOrElse(masterid(2), "null"), 1)
-                     } else {
-                       jedis.hincrBy(x._4 + "_" + "schooloiltotal", "school"+"_"+"masterid" + "_" + masterid(1) + "_" + "slave" + "_" + masterid(2), 1)
-                     }
-                   }
-                 }
+  def wasteSchool(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) = {
+    //platform_type, source_id, types,date
+    waste(filterData._1).filter(x => x._1.equals("insert")).map(x => (x._3, x._4, x._6, x._10)).distinct() //.map(x=> ((x._1,x._2,x._3),1)).reduceByKey(_+_)
+      .foreachPartition({
+      itr =>
+        val jedis = JPools.getJedis
+        itr.foreach({
+          x =>
+            //教委端
+            if (x._1 == 3) {
+              //餐厨垃圾
+              if (x._3 == 1) {
+                jedis.hincrBy(x._4 + "_" + "schoolwastetotal", "school" + "_area_" + filterData._2.value.getOrElse(x._4, "null"), 1)
+                //教属的
+                val masterid = filterData._3.value.getOrElse(x._2, List("null"))
+                if (StringUtils.isNoneEmpty(masterid(0)) && !masterid(0).equals("null")) {
+                  if ("3".equals(masterid(1))) {
+                    jedis.hincrBy(x._4 + "_" + "schoolwastetotal", "school" + "_" + "masterid" + "_" + masterid(1) + "_" + "slave" + "_" + filterData._4.value.getOrElse(masterid(2), "null"), 1)
+                  } else {
+                    jedis.hincrBy(x._4 + "_" + "schoolwastetotal", "school" + "_" + "masterid" + "_" + masterid(1) + "_" + "slave" + "_" + masterid(2), 1)
+                  }
+                }
+              } else {
+                //废弃油脂
+                jedis.hincrBy(x._4 + "_" + "schooloiltotal", "school" + "_area_" + filterData._2.value.getOrElse(x._4, "null"), 1)
+                //教属的
+                val masterid = filterData._3.value.getOrElse(x._2, List("null"))
+                if (StringUtils.isNoneEmpty(masterid(0)) && !masterid(0).equals("null")) {
+                  if ("3".equals(masterid(1))) {
+                    jedis.hincrBy(x._4 + "_" + "schooloiltotal", "school" + "_" + "masterid" + "_" + masterid(1) + "_" + "slave" + "_" + filterData._4.value.getOrElse(masterid(2), "null"), 1)
+                  } else {
+                    jedis.hincrBy(x._4 + "_" + "schooloiltotal", "school" + "_" + "masterid" + "_" + masterid(1) + "_" + "slave" + "_" + masterid(2), 1)
+                  }
+                }
+              }
 
-               }else{
-                 //团餐端
-                 //餐厨垃圾
-                 if(x._3 == 1){
-                   jedis.hincrBy(x._4+"_"+"supplierwastetotal","supplier"+"_area_"+filterData._5.value.getOrElse(x._4,"null"),1)
-                 }else{
-                   //废弃油脂
-                   jedis.hincrBy(x._4 + "_" + "supplieroiltotal", "supplier"+"_area_"+filterData._5.value.getOrElse(x._4, "null"), 1)
+            } else {
+              //团餐端
+              //餐厨垃圾
+              if (x._3 == 1) {
+                jedis.hincrBy(x._4 + "_" + "supplierwastetotal", "supplier" + "_area_" + filterData._5.value.getOrElse(x._4, "null"), 1)
+              } else {
+                //废弃油脂
+                jedis.hincrBy(x._4 + "_" + "supplieroiltotal", "supplier" + "_area_" + filterData._5.value.getOrElse(x._4, "null"), 1)
 
-                 }
-               }
-           })
-       })
-   }
+              }
+            }
+        })
+    })
+  }
 
 }

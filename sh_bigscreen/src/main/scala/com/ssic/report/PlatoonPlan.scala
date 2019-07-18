@@ -1,8 +1,8 @@
 package com.ssic.report
 
 import com.ssic.beans.SchoolBean
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.commons.lang3._
+import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 

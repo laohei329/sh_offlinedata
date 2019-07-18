@@ -4,7 +4,7 @@ import java.util.Date
 
 import com.ssic.beans.SchoolBean
 import com.ssic.utils.{Rule, SchoolRule}
-import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 
@@ -34,7 +34,6 @@ object Distribution {
 
         val now = format.format(new Date())
         //时间没有过期
-        if(format.parse(now).getTime <= format.parse(date).getTime){
           if (x.`type`.equals("insert") && stat.equals("1")) {
             (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat,"null",delivery_date))
           } else if (x.`type`.equals("update")) {
@@ -42,9 +41,7 @@ object Distribution {
           } else {
             (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat,"null",delivery_date))
           }
-        }else{
-          ("null", List("null", "null", "null", "null", "null", "null", "null", "null", "null", "null","null"))
-        }
+
 
 
     })

@@ -42,7 +42,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat = 1 and warn_type=1
+         |year='2019' and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,school_nature_name) as a
@@ -61,7 +61,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat = 1 and warn_type=1
+         |year='2019' and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,school_nature_name) as c
@@ -87,7 +87,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat = 1 and warn_type=1
+         |year='2019' and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,level_name) as a
@@ -106,7 +106,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat = 1 and warn_type=1
+         |year='2019' and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,level_name) as c

@@ -5,9 +5,11 @@ import java.util.Date
 
 import com.ssic.report.TargetChild.format
 import com.ssic.utils.{JPools, Rule}
+import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
@@ -15,6 +17,7 @@ import scala.collection.JavaConverters._
 object NoDistribution {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf().setMaster("spark://172.16.10.17:7077").setAppName("大数据运营管理后台离线数据")
@@ -28,7 +31,7 @@ object NoDistribution {
     val date = format.format(new Date())
 
     val jedis = JPools.getJedis
-    val dischild = jedis.hgetAll(date + "_DistributionTotal_child_test")
+    val dischild = jedis.hgetAll(date + "_DistributionTotal_child")
     val dischilddata = sc.parallelize(dischild.asScala.toList)  //配送子页面数据
 
     val platoon: util.Map[String, String] = jedis.hgetAll(date + "_platoon-feed")
@@ -44,34 +47,38 @@ object NoDistribution {
             if (v._1.size == 0){
               jedis.hdel(date+"_DistributionTotal_child",k)
             }else{
-
               val value = jedis.hget(date+"_DistributionTotal_child",k)
-              val shipp = Rule.emptyToInt(value.split("shipp_")(1).split("_")(0))  //已配送数量
-              val assign = Rule.emptyToInt(value.split("assign_")(1).split("_")(0))   //已指派数量
-              val accept = Rule.emptyToInt(value.split("accept_")(1).split("_")(0))   //已验收数量
-              val disTotalNum = Rule.emptyToInt(value.split("total_")(1).split("_")(0))  //总数
+              if(StringUtils.isNoneEmpty(value) && !value.equals("null")){
+                val shipp = Rule.emptyToInt(value.split("shipp_")(1).split("_")(0))  //已配送数量
+                val assign = Rule.emptyToInt(value.split("assign_")(1).split("_")(0))   //已指派数量
+                val accept = Rule.emptyToInt(value.split("accept_")(1).split("_")(0))   //已验收数量
+                val disTotalNum = Rule.emptyToInt(value.split("total_")(1).split("_")(0))  //总数
 
-              if(disTotalNum != 0) {
+                if(disTotalNum != 0) {
 
-                if((disTotalNum  - assign) != 0){
-                  //未指派不为0的时候，所有状态为否
-                  jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1")
-                }else{
-                  if(disTotalNum  - shipp != 0){
-                    //未指派为0的时候,已指派为0的时候,未配送不为0的时候，指派状态为是，其他状态为否
-                    jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"1")
+                  if((disTotalNum  - assign) != 0){
+                    //未指派不为0的时候，所有状态为否
+                    jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1")
                   }else{
-                    if(disTotalNum  - accept != 0){
-                      //未指派为0的时候,已指派为0的时候,未配送为0的时候，已配送不为0的时候，指派状态为是，配送状态为是，其他状态为否
-                      jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"2")
+                    if(disTotalNum  - shipp != 0){
+                      //未指派为0的时候,已指派为0的时候,未配送不为0的时候，指派状态为是，其他状态为否
+                      jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"1")
                     }else{
-                      jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"3")
+                      if(disTotalNum  - accept != 0){
+                        //未指派为0的时候,已指派为0的时候,未配送为0的时候，已配送不为0的时候，指派状态为是，配送状态为是，其他状态为否
+                        jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"2")
+                      }else{
+                        jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"3")
+                      }
                     }
                   }
+                }else{
+                  jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1")
                 }
               }else{
-                jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1")
+                jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1")
               }
+
             }
 
         })

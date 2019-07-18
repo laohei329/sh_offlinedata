@@ -237,11 +237,11 @@ object RetentionDish {
         val reservedata = supply_date+" "+reserve_hour+":"+reserve_minute+":"+"00"
 
         val now = format.format(new Date())
-        if (format.parse(now).getTime <= format.parse(date).getTime) {
+        //if (format.parse(now).getTime <= format.parse(date).getTime) {
           (id, List(package_id, creator, date, create_time, remark,cater_type_name,menu_group_name,reservedata))
-        }else{
-          ("null",List("null","null","null","null","null","null","null","null"))
-        }
+//        }else{
+//          ("null",List("null","null","null","null","null","null","null","null"))
+//        }
     }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => !x._1.equals("null"))
 
     val retentionData = retention.distinct().map({
@@ -298,11 +298,11 @@ object RetentionDish {
         val reservedata = supply_date+" "+reserve_hour+":"+reserve_minute+":"+"00"
 
         val now = format.format(new Date())
-        if (format.parse(now).getTime <= format.parse(date).getTime) {
+      //  if (format.parse(now).getTime <= format.parse(date).getTime) {
           (id, List(package_id, creator, date, create_time, remark,cater_type_name,menu_group_name,reservedata))
-        }else{
-          ("null",List("null","null","null","null","null","null","null","null"))
-        }
+//        }else{
+//          ("null",List("null","null","null","null","null","null","null","null"))
+//        }
     }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => !x._1.equals("null"))
 
     val retentionData = retention.distinct().map({
@@ -350,11 +350,11 @@ object RetentionDish {
         val reservedata = supply_date+" "+reserve_hour+":"+reserve_minute+":"+"00"
 
         val now = format.format(new Date())
-        if (format.parse(now).getTime <= format.parse(date).getTime){
+       // if (format.parse(now).getTime <= format.parse(date).getTime){
           (id, remark, x.`type`,date, x.data.stat,cater_type_name,menu_group_name,reservedata)
-        }else{
-          ("null", "null", "null","null","null","null","null","null")
-        }
+//        }else{
+//          ("null", "null", "null","null","null","null","null","null")
+//        }
 
 
     }).filter(x => !x._1.equals("null"))
