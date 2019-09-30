@@ -17,7 +17,7 @@ object Distribution {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def DistributionPlan(filterData: RDD[SchoolBean]): RDD[(String, List[String])] = {
-    val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master"))
+    val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master") && "1".equals(x.data.industry_type))
     val ledgerMasterData: RDD[(String, List[String])] = proLedgerMaster.map({
       x =>
         val id = x.data.id

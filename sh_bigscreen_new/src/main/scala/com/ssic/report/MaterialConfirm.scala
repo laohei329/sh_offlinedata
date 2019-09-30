@@ -136,7 +136,7 @@ object MaterialConfirm {
                       }
                     } else {
                       val status = jedis.hget(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + filterData._3.value.getOrElse(x._3, "null"))
-                      if (!"2".equals(status)) {
+                     if (!"2".equals(status)) {
                         jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + filterData._3.value.getOrElse(x._3, "null"), x._5)
                       }
 

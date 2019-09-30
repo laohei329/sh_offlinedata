@@ -1,8 +1,7 @@
 package com.ssic.utils
 
-import java.util.Properties
+import java.util.{Calendar, Date, Properties}
 
-import com.ssic.utils.Tools.{conn, edu_committee, url}
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3._
 import org.apache.spark.rdd.RDD
@@ -120,7 +119,7 @@ from t_pro_supplier
 
   def schoolid2masterid(session: SparkSession): Map[String, List[String]] = {
 
-    val result = session.sql("SELECT id,department_master_id FROM t_edu_school")
+    val result = session.sql("SELECT id,school_name,department_master_id,department_slave_id FROM t_edu_school")
 
     result.rdd.map(x => (x.getAs[String]("id"), List(x.getAs[String]("school_name"), x.getAs[String]("department_master_id"), x.getAs[String]("department_slave_id")))).collect().toMap
 
@@ -133,6 +132,17 @@ from t_pro_supplier
 SELECT id,school_id FROM t_edu_school_supplier WHERE stat =1
       """.stripMargin)
     result.rdd.map(x => (x.getAs[String]("id"), x.getAs[String]("school_id"))).collect().toMap
+  }
+
+
+  def schoolid(session: (SparkSession,String)):  String = {
+    //查询有效的schoolid
+
+    session._1.sql(s"select id,area from t_edu_school where id ='${session._2}'").rdd.map(row => {
+      val area = row.getAs[String]("area")
+      val id = row.getAs[String]("id")
+      (area)
+    }).collect()(0)
   }
 
 }

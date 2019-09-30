@@ -45,9 +45,9 @@ class DataBean(
                 var supply_name: String,
                 var supplier_code: String,
                 var supplier_name: String,
-                var quantity: Float,
+                var quantity: String,
                 var amount_unit: String,
-                var actual_quantity: Float,
+                var actual_quantity: String,
                 var batch_no: String,
                 var trace_code: String,
                 var paste_flag: Int,
@@ -69,6 +69,7 @@ class DataBean(
                 var cost: Float,
                 var is_publish: Int,
                 var reserved: Int,
+                var industry_type:String,
 
                 //t_pro_supplier
                 var company_type: String,

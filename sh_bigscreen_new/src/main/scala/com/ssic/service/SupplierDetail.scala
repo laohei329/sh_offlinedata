@@ -14,7 +14,7 @@ object SupplierDetail {
     val supplierDetail = supplietData.distinct().map({
       x =>
         var id ="null"
-        if("11".equals(x.data.company_id) && StringUtils.isNoneEmpty(x.data.uuid) && !"null".equals(x.data.uuid)){
+        if("12".equals(x.data.company_id) && StringUtils.isNoneEmpty(x.data.uuid) && !"null".equals(x.data.uuid)){
           id = x.data.uuid
         }else{
           id = x.data.id

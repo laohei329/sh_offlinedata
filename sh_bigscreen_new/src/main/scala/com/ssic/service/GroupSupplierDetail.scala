@@ -1,7 +1,7 @@
 package com.ssic.service
 
 import com.ssic.beans.SchoolBean
-import com.ssic.utils.JPools
+import com.ssic.utils.{JPools, NewSchoolToOldSchool}
 import org.apache.commons.lang3._
 import org.apache.spark.rdd.RDD
 
@@ -21,9 +21,10 @@ object GroupSupplierDetail {
     val suppilerDetailData = supplierData.distinct().map({
       x =>
         val id = x.data.uuid
-        val supplier_type = x.data.supplier_type //1团餐公司 2供应商
+        val supplier_type = "1" //1团餐公司 2供应商
       val supplier_name = x.data.supplier_name
-        val area = x.data.district_id
+        val area = NewSchoolToOldSchool.committeeToOldArea(x.data.area)
+        //val area = x.data.district_id
         val address = x.data.address //详情地址
       val contact = x.data.contacts //联系人
       val contact_way = x.data.contact_way //联系人联系方式
@@ -59,10 +60,11 @@ object GroupSupplierDetail {
       && ("1").equals(x.data.supplier_type))
     val suppilerDetailData = supplierData.distinct().map({
       x =>
-        val id = x.data.id
-        val supplier_type = x.data.supplier_type //1团餐公司 2供应商
+        val id = x.data.uuid
+        val supplier_type = "1" //1团餐公司 2供应商
       val supplier_name = x.data.supplier_name
-        val area = x.data.district_id
+        val area = NewSchoolToOldSchool.committeeToOldArea(x.data.area)
+        //val area = x.data.district_id
         val address = x.data.address //详情地址
       val contact = x.data.contacts //联系人
       val contact_way = x.data.contact_way //联系人联系方式
@@ -96,14 +98,14 @@ object GroupSupplierDetail {
                 if ("1".equals(x._15) && "0".equals(x._14)) {
                   jedis.hdel("group-supplier-detail", x._2)
                 } else if ("0".equals(x._15) && "1".equals(x._14)) {
-                  jedis.hset("group-supplier-detail", x._1, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
+                  jedis.hset("group-supplier-detail", x._2, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
                 }
               } else {
                 val v = jedis.hget("group-supplier-detail", x._2)
                 if (StringUtils.isNoneEmpty(v) && !v.equals("null")) {
-                  jedis.hset("group-supplier-detail", x._1, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
+                  jedis.hset("group-supplier-detail", x._2, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
                 } else {
-                  jedis.hset("group-supplier-detail", x._1, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
+                  jedis.hset("group-supplier-detail", x._2, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
                 }
               }
             }

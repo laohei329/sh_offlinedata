@@ -384,7 +384,7 @@ object ZhongTaiDetailToLocal {
         val org_parent_merchant_id = null
         val parent_id = null
         var uuid ="-1"
-        if("11".equals(x.data.company_id) && StringUtils.isNoneEmpty(x.data.uuid) && !"null".equals(x.data.uuid)){
+        if("12".equals(x.data.company_id) && StringUtils.isNoneEmpty(x.data.uuid) && !"null".equals(x.data.uuid)){
          uuid = x.data.uuid
         }else{
          uuid =x.data.id

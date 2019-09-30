@@ -18,7 +18,7 @@ object SchoolRule {
     val stat = filterData._1.data.stat
     //区号
     //  将上海市各区的新的district_id映射 => 旧的area的映射
-    val area = NewSchoolToOldSchool.committeeToOldArea(filterData._1.data.district_id)
+    val area = NewSchoolToOldSchool.committeeToOldArea(filterData._1.data.seat_district_id)
     //学校类型
     var level_name = "null"
     val level = filterData._1.data.level
@@ -180,10 +180,10 @@ object SchoolRule {
       stat_name = oldbean.stat
     }
 
-    if (StringUtils.isEmpty(oldbean.area)) {
+    if (StringUtils.isEmpty(oldbean.seat_district_id)) {
       area_name
     } else {
-      area_name = NewSchoolToOldSchool.committeeToOldArea(oldbean.area)
+      area_name = NewSchoolToOldSchool.committeeToOldArea(oldbean.seat_district_id)
     }
 
     //学校类型

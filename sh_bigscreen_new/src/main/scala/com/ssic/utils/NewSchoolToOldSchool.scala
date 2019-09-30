@@ -32,7 +32,7 @@ object NewSchoolToOldSchool {
     } else if ("2".equals(data._1) && "宝山区教育局".equals(data._2)) {
       "e6ee4eec-2c5b-11e6-b1e8-005056a5ed30" //老宝山区教育局id
     } else if ("2".equals(data._1) && "浦东新区教育局".equals(data._2)) {
-      "e6ee4e97-2c5b-11e6-b1e8-005056a5ed30" //老浦东新区教育局id
+      "e6ee4f43-2c5b-11e6-b1e8-005056a5ed30" //老浦东新区教育局id
     } else if ("2".equals(data._1) && "松江区教育局".equals(data._2)) {
       "e6ee4fa4-2c5b-11e6-b1e8-005056a5ed30" //老松江区教育局id
     } else if ("2".equals(data._1) && "金山区教育局".equals(data._2)) {
@@ -65,19 +65,19 @@ object NewSchoolToOldSchool {
       "0" //老部级的 其他id
     } else if ("0".equals(data._1) && "其他".equals(data._2)) {
       "0" //老市级的 其他id
-    } else if ("0".equals(data._1) && "市水务局（海洋局）".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市水务局（海洋局）".equals(data._2)) {
       "1" //老市级的 市水务局（海洋局）id
-    } else if ("0".equals(data._1) && "市农委".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市农委".equals(data._2)) {
       "2" //老市级的 市农委id
-    } else if ("0".equals(data._1) && "市交通委".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市交通委".equals(data._2)) {
       "3" //老市级的 市交通委id
-    } else if ("0".equals(data._1) && "市科委".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市科委".equals(data._2)) {
       "4" //老市级的 市科委id
-    } else if ("0".equals(data._1) && "市商务委".equals(data._2)) {
-      "5" //老市级的 市商务委id
-    } else if ("0".equals(data._1) && "市经信委".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市商务委".equals(data._2)) {
+      "5" //老市级的 市商务委i
+    } else if ("0".equals(data._1) && "上海市经信委".equals(data._2)) {
       "6" //老市级的 市经信委id
-    } else if ("0".equals(data._1) && "市教委".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市科艺中心".equals(data._2)) {
       "7" //老市级的 市教委id
     } else {
       department_slave_id

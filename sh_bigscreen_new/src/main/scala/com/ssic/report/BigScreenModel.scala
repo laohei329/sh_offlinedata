@@ -6,7 +6,7 @@ import java.{io, lang, util}
 import com.alibaba.fastjson.JSON
 import com.ssic.beans.SchoolBean
 import com.ssic.service.{GroupSupplierDetail,SchoolData , SupplierDetail, ZhongTaiDetailToLocal}
-import com.ssic.utils.{JPools, NewTools, SaveOnRedis, Tools}
+import com.ssic.utils.{NewTools, SaveOnRedis}
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.kafka010._
@@ -117,7 +117,7 @@ object BigScreenModel {
             schoolBean
         })
 
-        //将中台的所在地表信息 迁移到 本地的area表
+//        //将中台的所在地表信息 迁移到 本地的area表
         ZhongTaiDetailToLocal.Area(filterData)
         //将中台的所属表信息 迁移到 本地的t_edu_competent_department表
         ZhongTaiDetailToLocal.EduCompetentDepartment(filterData)
@@ -139,10 +139,8 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.EduHoliday(filterData)
 
 
-
-//
 //        //上海市排菜计划的详细的临时表
-        PlatoonPlan.PlatoonRealTimeData(filterData, school2Area)
+        PlatoonPlan.PlatoonRealTimeData(filterData, school2Area,session)
           //时间，区号，schoolid，表操作类型，创建时间
           .map(x => (x._1, x._3, x._2, x._4, x._5))
           .foreachPartition({
@@ -192,23 +190,7 @@ object BigScreenModel {
         //禁止食品
         StopFood.Stop(filterData)
 
-        //预警计划的数量
-        //        WarnHive.masterlicenseinsert(filterData)
-        //        WarnHive.masterupdatedelete(filterData)
-        //        WarnHive.warnrelation(filterData)
 
-        //       Warn.warnInsert(filterData, supplierid2district, supplierid2companytype,supplierid2Schoolmaster,commiteeid2commiteename)
-        //      Warn.warnInsertPeople(filterData, supplierid2district, supplierid2companytype,schoolid2masterid,commiteeid2commiteename)
-        //     Warn.warnUpdateDelete(filterData, supplierid2district, supplierid2companytype,supplierid2Schoolmaster,commiteeid2commiteename,schoolid2masterid)
-
-        //原料供应统计
-        //        B2bMaterial.Material2Suppllier(filterData, school2CommiteeBro)
-
-        //        // 原料供应明细
-        //        B2bMaterial.Material2SupplierDetailInsert(filterData, school2CommiteeBro)
-        //        B2bMaterial.Material2SupplierDetailDelete(filterData)
-        //        B2bMaterial.LedgerMasterUpdate(filterData)
-        //        B2bMaterial.LedgerUpdate(filterData, school2CommiteeBro)
         //
         //        //  菜品详细信息
         //        RetentionDish.dishDetail(filterData, school2CommiteeBro)
