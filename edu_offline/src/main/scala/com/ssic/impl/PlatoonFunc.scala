@@ -9,6 +9,6 @@ import scala.collection.mutable
 
 trait PlatoonFunc {
 
-  def platoredis(data: (SparkSession, RDD[(String, String)],String, Broadcast[Map[String, Int]], Broadcast[Map[String, Int]], Broadcast[Map[String, String]], Broadcast[Map[String, String]],String,mutable.Set[String]))
+  def platoredis(data: (SparkSession, RDD[(String, String)],String, Broadcast[Map[String, Int]], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, String]],String,mutable.Set[String]))
 
 }

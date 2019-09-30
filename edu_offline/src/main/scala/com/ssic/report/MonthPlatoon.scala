@@ -51,6 +51,7 @@ object MonthPlatoon {
 
     for (i <- -30 to -1) {
       //查询一个月的排菜数据
+
       val calendar = Calendar.getInstance()
       calendar.setTime(new Date())
       calendar.add(Calendar.DAY_OF_MONTH, i)

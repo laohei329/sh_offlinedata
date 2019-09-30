@@ -15,12 +15,12 @@ class GongcanStat extends GongcanFunc {
         return "供餐_已排菜" + "_" + "create-time" + value.split("create-time")(1)
 
       } else {
-        return "供餐_已排菜"
+        return "供餐_已排菜" +"_"+"create-time"+"_"+"null"
 
       }
     } else {
       //不在排采临时表内
-      return "供餐_未排菜"
+      return "供餐_未排菜"+"_"+"create-time"+"_"+"null"
     }
 
 
@@ -28,7 +28,7 @@ class GongcanStat extends GongcanFunc {
 
   override def nogongcan(): String = {
 
-    return "不供餐_未排菜"
+    return "不供餐_未排菜"+"_"+"create-time"+"_"+"null"
 
   }
 }

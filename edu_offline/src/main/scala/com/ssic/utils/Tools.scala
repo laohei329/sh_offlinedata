@@ -1,11 +1,10 @@
 package com.ssic.utils
 
-import java.util.{Date, Properties}
+import java.util.{Calendar, Date, Properties}
 
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time._
-import org.apache.spark.internal.config
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.hive.HiveContext
@@ -34,23 +33,31 @@ object Tools {
   val edu_schoolterm_system = config.getString("db.default.edu_schoolterm_system")
   val edu_holiday = config.getString("db.default.edu_holiday")
   val edu_school_supplier = config.getString("db.default.edu_school_supplier")
+  val pro_supplier =config.getString("db.default.pro_supplier")
 
   val conn = new Properties()
   conn.setProperty("user", user)
   conn.setProperty("password", pwd)
   conn.setProperty("driver", driver)
 
-  def calenda(session: (SparkSession, String)): Map[String, Int] = {
+  def calenda(session: (SparkSession, String)): Map[String, String]= {
 
     //查询是供餐表是否有数据，对应的学校id是否供餐
     val date1 = session._2
     //format.format(new Date())
-    val result = session._1.sql(s"select school_id,have_class from t_edu_calendar where stat=1 and the_day='$date1'")
+    val result = session._1.sql(s"select school_id,have_class,reason from t_edu_calendar where stat=1 and the_day='$date1'")
     result.rdd.map({
       row =>
         val school_id = row.getAs[String]("school_id")
         val have_class = row.getAs[Int]("have_class")
-        (school_id, have_class)
+        var reason ="null"
+        if(StringUtils.isNoneEmpty(row.getAs[String]("reason")) && !"null".equals(row.getAs[String]("reason"))){
+          reason = row.getAs[String]("reason")
+        }else{
+          reason
+        }
+
+        (school_id, have_class+"_"+reason)
     }).collect().toMap
   }
 
@@ -60,9 +67,16 @@ object Tools {
       .rdd.map(row => (row.getAs[String]("holiday_day"), row.getAs[Int]("type"))).collect().toMap
   }
 
-  def schoolid(session: (SparkSession)): RDD[(String, String)] = {
+  def schoolid(session: ((SparkSession,String))): RDD[(String, String)] = {
     //查询有效的schoolid
-    session.sql(s"select id,area from t_edu_school where stat=1 and reviewed =1 ").rdd.map(row => {
+
+    val date = format.parse(session._2)
+    val calendar = Calendar.getInstance()
+    calendar.setTime(new Date())
+    calendar.add(Calendar.DAY_OF_MONTH, 1)
+    val time = calendar.getTime
+    val datetime = format.format(time)
+    session._1.sql(s"select id,area from t_edu_school where stat=1 and reviewed =1 and create_time <= '${datetime}' and (area ='1' or area ='2' or area = '3' or area='4' or area='5' or area='6' or area='7' or area='8' or area='9' or area='10' or area ='11' or area='12' or area='13' or area='14' or area='15' or area='16') ").rdd.map(row => {
       val district_id = row.getAs[String]("area")
       val id = row.getAs[String]("id")
       (district_id + "_" + id, id)
@@ -90,6 +104,19 @@ object Tools {
     }).collect().toMap
   }
 
+  def school2Committee2(session: SparkSession):Map[String,String] ={
+    //查询教属的基础信息
+    val result = session.sql("select id,district_id from t_edu_committee where stat=1 ")
+
+    result.rdd.map({
+      row =>
+        val id = row.getAs[String]("id")
+        val district_id = row.getAs[String]("district_id")
+        (id,district_id)
+    }).collect().toMap
+  }
+
+
   def projid2schoolid(session: SparkSession): Map[String, String] = {
 
     //查询学校与团餐公司关联表的id
@@ -98,6 +125,15 @@ object Tools {
 
     result.rdd.map(x => (x.getAs[String]("id"), x.getAs[String]("school_id"))).collect().toMap
 
+  }
+
+  //schoolid-> 团餐公司名字
+  def schoolid2suppliername(session: SparkSession) : Map[String, String] = {
+     session.sql(
+      """
+        |select a.school_id,b.supplier_name from t_edu_school_supplier as a left join t_pro_supplier as b on a.supplier_id = b.id where a.stat=1
+      """.stripMargin
+    ).rdd.map(x => (x.getAs[String]("school_id"),x.getAs[String]("supplier_name"))).collect().toMap
   }
 
   //项目点id-》 学校名字
@@ -276,11 +312,13 @@ object Tools {
   def schoolNew(session: SparkSession):Map[String,List[String]] ={
 
     //对学校的基础信息按照新规则进行清洗
-    val result = session.sql("select id,level,IFNULL(level2,-1)as level2,school_nature,school_nature_sub,license_main_type,license_main_child,department_master_id,department_slave_id from t_edu_school where stat=1 and reviewed =1 ")
+    val result = session.sql("select id,school_name,level,IFNULL(level2,-1)as level2,school_nature,school_nature_sub,license_main_type,license_main_child,department_master_id,department_slave_id,area from t_edu_school where stat=1 and reviewed =1 ")
 
     result.rdd.map({
       row =>
         val id = row.getAs[String]("id")
+        val area = row.getAs[String]("area")
+        val school_name = row.getAs[String]("school_name")
         val level = row.getAs[String]("level")
         val level2 = row.getAs[Int]("level2")
         var level_name="null"
@@ -405,7 +443,7 @@ object Tools {
           department_slave_id_name
         }
 
-        (id,List(level_name,school_nature_name,school_nature_sub_name,license_main_type_name,license_main_child_name,department_master_id_name,department_slave_id_name))
+        (id,List(level_name,school_nature_name,school_nature_sub_name,license_main_type_name,license_main_child_name,department_master_id_name,department_slave_id_name,area,school_name))
     }).collect().toMap
 
   }

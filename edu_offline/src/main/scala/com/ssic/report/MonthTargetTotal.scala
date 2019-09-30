@@ -76,7 +76,7 @@ object MonthTargetTotal {
       val retentionDetail: util.Map[String, String] = jedis.hgetAll(date + "_gc-retentiondish")
       val retentionData = sc.parallelize(retentionDetail.asScala.toList) //已存在的留样计划数据
 
-      val retentionTotal = jedis.hgetAll(date + "_gc-retentiondishtotal")
+      val retentionTotal: util.Map[String, String] = jedis.hgetAll(date + "_gc-retentiondishtotal")
       val retentionTotalData = sc.parallelize(retentionTotal.asScala.toList) //已存在的留样计划统计数据
 
       val retentionchild: util.Map[String, String] = jedis.hgetAll(date + "_gc-retentiondishtotal_child")

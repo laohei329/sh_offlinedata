@@ -3,7 +3,6 @@ package com.ssic.service
 import java.util.Calendar
 
 import com.ssic.impl.PlatoonFunc
-import com.ssic.report.Platoon.format
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
@@ -16,7 +15,7 @@ class PlatoonStat extends PlatoonFunc{
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
-  override def platoredis(data: (SparkSession, RDD[(String, String)],String, Broadcast[Map[String, Int]], Broadcast[Map[String, Int]], Broadcast[Map[String, String]], Broadcast[Map[String, String]],String,mutable.Set[String])): Unit = {
+  override def platoredis(data: (SparkSession, RDD[(String, String)],String, Broadcast[Map[String, Int]], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, String]],String,mutable.Set[String])): Unit = {
 
     val session = data._1
     val plaData = data._2
@@ -33,7 +32,7 @@ class PlatoonStat extends PlatoonFunc{
     calendar.setTime(week)
     val d = calendar.get(Calendar.DAY_OF_WEEK) - 1
 
-    Tools.schoolid(session).cogroup(plaData).foreachPartition({
+    Tools.schoolid((session,date)).cogroup(plaData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
@@ -45,7 +44,18 @@ class PlatoonStat extends PlatoonFunc{
             } else{
 
               val holidayData = holiday.value.getOrElse(date, -1) //假期信息表
-              val haveClass = calen.value.getOrElse(v._1.head, -1) //供餐信息表
+              var haveClass = -1  //供餐信息表
+              var reason ="null"
+              val calenData = calen.value.getOrElse(v._1.head, "null")
+              if (!"null".equals(calenData)){
+                haveClass= calenData.split("_")(0).toInt
+                reason= calenData.split("_")(1)
+              }else{
+                haveClass
+                reason
+              }
+              //val haveClass = calen.value.getOrElse(v._1.head, -1)
+
               val schoolTermData = schoolTerm.value.getOrElse(v._1.head, "null")   //学期设置信息表
               val schoolTermSysData = schoolTermSys.value.getOrElse(year, "null") //系统学期信息表
 
@@ -53,12 +63,12 @@ class PlatoonStat extends PlatoonFunc{
                 //供餐表有数据，就参考供餐表数据，不供餐
                 val value = new GongcanStat().nogongcan()
 
-                jedis.hset(date + "_platoon-feed", k, value)
+                jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
               }else if(haveClass == 1){
                 //供餐表有数据，就参考供餐表数据，供餐
                 val value = new GongcanStat().gongcan(platoondata,k,jedis,date)
 
-                jedis.hset(date + "_platoon-feed", k, value)
+                jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
 
               }else{
                 //没有供餐表数据，先查看今天是否是假期
@@ -66,7 +76,7 @@ class PlatoonStat extends PlatoonFunc{
                   //在假期中,默认不供餐
                   val value = new GongcanStat().nogongcan()
 
-                  jedis.hset(date + "_platoon-feed", k, value)
+                  jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                 }else if (holidayData == 2) {
                   //法定加班,默认供餐
                   //查看是否在学期设置内
@@ -74,11 +84,11 @@ class PlatoonStat extends PlatoonFunc{
                     //在学期设置内,供餐
                     val value = new GongcanStat().gongcan(platoondata,k,jedis,date)
 
-                    jedis.hset(date + "_platoon-feed", k, value)
+                    jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                   }else if("0".equals(schoolTermData)){
                     //有学期设置但是过期，不供餐
                     val value = new GongcanStat().nogongcan()
-                    jedis.hset(date + "_platoon-feed", k, value)
+                    jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
 
                   }else{
                     //没有设置学期设置，查询系统学期设置
@@ -87,12 +97,12 @@ class PlatoonStat extends PlatoonFunc{
 
                       val value = new GongcanStat().gongcan(platoondata,k,jedis,date)
 
-                      jedis.hset(date + "_platoon-feed", k, value)
+                      jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                     }else {
                       //不在系统学期设内，不供餐
                       val value = new GongcanStat().nogongcan()
 
-                      jedis.hset(date + "_platoon-feed", k, value)
+                      jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                     }
 
                   }
@@ -105,11 +115,11 @@ class PlatoonStat extends PlatoonFunc{
                       //在学期设置内,供餐
                       val value = new GongcanStat().gongcan(platoondata,k,jedis,date)
 
-                      jedis.hset(date + "_platoon-feed", k, value)
+                      jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                     }else if("0".equals(schoolTermData)){
                       //有学期设置但是过期，不供餐
                       val value = new GongcanStat().nogongcan()
-                      jedis.hset(date + "_platoon-feed", k, value)
+                      jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
 
                     } else{
                       //没有设置学期设置，查询系统学期设置
@@ -117,12 +127,12 @@ class PlatoonStat extends PlatoonFunc{
                         //在系统学期设置内，供餐
                         val value = new GongcanStat().gongcan(platoondata,k,jedis,date)
 
-                        jedis.hset(date + "_platoon-feed", k, value)
+                        jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                       }else {
                         //不在系统学期设内，不供餐
                         val value = new GongcanStat().nogongcan()
 
-                        jedis.hset(date + "_platoon-feed", k, value)
+                        jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                       }
 
                     }
@@ -131,7 +141,7 @@ class PlatoonStat extends PlatoonFunc{
                     //周末默认不供餐
                     val value = new GongcanStat().nogongcan()
 
-                    jedis.hset(date + "_platoon-feed", k, value)
+                    jedis.hset(date + "_platoon-feed", k, value+"_"+"reason"+"_"+reason)
                   }
                 }
               }

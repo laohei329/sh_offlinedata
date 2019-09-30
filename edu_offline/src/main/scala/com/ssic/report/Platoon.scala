@@ -72,7 +72,7 @@ object Platoon {
 
       val jedis = JPools.getJedis
       val platoon_feed = jedis.hgetAll(date + "_platoon-feed")
-      val plaData = sc.parallelize(platoon_feed.asScala.toList) //redis中存的供餐数据
+      val plaData = sc.parallelize(platoon_feed.asScala.toList)//redis中存的供餐数据
       val platoondata: mutable.Set[String] = jedis.hkeys(date + "_platoon").asScala //排菜表的key
 
       new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,term_year,platoondata)

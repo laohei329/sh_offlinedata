@@ -3,7 +3,7 @@ package com.ssic.report
 import java.util
 import java.util.Date
 
-import com.ssic.service.{DealDataStat, DistributionTotalStat, RetentionTotalStat, UsematerialTotalStat}
+import com.ssic.service._
 import com.ssic.utils.Tools._
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3.time.FastDateFormat
@@ -35,10 +35,12 @@ object TargetTotal {
     val school = session.read.jdbc(url, edu_school, conn)
     val school_supplier = session.read.jdbc(url, edu_school_supplier, conn)
     val committee = session.read.jdbc(url, edu_committee, conn)
+    val supplier =session.read.jdbc(url, pro_supplier, conn)
 
     school.createTempView("t_edu_school")
     school_supplier.createTempView("t_edu_school_supplier")
     committee.createTempView("t_edu_committee")
+    supplier.createTempView("t_pro_supplier")
 
 
     val projid2schoolid: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolid(session)) //项目点id获取学校id
@@ -46,6 +48,8 @@ object TargetTotal {
     val gongcanSchool: Broadcast[Map[String, String]] = sc.broadcast(Tools.gongcanSchool(date)) //供餐学校数据
     val schoolData = sc.broadcast(Tools.schoolNew(session)) //学校基础信息
     val commiteeid2commiteename = sc.broadcast(Tools.commiteeid2commiteename(session)) //教属名字信息
+    val commiteeid2commiteeid = sc.broadcast(Tools.school2Committee2(session)) //教属id信息
+    val schoolid2suppliername = sc.broadcast(Tools.schoolid2suppliername(session))  //团餐公司名字
 
     val jedis = JPools.getJedis
     val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlan-Detail")
@@ -74,7 +78,6 @@ object TargetTotal {
 
     val retentionchild: util.Map[String, String] = jedis.hgetAll(date + "_gc-retentiondishtotal_child")
     val retentionchildData = sc.parallelize(retentionchild.asScala.toList) //已存在的留样计划子页面数据
-
 
 
 
@@ -245,6 +248,18 @@ object TargetTotal {
     //按各区各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
     val areareLevelSchoolStatusData = retentiondealtotaldata.filter(x => !x._13._1.equals("null")).map(_._13)
     new RetentionTotalStat().arealevelreretentionschoolstatus(retentionchildData,date,areareLevelSchoolStatusData,schoolData)
+
+    val platoon_feed = jedis.hgetAll(date + "_platoon-feed")
+    val plaData = sc.parallelize(platoon_feed.asScala.toList) //redis中存
+
+    // 的供餐数据
+
+    val edu_all = jedis.hgetAll(date + "_allUseData")
+    val eduAllData = sc.parallelize(edu_all.asScala.toList) //redis中存的所有维度的数据
+
+    new EduAllDataStat().platoonmaterialdetailresert(plaData,useMaterialChildData,distributionchildData,retentionchildData,schoolData,eduAllData,date,commiteeid2commiteeid,schoolid2suppliername)
+
+
 
     sc.stop()
 

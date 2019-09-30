@@ -63,7 +63,7 @@ object MonthTargetDetail {
       val useMaterialPlanDetailData = sc.parallelize(useMaterialPlanDetail.asScala.toList) //用料计划临时表数据
 
       val useMaterials = jedis.hgetAll(date + "_useMaterialPlan-Detail")
-      val useMaterialData = sc.parallelize(useMaterialPlanDetail.asScala.toList) //用料计划已经存在的数据
+      val useMaterialData = sc.parallelize(useMaterials.asScala.toList) //用料计划已经存在的数据
 
       val distributionDetail = jedis.hgetAll(date + "_DistributionDetail")
       val distributionDetailData = sc.parallelize(distributionDetail.asScala.toList) //配送计划临时表数据

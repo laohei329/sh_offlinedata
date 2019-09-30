@@ -21,7 +21,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |a.year as year,
          |a.month as month
          |from
-         |(select sum(untreated_sum) as untreated_sum,sum(review_sum) as review_sum,sum(rejected_sum) as rejected_sum,sum(deal_sum) as deal_sum,sum(nodeal_sum) as nodeal_sum,warn_date,district_id,target,lic_type,year,month from saas_v1_dw.dw_t_edu_warn_total where year='2019' group by district_id,warn_date,target,lic_type,year,month) as a
+         |(select sum(untreated_sum) as untreated_sum,sum(review_sum) as review_sum,sum(rejected_sum) as rejected_sum,sum(deal_sum) as deal_sum,sum(nodeal_sum) as nodeal_sum,warn_date,district_id,target,lic_type,year,month from saas_v1_dw.dw_t_edu_warn_total where year='2019' and month > (month(date_sub(current_date ,1)) -6)  group by district_id,warn_date,target,lic_type,year,month) as a
        """.stripMargin)
   }
 
@@ -31,7 +31,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |insert overwrite table app_saas_v1.app_t_edu_warn_nature_total partition(year,month) select b.school_nature_name as nature,
          |b.warn_date as use_date,
          |b.target as target,
-         |b.district_id as area,
+         |b.district_id as district_id,
          |c.total as warn_dis_nodeal_sum,
          |a.total as warn_nodeal_sum,
          |b.total as warn_sum,
@@ -42,7 +42,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat != 4 and warn_type=1
+         |year='2019' and month > (month(date_sub(current_date ,1)) -6) and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,school_nature_name) as a
@@ -51,7 +51,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_type=1
+         |year='2019' and month > (month(date_sub(current_date ,1)) -6) and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,school_nature_name) as b
@@ -61,7 +61,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat != 4 and warn_type=1
+         |year='2019' and month > (month(date_sub(current_date ,1)) -6) and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,school_nature_name) as c
@@ -76,7 +76,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |insert overwrite table app_saas_v1.app_t_edu_warn_level_total partition(year,month) select b.level_name as level,
          |b.warn_date as use_date,
          |b.target as target,
-         |b.district_id as area,
+         |b.district_id as district_id,
          |c.total as warn_dis_nodeal_sum,
          |a.total as warn_nodeal_sum,
          |b.total as warn_sum,
@@ -87,7 +87,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat != 4 and warn_type=1
+         |year='2019' and month > (month(date_sub(current_date ,1)) -6) and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,level_name) as a
@@ -96,7 +96,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_type=1
+         |year='2019' and month > (month(date_sub(current_date ,1)) -6) and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,level_name) as b
@@ -106,7 +106,7 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |from
          |app_saas_v1.app_t_edu_warn_detail
          |where
-         |year='2019' and warn_stat != 4 and warn_type=1
+         |year='2019' and month > (month(date_sub(current_date ,1)) -6) and warn_stat != 4 and warn_type=1
          |and (warn_type_child =20 or warn_type_child =22 or warn_type_child=23 or warn_type_child=24 or warn_type_child=25 or warn_type_child =0 or warn_type_child =1 or warn_type_child=4)
          |group by
          |district_id,warn_date,target,year,month,level_name) as c
