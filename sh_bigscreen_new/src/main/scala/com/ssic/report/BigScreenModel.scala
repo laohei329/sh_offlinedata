@@ -167,8 +167,9 @@ object BigScreenModel {
 //
 //        //配送计划的详细信息
         Distribution.DistributionPlan(filterData).distinct().filter(x => !x._1.equals("null")).leftOuterJoin(Distribution.ProLedgerPlan(filterData).distinct())
-          //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号,表的类型，是否有效
-          .map(x => (x._1, x._2._1(0), x._2._1(1), x._2._1(2), x._2._1(3), x._2._1(4), x._2._1(5), x._2._2.getOrElse("null"), school2Area.value.getOrElse(x._2._1(2), "null"), x._2._1(7), x._2._1(8), x._2._1(10)))
+          //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收时间
+          .map(x => (x._1, x._2._1(0), x._2._1(1), x._2._1(2), x._2._1(3), x._2._1(4), x._2._1(5).toInt, x._2._2.getOrElse("null"), school2Area.value.getOrElse(x._2._1(2), "null"), x._2._1(7), x._2._1(8), x._2._1(10)))
+                .sortBy(x => x._7,true)
           .foreachPartition({
             itr =>
               SaveOnRedis.DistributionDetailRealTime(itr)

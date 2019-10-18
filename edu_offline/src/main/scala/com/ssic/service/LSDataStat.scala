@@ -23,8 +23,10 @@ class LSDataStat extends LSDataFunc {
               //表示左边没有，右边有
               if (v._1.size == 0) {
                 jedis.hset(data._2.split(" ")(0) + "_material_new", k, "0")
+                jedis.expire(data._2.split(" ")(0) + "_material_new",345600)
               } else {
                 jedis.hset(data._2.split(" ")(0) + "_material_new", k, v._1.head.toString)
+                jedis.expire(data._2.split(" ")(0) + "_material_new",345600)
               }
 
           })
@@ -50,8 +52,10 @@ class LSDataStat extends LSDataFunc {
               //表示左边没有，右边有
               if (v._1.size == 0) {
                 jedis.hset(data._2.split(" ")(0) + "_dish_new", k, "0")
+                jedis.expire(data._2.split(" ")(0) + "_dish_new",345600)
               } else {
                 jedis.hset(data._2.split(" ")(0) + "_dish_new", k, v._1.head.toString)
+                jedis.expire(data._2.split(" ")(0) + "_dish_new",345600)
               }
 
           })
@@ -77,8 +81,10 @@ class LSDataStat extends LSDataFunc {
               //表示左边没有，右边有
               if (v._1.size == 0) {
                 jedis.hset(data._2.split(" ")(0) + "_supplierToSchool_new", k, "0")
+                jedis.expire(data._2.split(" ")(0) + "_supplierToSchool_new",345600)
               } else {
                 jedis.hset(data._2.split(" ")(0) + "_supplierToSchool_new", k, v._1.head.toString)
+                jedis.expire(data._2.split(" ")(0) + "_supplierToSchool_new",345600)
               }
 
           })

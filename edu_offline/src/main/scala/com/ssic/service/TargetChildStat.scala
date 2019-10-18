@@ -44,11 +44,13 @@ class TargetChildStat extends TargetChildFunc {
               if ("-1".equals(v._1.head._2._1)) {
                 //该学校没有用料计划
                 jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + "0" + "_" + "usematerial" + "_" + "0" + "_" + "nousematerial" + "_" + "0" + "_" + "status" + "_" + "1")
+
               } else {
                 //该学校有用料计划
                 if ("1".equals(v._1.head._2._1)) {
                   if (v._1.head._2._2 != 0) {
                     jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "nousematerial" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "1")
+
                   } else {
                     jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "nousematerial" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "2")
                   }

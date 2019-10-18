@@ -46,6 +46,8 @@ object TargetDetail {
     val projid2schoolid: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolid(session))  //项目点id获取学校id
     val projid2schoolname: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolname(session)) //项目点id获取学校名字
     val gongcanSchool: Broadcast[Map[String, String]] = sc.broadcast(Tools.gongcanSchool(date))    //供餐学校数据
+    val projid2Area = sc.broadcast(Tools.projid2Area(session)) //项目点id获取学校区号
+    val school2Area = sc.broadcast(Tools.school2Area(session)) //学校id获取学校区号
 
     val jedis = JPools.getJedis
 
@@ -71,12 +73,12 @@ object TargetDetail {
 
     //用料计划的详情数据
            //处理好的用料计划数据
-    val usematerialDealData = new DealDataStat().usematerialdealdata(useMaterialPlanDetailData,projid2schoolid,projid2schoolname,gongcanSchool)
+    val usematerialDealData = new DealDataStat().usematerialdealdata(useMaterialPlanDetailData,projid2schoolid,projid2schoolname,gongcanSchool,projid2Area)
     new TargetDetailStat().usematerial(usematerialDealData,useMaterialData,date)
 
     //配送计划的详情数据
           // 处理好的配送计划数据
-    val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailData,gongcanSchool)
+    val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailData,gongcanSchool,school2Area)
     new TargetDetailStat().distribution(distributiondealdata,distributionData,date)
 
     //菜品留样的详情数据

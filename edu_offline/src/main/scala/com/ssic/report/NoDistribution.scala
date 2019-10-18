@@ -3,7 +3,6 @@ package com.ssic.report
 import java.util
 import java.util.Date
 
-import com.ssic.report.TargetChild.format
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat

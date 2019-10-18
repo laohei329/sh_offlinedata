@@ -37,8 +37,7 @@ object SchoolData {
     val schoolData = filterData._1.filter(x => x != null
       && x.database.equals("merchant")
       && x.table.equals("t_edu_school")
-      && x.`type`.equals("insert")
-      && x.data.stat.equals("1"))
+      && x.`type`.equals("insert"))
       .filter(x => "8627".equals(x.data.seat_district_id)
       || "8637".equals(x.data.seat_district_id)
       || "8636".equals(x.data.seat_district_id)

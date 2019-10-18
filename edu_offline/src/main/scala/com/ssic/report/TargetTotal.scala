@@ -50,6 +50,8 @@ object TargetTotal {
     val commiteeid2commiteename = sc.broadcast(Tools.commiteeid2commiteename(session)) //教属名字信息
     val commiteeid2commiteeid = sc.broadcast(Tools.school2Committee2(session)) //教属id信息
     val schoolid2suppliername = sc.broadcast(Tools.schoolid2suppliername(session))  //团餐公司名字
+    val projid2Area = sc.broadcast(Tools.projid2Area(session)) //项目点id获取学校区号
+    val school2Area = sc.broadcast(Tools.school2Area(session)) //学校id获取学校区号
 
     val jedis = JPools.getJedis
     val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlan-Detail")
@@ -82,7 +84,7 @@ object TargetTotal {
 
 
     //处理好的用料计划数据
-    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool)
+    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area)
     //处理好的用料计划统计数据
     val usematerialdealtotaldata = new DealDataStat().usematerialdealtotaldata(useMaterialTotalData)
 
@@ -138,7 +140,7 @@ object TargetTotal {
     new UsematerialTotalStat().arealevelusmaterialschoolstatus(useMaterialChildData, date, areauseLevelSchoolStatusData, schoolData)
 
     //处理好的配送计划数据
-   val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool)
+   val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool,school2Area)
     //处理好的配送计划统计数据
     val distributionDealTotalData = new DealDataStat().distributiondealtotaldata(distributionTotalData)
 

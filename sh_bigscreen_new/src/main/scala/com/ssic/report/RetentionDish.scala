@@ -253,7 +253,7 @@ object RetentionDish {
         (sample_id, List(quantity,dishes,id))
     })
 
-    retentionDishData.leftOuterJoin(retentionData).map(x => (x._1, x._2._1, x._2._2.getOrElse(List("null")))).filter(x => !x._3(0).equals("null"))
+    retentionDishData.leftOuterJoin(retentionData).map(x => (x._1, x._2._1, x._2._2.getOrElse(List("null")))).filter(x => !("null").equals(x._3(0)))
       .foreachPartition({
         itr =>
           val jedis = JPools.getJedis

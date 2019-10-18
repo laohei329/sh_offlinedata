@@ -171,7 +171,7 @@ object SaveOnRedis {
   }
 
   //配送计划的详细的计算
-  def DistributionDetailRealTime(itr: Iterator[(String, String, String, String, String, String, String, String, String, String, String,String)]) = {
+  def DistributionDetailRealTime(itr: Iterator[(String, String, String, String, String, String, Int, String, String, String, String,String)]) = {
     val jedis = JPools.getJedis
     itr.foreach({
       x =>
@@ -187,7 +187,6 @@ object SaveOnRedis {
               }else{
                 jedis.hset(x._2 + "_" + "DistributionDetail", "id"+"_"+x._1 +"_"+"type"+ "_" + x._3+"_"+"schoolid"+"_" + x._4+"_"+"area"+"_"+x._9 +"_"+"sourceid"+ "_" + x._5 + "_" +"batchno"+"_"+ x._6 +"_"+"delivery"+ "_" + "直配", x._7+"_deliveryDate"+"_"+x._12)
               }
-
 
             } else if("update".equals(x._10)){
               if(id.equals("id_"+x._1)){

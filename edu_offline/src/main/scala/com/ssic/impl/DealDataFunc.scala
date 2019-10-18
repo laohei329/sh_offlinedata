@@ -6,16 +6,16 @@ import org.apache.spark.rdd.RDD
 trait DealDataFunc {
 
   //对排菜的统计数据进行数据处理
-  def platoontotal(data: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
+  def platoontotal(data: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
 
   //对用料计划的详情数据进行数据处理
-  def usematerialdealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]],Broadcast[Map[String, String]],Broadcast[Map[String, String]])): RDD[(String, String,String,String,String,String)]
+  def usematerialdealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]],Broadcast[Map[String, String]],Broadcast[Map[String, String]],Broadcast[Map[String, String]])): RDD[(String, String,String,String,String,String)]
 
   //对用料的统计数据进行数据处理
   def usematerialdealtotaldata(data: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
 
   //对配送计划的详情数据进行数据处理
-  def distributiondealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]])): RDD[(String, String,String,String,String,String)]
+  def distributiondealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]],Broadcast[Map[String, String]])): RDD[(String, String,String,String,String,String)]
 
   //对配送的统计数据进行数据处理
   def distributiondealtotaldata (data: RDD[(String, String)]):RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]

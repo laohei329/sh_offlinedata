@@ -48,6 +48,8 @@ object MonthTargetChild {
       val projid2schoolid: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolid(session)) //项目点id获取学校id
       val projid2schoolname: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolname(session)) //项目点id获取学校名字
       val gongcanSchool: Broadcast[Map[String, String]] = sc.broadcast(Tools.gongcanSchool(date)) //供餐学校数据
+      val projid2Area = sc.broadcast(Tools.projid2Area(session)) //项目点id获取学校区号
+      val school2Area = sc.broadcast(Tools.school2Area(session)) //学校id获取学校区号
 
       val jedis = JPools.getJedis
       val platoon: util.Map[String, String] = jedis.hgetAll(date + "_platoon-feed")
@@ -72,7 +74,7 @@ object MonthTargetChild {
       val retentionChildData = sc.parallelize(retentionChild.asScala.toList) //已存在的留样计划子页面数据
 
       //用料计划的处理后的数据
-      val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool)
+      val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area)
 
       //用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
       val useValue = usematerialDealData.map(x => (x._1 + "_" + x._6, List(x._4, x._3)))
@@ -80,7 +82,7 @@ object MonthTargetChild {
       new TargetChildStat().usematerialchild(platoonData, useValue, date, useMaterialChildData)
 
       //配送计划处理后的数据
-      val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool)
+      val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool,school2Area)
       //配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
       val disValue = distributionDealData.map(x => (x._1 + "_" + x._4, x._6))
       new TargetChildStat().distributionchild(platoonData, disValue, date,distributionChildData)

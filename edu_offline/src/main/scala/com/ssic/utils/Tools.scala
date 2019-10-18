@@ -34,6 +34,7 @@ object Tools {
   val edu_holiday = config.getString("db.default.edu_holiday")
   val edu_school_supplier = config.getString("db.default.edu_school_supplier")
   val pro_supplier =config.getString("db.default.pro_supplier")
+  val edu_bd_department = config.getString("db.default.edu_bd_department")
 
   val conn = new Properties()
   conn.setProperty("user", user)
@@ -125,6 +126,34 @@ object Tools {
 
     result.rdd.map(x => (x.getAs[String]("id"), x.getAs[String]("school_id"))).collect().toMap
 
+  }
+
+  def projid2Area(session: SparkSession): Map[String, String] = {
+    val result = session.sql(
+      """
+        |SELECT
+        |	a.bid AS did,
+        |	c.area AS area
+        |FROM
+        |	(
+        |		SELECT
+        |			id AS bid,
+        |			school_id AS school_id
+        |		FROM
+        |			t_edu_school_supplier
+        |	) AS a
+        |LEFT JOIN t_edu_school AS c ON a.school_id = c.id
+      """.stripMargin)
+    result.rdd.map(x => (x.getAs[String]("did"), x.getAs[String]("area"))).collect().toMap
+  }
+
+  def school2Area(session: SparkSession): Map[String, String] = {
+    val result = session.sql(
+      """
+select id,area from t_edu_school
+     """.stripMargin)
+
+    result.rdd.map(x => (x.getAs[String]("id"), x.getAs[String]("area"))).collect().toMap
   }
 
   //schoolid-> 团餐公司名字
@@ -312,7 +341,7 @@ object Tools {
   def schoolNew(session: SparkSession):Map[String,List[String]] ={
 
     //对学校的基础信息按照新规则进行清洗
-    val result = session.sql("select id,school_name,level,IFNULL(level2,-1)as level2,school_nature,school_nature_sub,license_main_type,license_main_child,department_master_id,department_slave_id,area from t_edu_school where stat=1 and reviewed =1 ")
+    val result = session.sql("select id,school_name,level,IFNULL(level2,-1)as level2,school_nature,school_nature_sub,license_main_type,license_main_child,department_master_id,department_slave_id,area,department_id from t_edu_school where stat=1 and reviewed =1 ")
 
     result.rdd.map({
       row =>
@@ -443,9 +472,157 @@ object Tools {
           department_slave_id_name
         }
 
-        (id,List(level_name,school_nature_name,school_nature_sub_name,license_main_type_name,license_main_child_name,department_master_id_name,department_slave_id_name,area,school_name))
+        val department_id = row.getAs[String]("department_id")
+
+        (id,List(level_name,school_nature_name,school_nature_sub_name,license_main_type_name,license_main_child_name,department_master_id_name,department_slave_id_name,area,school_name,department_id))
     }).collect().toMap
 
   }
+
+  def schoolRdd(session: SparkSession):RDD[(String, String, String, String, String, String, String, String, String, String,String)] ={
+    session.sql("select a.id as id ,a.school_name as school_name,a.level as level,IFNULL(a.level2,-1)as level2,a.school_nature as school_nature,a.school_nature_sub as school_nature_sub,a.license_main_type as license_main_type,a.license_main_child as license_main_child,a.department_master_id as department_master_id,a.department_slave_id as department_slave_id,a.area as area,a.department_id as department_id,b.name as name from t_edu_school as a left join t_edu_committee as b on a.department_slave_id=b.id  where a.stat=1 and a.reviewed =1  ").rdd.map({
+      row =>
+        val id = row.getAs[String]("id")
+        val area = row.getAs[String]("area")
+        val school_name = row.getAs[String]("school_name")
+        val level = row.getAs[String]("level")
+        val level2 = row.getAs[Int]("level2")
+        var level_name = "null"
+        if (level2 == -1) {
+          if (StringUtils.isEmpty(level)) {
+            level_name
+          } else if ("0".equals(level)) {
+            level_name = "3" //幼儿园
+          } else if ("1".equals(level)) {
+            level_name = "7" //小学
+          } else if ("2".equals(level)) {
+            level_name = "8" //初级中学
+          } else if ("3".equals(level)) {
+            level_name = "9" //高级中学
+          } else if ("6".equals(level)) {
+            level_name = "13" //职业初中
+          } else if ("7".equals(level)) {
+            level_name = "0" //托儿所（托班）
+          } else if ("9".equals(level)) {
+            level_name = "17" //其他
+          } else if ("0,7".equals(level)) {
+            level_name = "1" //托幼园（托儿所+幼儿园）
+          } else if ("7,0".equals(level)) {
+            level_name = "1" //托幼园（托儿所+幼儿园）
+          } else if ("1,2".equals(level)) {
+            level_name = "11" //九年一贯制学校
+          } else if ("2,3".equals(level)) {
+            level_name = "10" //完全中学
+          } else if ("1,2,3".equals(level)) {
+            level_name = "12" //十二年一贯制学校
+          } else if ("1,2,3,6".equals(level)) {
+            level_name = "12" //十二年一贯制学校
+          } else if ("0,1".equals(level)) {
+            level_name = "4" // 幼小（幼儿园+小学）
+          } else if ("3,6".equals(level)) {
+            level_name = "14" // 中等职业学校
+          } else if ("0,6".equals(level)) {
+            level_name = "14" //中等职业学校
+          } else if ("0,1,2".equals(level)) {
+            level_name = "5" //  幼小初（幼儿园+小学+初中）
+          } else if ("0,1,2,3".equals(level)) {
+            level_name = "6" // 幼小初高（幼儿园+小学+初中+高中）
+          } else if ("0,1,2,3,6".equals(level)) {
+            level_name = "6" // 幼小初高（幼儿园+小学+初中+高中）
+          } else if ("0,1,2,3,6,7,9".equals(level)) {
+            level_name = "6" // 幼小初高（幼儿园+小学+初中+高中）
+          } else if ("1,9".equals(level)) {
+            level_name = "17" // 其他
+          } else if ("3,9".equals(level)) {
+            level_name = "17" // 其他
+          } else if ("0,1,7".equals(level)) {
+            level_name = "2" // 托幼小（托儿所+幼儿园+小学）
+          }
+          else if ("0,1,2,3".equals(level)) {
+            level_name = "6" // 幼小初高（幼儿园+小学+初中+高中
+          } else if ("0,2".equals(level)) {
+            level_name = "5" //  幼小初（幼儿园+小学+初中）
+          } else {
+            level_name
+          }
+        } else {
+          level_name = level2.toString
+        }
+        val school_nature = row.getAs[String]("school_nature")
+        val school_nature_sub = row.getAs[String]("school_nature_sub")
+        //GNGB(0, "公办"),GNMB(2, "民办"),OTHER(4, "其他");3, "外籍人员子女学校"
+        var school_nature_name = "null"
+        var school_nature_sub_name = "null"
+        if (StringUtils.isNoneEmpty(school_nature)) {
+          if (school_nature.equals("1") || school_nature.equals("0")) {
+            school_nature_name = "0"
+          } else if (school_nature.equals("2")) {
+            school_nature_name = "2"
+          } else if (school_nature.equals("4")) {
+            school_nature_name = "4"
+          } else if (school_nature.equals("3")) {
+            school_nature_name = "3"
+          } else {
+            school_nature_name = "4"
+          }
+        } else {
+          school_nature_name
+        }
+
+        if (school_nature_sub != null) {
+          school_nature_sub_name = school_nature_sub.toString
+        } else {
+          school_nature_sub_name
+        }
+        val license_main_type = row.getAs[String]("license_main_type")
+        val license_main_child = row.getAs[Int]("license_main_child")
+        //食堂经营
+        var license_main_type_name = "null"
+        var license_main_child_name = "null"
+
+        if (StringUtils.isNoneEmpty(license_main_type)) {
+          license_main_type_name = license_main_type
+        } else {
+          license_main_type_name
+        }
+
+
+        if (license_main_child != null) {
+          license_main_child_name = license_main_child.toString
+        } else {
+          license_main_child_name
+        }
+
+        val department_master_id = row.getAs[String]("department_master_id")
+        var department_master_id_name = "null"
+        if (StringUtils.isNoneEmpty(department_master_id)) {
+          department_master_id_name = department_master_id
+        } else {
+          department_master_id_name
+        }
+
+        val department_slave_id = row.getAs[String]("department_slave_id")
+        val name = row.getAs[String]("name")
+        var department_slave_id_name = "null"
+        if (StringUtils.isNoneEmpty(department_slave_id) && !"null".equals(department_slave_id)) {
+          department_slave_id_name = name
+        } else {
+          department_slave_id_name = department_slave_id
+        }
+        val department_id = row.getAs[String]("department_id")
+
+        (id, school_name, area, level_name, school_nature_name, school_nature_sub_name, license_main_type_name, license_main_child_name, department_master_id_name, department_slave_id_name,department_id)
+    })
+  }
+
+  def departmentid(session: SparkSession): Array[String] = {
+     session.sql("select department_id from t_edu_bd_department").rdd.map({
+       row =>
+         val department_id = row.getAs[String]("department_id")
+         department_id
+     }).collect()
+  }
+
+
 
 }
