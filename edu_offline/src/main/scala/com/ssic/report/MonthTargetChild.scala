@@ -74,18 +74,18 @@ object MonthTargetChild {
       val retentionChildData = sc.parallelize(retentionChild.asScala.toList) //已存在的留样计划子页面数据
 
       //用料计划的处理后的数据
-      val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area)
-
-      //用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
-      val useValue = usematerialDealData.map(x => (x._1 + "_" + x._6, List(x._4, x._3)))
-
-      new TargetChildStat().usematerialchild(platoonData, useValue, date, useMaterialChildData)
-
-      //配送计划处理后的数据
-      val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool,school2Area)
-      //配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
-      val disValue = distributionDealData.map(x => (x._1 + "_" + x._4, x._6))
-      new TargetChildStat().distributionchild(platoonData, disValue, date,distributionChildData)
+//      val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area)
+//
+//      //用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
+//      val useValue = usematerialDealData.map(x => (x._1 + "_" + x._6, List(x._4, x._3)))
+//
+//      new TargetChildStat().usematerialchild(platoonData, useValue, date, useMaterialChildData)
+//
+//      //配送计划处理后的数据
+//      val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool,school2Area,date)
+//      //配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
+//      val disValue = distributionDealData.map(x => (x._1 + "_" + x._4, x._6+"_"+x._7))
+//      new TargetChildStat().distributionchild(platoonData, disValue, date,distributionChildData)
 
       //留样计划处理后的数据
       val reValue = new DealDataStat().retentiondealdata(retentionData)

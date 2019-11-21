@@ -23,9 +23,9 @@ object RetentionDish {
 
 
   //项目点排菜的菜品详情
-  def dishDetail(data: (RDD[SchoolBean], Broadcast[Map[String, String]])) = {
-    val packages = data._1.filter(x => x != null && x.table.equals("t_saas_package") && x.`type`.equals("insert") && x.data.stat.equals("1"))
-    val dishData = data._1.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("insert") && x.data.stat.equals("1"))
+  def dishDetail(data: (RDD[SchoolBean])) = {
+    val packages = data.filter(x => x != null && x.table.equals("t_saas_package") && x.`type`.equals("insert") && "1".equals(x.data.stat) && "1".equals(x.data.industry_type))
+    val dishData = data.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("insert") && "1".equals(x.data.stat))
 
     val packageData = packages.distinct().map(x => {
       val id = x.data.id
@@ -38,8 +38,8 @@ object RetentionDish {
       val ledger_type = x.data.ledger_type      //配送类型: 1 原料 2 成品菜
       val stat = x.data.stat
       val now = format.format(new Date())
-      if (format.parse(now).getTime <= format.parse(date).getTime) {
-        (id, List(date, supplier_id, school_id, stat, menu_group_name,ledger_type))
+      if (format.parse(now).getTime == format.parse(date).getTime) {
+        (id, List(date, supplier_id, school_id, stat, Rule.emptyToNull(menu_group_name),Rule.emptyToNull(ledger_type)))
       } else {
         ("null", List("null", "null", "null", "null", "null","null"))
       }
@@ -47,91 +47,64 @@ object RetentionDish {
     }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => StringUtils.isNoneEmpty(x._2(0))).filter(x => !x._1.equals("null"))
     val dishFlitData = dishData.distinct().map({
       x =>
-        (x.data.package_id, List(x.data.dishes_name, x.data.dishes_number, x.data.id, x.data.cater_type_name,x.data.category))
-    }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => StringUtils.isNoneEmpty(x._2(0)))
+        val date = format.format(format.parse(x.data.create_time))
+        val now = format.format(new Date())
+        if (format.parse(now).getTime == format.parse(date).getTime) {
+          (x.data.package_id, List(x.data.dishes_name, Rule.emptyToNull(x.data.dishes_number), x.data.id, Rule.emptyToNull(x.data.cater_type_name),x.data.category))
+        } else {
+          ("null", List("null", "null", "null", "null", "null","null"))
+        }
+
+    }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => StringUtils.isNoneEmpty(x._2(0))).filter(x => !"null".equals(x._1))
     packageData.leftOuterJoin(dishFlitData).map(x => (x._2._1, x._2._2.getOrElse(List("null")), x._1)).filter(x => !x._2(0).equals("null"))
       .foreachPartition({
         itr =>
           val jedis = JPools.getJedis
           itr.foreach({
             x =>
+
               //dish(id),supplydate,packageid,supplierid,schoolid,groupname,dishesname,dishesnumber,catertypename(早餐),ledgertype(配送类型),category（分类）
-              jedis.hset(x._1(0) + "_" + "dish-menu", x._3+"_"+x._2(2), "supplierid" + "_" + x._1(1) + "_" + "schoolid" + "_" + x._1(2) + "_" + "groupname" + "_" + x._1(4) + "_" + "dishesname" + "_" + x._2(0) + "_" + "dishesnumber" + "_" + x._2(1) + "_" + "catertypename" + "_"+x._2(3)+"_"+"ledgertype"+"_"+x._1(5)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"))
-
-              jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4),x._2(1).toFloat)
-              jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"),x._2(1).toFloat)
-              jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null")+ "_" + "schoolid" + "_" + x._1(2),x._2(1).toFloat)
-              jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3),x._2(1).toFloat)
-              jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"),x._2(1).toFloat)
-              jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null")+ "_" + "schoolid" + "_" + x._1(2),x._2(1).toFloat)
-
+              jedis.hset(x._1(0) + "_" + "dish-menu", x._3+"_"+x._2(2), "supplierid" + "_" + x._1(1) + "_" + "schoolid" + "_" + x._1(2) + "_" + "groupname" + "_" + x._1(4) + "_" + "dishesname" + "_" + x._2(0) + "_" + "dishesnumber" + "_" + x._2(1) + "_" + "catertypename" + "_"+x._2(3)+"_"+"ledgertype"+"_"+x._1(5)+"_"+"category"+"_"+x._2(4))
+              jedis.expire(x._1(0) + "_" + "dish-menu",172800)
 
           })
       })
 
   }
 
-  def dishUpdateDelete(data: (RDD[SchoolBean], Broadcast[Map[String, String]])) = {
-    val packages = data._1.filter(x => x != null && x.table.equals("t_saas_package") && x.`type`.equals("update") && x.data.stat.equals("1"))
-    val dishData = data._1.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("update") && x.data.stat.equals("1"))
-    val packageData = packages.distinct().map(x => {
-      val id = x.data.id
-      val supply_date = x.data.supply_date
-      val replaceAll = supply_date.replaceAll("\\D", "-")
-      val date = format.format(format.parse(replaceAll))
-      val supplier_id = x.data.supplier_id
-      val school_id = x.data.school_id
-      val menu_group_name = x.data.menu_group_name
-      val ledger_type = x.data.ledger_type      //配送类型: 1 原料 2 成品菜
-      val stat = x.data.stat
-      val now = format.format(new Date())
-      if (format.parse(now).getTime <= format.parse(date).getTime) {
-        (id, List(date, supplier_id, school_id, stat, menu_group_name,ledger_type))
-      } else {
-        ("null", List("null", "null", "null", "null", "null","null"))
-      }
+  def dishUpdateDelete(data: (RDD[SchoolBean])) = {
 
-    }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => StringUtils.isNoneEmpty(x._2(0))).filter(x => !x._1.equals("null"))
+    val dishData = data.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("update") )
+
     val dishFlitData = dishData.distinct().map({
       x =>
-        (x.data.package_id, List(x.data.dishes_name, x.data.dishes_number, x.data.id, x.data.cater_type_name,x.data.category,x.old.dishes_name,x.old.dishes_number,x.data.stat))
-    }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => StringUtils.isNoneEmpty(x._2(0)))
-    packageData.leftOuterJoin(dishFlitData).map(x => (x._2._1, x._2._2.getOrElse(List("null")), x._1)).filter(x => !x._2(0).equals("null"))
+        val date = format.format(format.parse(x.data.create_time))
+        val now = format.format(new Date())
+        if (format.parse(now).getTime == format.parse(date).getTime) {
+          (x.data.package_id, List(x.data.dishes_name, x.data.dishes_number, x.data.id, x.data.cater_type_name,x.data.category),x.data.stat,x.old.stat,now)
+        } else {
+          ("null", List("null", "null", "null", "null", "null","null"),"null","null","null")
+        }
+
+    }).filter(x => StringUtils.isNoneEmpty(x._1)).filter(x => StringUtils.isNoneEmpty(x._2(0))).filter(x => !"null".equals(x._1))
       .foreachPartition({
         itr =>
           val jedis = JPools.getJedis
           itr.foreach({
             x =>
-              logger.info(x._1(0)+"_"+x._1(1)+"_"+x._1(2)+"_"+x._1(3)+"_"+x._1(4)+"_"+x._1(5)+"_"+x._2(0)+"_"+x._2(1)+"_"+x._2(2)+"_"+x._2(3)+"_"+x._2(4)+"_"+x._2(5)+"_"+x._2(6)+"_"+x._2(7)+"_"+x._3)
+              logger.info(x._1+"_"+"_"+x._2+"_"+x._3)
               //dish(id),supplydate,packageid,supplierid,schoolid,groupname,dishesname,dishesnumber,catertypename(早餐)
-              val strings = jedis.hkeys(x._1(0)+"_"+"dish-menu")
-              for (i <- strings.asScala){
-                val id = i.split("_")(1)
-                if(id.equals(x._2(2))){
-                  jedis.hset(x._1(0) + "_" + "dish-menu", x._3+"_"+x._2(2), "supplierid" + "_" + x._1(1) + "_" + "schoolid" + "_" + x._1(2) + "_" + "groupname" + "_" + x._1(4) + "_" + "dishesname" + "_" + x._2(0) + "_" + "dishesnumber" + "_" + x._2(1) + "_" + "catertypename" +"_"+ x._2(3)+"_"+"ledgertype"+"_"+x._1(5)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"))
-
-                  if(StringUtils.isNoneEmpty(x._2(6)) && !x._2(6).equals("null")){
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4),x._2(1).toFloat)
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"),x._2(1).toFloat)
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null")+ "_" + "schoolid" + "_" + x._1(2),x._2(1).toFloat)
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3),x._2(1).toFloat)
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"),x._2(1).toFloat)
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null")+ "_" + "schoolid" + "_" + x._1(2),x._2(1).toFloat)
-
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4),-(x._2(6).toFloat))
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"),-(x._2(6).toFloat))
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null")+ "_" + "schoolid" + "_" + x._1(2),-(x._2(6).toFloat))
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3),-(x._2(6).toFloat))
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null"),-(x._2(6).toFloat))
-                    jedis.hincrByFloat(x._1(0) + "_" + "dish-menu-total","dishesname"+"_"+x._2(0)+"_"+"category"+"_"+x._2(4)+"_"+"catertypename"+"_"+x._2(3)+"_"+"area"+"_"+data._2.value.getOrElse(x._1(2),"null")+ "_" + "schoolid" + "_" + x._1(2),-(x._2(6).toFloat))
-                  }else{
-                    logger.info("不需要计算的菜品更新，其数量没有变化")
-                  }
-
+              val v = jedis.hget(x._5+"_"+"dish-menu",x._1+"_"+x._2(2))
+              if(StringUtils.isNoneEmpty(v) && !"null".equals(v)){
+                if("0".equals(x._3)){
+                  jedis.hdel(x._5+"_"+"dish-menu",x._1+"_"+x._2(2))
                 }else{
-                  logger.info("不需要计算的菜品更新，其不在之前的redis中")
+                  jedis.hset(x._5 + "_" + "dish-menu", x._1+"_"+x._2(2), v.split("dishesname")(0)+ "dishesname" + "_" + x._2(0) + "_" + "dishesnumber" + "_" + x._2(1) + "_" + "catertypename" + "_" + x._2(3) + "_" + "ledgertype" +v.split("ledgertype")(1) )
                 }
+
               }
+
+
 
           })
       })

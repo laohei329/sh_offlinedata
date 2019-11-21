@@ -64,6 +64,8 @@ object TargetDetail {
     val distributionData = sc.parallelize(distributions.asScala.toList)  //配送计划已经存在的数据
 
     val dishmenu: RDD[(String, String, String, String, String, String, String, String)] = Tools.hivedishmenu(hiveContext,datetime,year,month) //hive数据库的菜品数据
+    val todaydishmenu = jedis.hgetAll(date + "_dish-menu")
+    val todaydishmenuData: RDD[(String, String)] = sc.parallelize(todaydishmenu.asScala.toList)  //当天排菜菜品临时表数据
 
     val retentiondish = jedis.hgetAll(date + "_retention-dish")
     val retentiondishData: RDD[(String, String)] = sc.parallelize(retentiondish.asScala.toList)  //留样计划临时表数据
@@ -78,12 +80,12 @@ object TargetDetail {
 
     //配送计划的详情数据
           // 处理好的配送计划数据
-    val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailData,gongcanSchool,school2Area)
+    val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailData,gongcanSchool,school2Area,date)
+
     new TargetDetailStat().distribution(distributiondealdata,distributionData,date)
 
     //菜品留样的详情数据
-    new TargetDetailStat().retentiondish(dishmenu,retentiondishData,date,gongcanSchool,gcretentiondishData)
-
+    new TargetDetailStat().todayretentiondish(dishmenu,retentiondishData,date,gongcanSchool,gcretentiondishData,todaydishmenuData,school2Area)
 
 
     sc.stop()

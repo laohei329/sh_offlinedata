@@ -113,4 +113,8 @@ class WarnHiveDataStat extends WarnHiveDataFunc{
          |on b.warn_date=c.warn_date and b.target=c.target and b.level_name =c.level_name and b.district_id=c.district_id
        """.stripMargin)
   }
+
+  override def dapingwarndata(data: HiveContext): Unit = {
+
+  }
 }

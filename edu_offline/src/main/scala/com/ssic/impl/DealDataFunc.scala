@@ -12,19 +12,19 @@ trait DealDataFunc {
   def usematerialdealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]],Broadcast[Map[String, String]],Broadcast[Map[String, String]],Broadcast[Map[String, String]])): RDD[(String, String,String,String,String,String)]
 
   //对用料的统计数据进行数据处理
-  def usematerialdealtotaldata(data: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
+  def usematerialdealtotaldata(data: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
 
   //对配送计划的详情数据进行数据处理
-  def distributiondealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]],Broadcast[Map[String, String]])): RDD[(String, String,String,String,String,String)]
+  def distributiondealdata(data: (RDD[(String, String)],Broadcast[Map[String, String]],Broadcast[Map[String, String]],String)): RDD[(String, String,String,String,String,String,String)]
 
   //对配送的统计数据进行数据处理
-  def distributiondealtotaldata (data: RDD[(String, String)]):RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
+  def distributiondealtotaldata (data: RDD[(String, String)]):RDD[(String,(String, String))]
 
   //对留样计划的详情数据进行数据处理
-  def retentiondealdata(data:RDD[(String, String)]): RDD[(String, String,String)]
+  def retentiondealdata(data:RDD[(String, String)]): RDD[(String, String,String,String)]
 
   //对留样的统计数据进行数据处理
-  def retentiondealtotaldata (data: RDD[(String, String)]):RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
+  def retentiondealtotaldata (data: RDD[(String, String)]):RDD[(String,(String, String))]
 
 
 

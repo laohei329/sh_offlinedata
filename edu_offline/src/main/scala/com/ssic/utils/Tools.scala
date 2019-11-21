@@ -35,6 +35,7 @@ object Tools {
   val edu_school_supplier = config.getString("db.default.edu_school_supplier")
   val pro_supplier =config.getString("db.default.pro_supplier")
   val edu_bd_department = config.getString("db.default.edu_bd_department")
+  val edu_bd_pro_license = config.getString("db.default.edu_bd_pro_license")
 
   val conn = new Properties()
   conn.setProperty("user", user)
@@ -196,6 +197,8 @@ select id,area from t_edu_school
 
   }
 
+
+
   def schoolTerm(session: (SparkSession,String,String)):Map[String,String] ={
     //查询学校的学期设置是否是有效的的
     val schoolterm = session._1.sql(s"select school_id,first_start_date,first_end_date,second_start_date,second_end_date,term_year from t_edu_schoolterm where stat =1 and term_year='${session._3}'")
@@ -341,7 +344,7 @@ select id,area from t_edu_school
   def schoolNew(session: SparkSession):Map[String,List[String]] ={
 
     //对学校的基础信息按照新规则进行清洗
-    val result = session.sql("select id,school_name,level,IFNULL(level2,-1)as level2,school_nature,school_nature_sub,license_main_type,license_main_child,department_master_id,department_slave_id,area,department_id from t_edu_school where stat=1 and reviewed =1 ")
+    val result = session.sql("select id,school_name,level,IFNULL(level2,-1)as level2,school_nature,school_nature_sub,license_main_type,license_main_child,department_master_id,department_slave_id,area,department_id from t_edu_school  ")
 
     result.rdd.map({
       row =>

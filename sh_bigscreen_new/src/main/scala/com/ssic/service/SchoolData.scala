@@ -1,6 +1,7 @@
 package com.ssic.service
 
 import com.ssic.beans.SchoolBean
+import com.ssic.report.BigScreenModel.logger
 import com.ssic.utils.{JPools, NewSchoolToOldSchool, Rule, SchoolRule}
 import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
@@ -488,7 +489,10 @@ object SchoolData {
                     }
 
                   } else {
-                    jedis.hset("schoolDetail", x._2, v.split("slictype")(0) + "slictype" + ";" + x._3 + ";" + "slicpic" + ";" + x._4 + ";" + "slicjob" + ";" + x._5 + ";" + "slicno" + ";" + x._6 + ";" + "soperation" + ";" + x._7 + ";" + "slicdate" + ";" + x._8 + ";" + "senddate" + ";" + x._9 + ";" + "clictype" + v.split("clictype")(1))
+
+                      jedis.hset("schoolDetail", x._2, v.split("slictype")(0) + "slictype" + ";" + x._3 + ";" + "slicpic" + ";" + x._4 + ";" + "slicjob" + ";" + x._5 + ";" + "slicno" + ";" + x._6 + ";" + "soperation" + ";" + x._7 + ";" + "slicdate" + ";" + x._8 + ";" + "senddate" + ";" + x._9 + ";" + "clictype" + v.split("clictype")(1))
+
+
                   }
 
                 } else if ("insert".equals(x._1)) {

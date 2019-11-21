@@ -4,7 +4,7 @@ import java.sql.DriverManager
 
 import com.ssic.beans.SchoolBean
 import com.ssic.utils.{JPools, NewSchoolToOldSchool}
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
@@ -77,13 +77,52 @@ object ZhongTaiDetailToLocal {
         val canteen_mode="0"
         val ledger_type="0"
 
-        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation), (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code), (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone), (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name), (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time,canteen_mode,ledger_type))
+        var department_id="21"
+        if("e6ee4acf-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "1"
+        }else if("e6ee4e97-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "2"
+        }else if("e6ee4eec-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "3"
+        }else if("e6ee4f43-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "4"
+        }else if("e6ee4fa4-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "5"
+        }else if("e6ee4ffa-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "6"
+        }else if("e6ee5054-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "7"
+        }else if("e6ee50ac-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "8"
+        }else if("e6ee5101-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "9"
+        }else if("e6ee4bd5-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "10"
+        }else if("e6ee4c4f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "11"
+        }else if("e6ee4cb2-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "12"
+        }else if("e6ee4d17-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "13"
+        }else if("e6ee4d78-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "14"
+        }else if("e6ee4dd1-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "15"
+        }else if("e6ee4e3f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+          department_id = "16"
+        }else{
+          department_id
+        }
+
+
+
+        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation), (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code), (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone), (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name), (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time,canteen_mode,ledger_type,department_id))
 
     }).foreach({
       x =>
         if ("insert".equals(x._1)) {
           val conn = DriverManager.getConnection("jdbc:mysql://172.16.10.18:3306/saas_v1?characterEncoding=utf8", "maxwell", "S3cret_ssic_Bi")
-          val statement = conn.prepareStatement("insert into t_edu_school (org_merchant_id,org_parent_merchant_id,id,school_parent_id,parent_id,school_id,committee_org_merchant_id,committee_id,school_name,corporation,corporation_way,address,level,supplier_id,reviewed,school_nature,stat,corporation_telephone,is_branch_school,social_credit_code,school_nature_sub,department_master_id,department_slave_id,school_area_id,remark,license_main_type,license_main_child,department_head,department_mobilephone,department_telephone,department_fax,department_email,food_safety_persion,food_safety_mobilephone,food_safety_telephone,level2,students_amount,staff_amount,seat_province_id,seat_province_name,seat_city_id,seat_city_name,area,seat_district_name,creator,create_time,updater,last_update_time,canteen_mode,ledger_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          val statement = conn.prepareStatement("insert into t_edu_school (org_merchant_id,org_parent_merchant_id,id,school_parent_id,parent_id,school_id,committee_org_merchant_id,committee_id,school_name,corporation,corporation_way,address,level,supplier_id,reviewed,school_nature,stat,corporation_telephone,is_branch_school,social_credit_code,school_nature_sub,department_master_id,department_slave_id,school_area_id,remark,license_main_type,license_main_child,department_head,department_mobilephone,department_telephone,department_fax,department_email,food_safety_persion,food_safety_mobilephone,food_safety_telephone,level2,students_amount,staff_amount,seat_province_id,seat_province_name,seat_city_id,seat_city_name,area,seat_district_name,creator,create_time,updater,last_update_time,canteen_mode,ledger_type,department_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2._1)
           statement.setString(2, x._2._2)
           statement.setString(3, x._2._3)
@@ -134,62 +173,115 @@ object ZhongTaiDetailToLocal {
           statement.setString(48, x._6._8)
           statement.setString(49,x._6._9)
           statement.setString(50,x._6._10)
+          statement.setString(51,x._6._11)
           statement.execute()
           conn.close()
         } else if ("update".equals(x._1)) {
           val conn = DriverManager.getConnection("jdbc:mysql://172.16.10.18:3306/saas_v1?characterEncoding=utf8", "maxwell", "S3cret_ssic_Bi")
-          val statement = conn.prepareStatement("replace into t_edu_school (org_merchant_id,org_parent_merchant_id,id,school_parent_id,parent_id,school_id,committee_org_merchant_id,committee_id,school_name,corporation,corporation_way,address,level,supplier_id,reviewed,school_nature,stat,corporation_telephone,is_branch_school,social_credit_code,school_nature_sub,department_master_id,department_slave_id,school_area_id,remark,license_main_type,license_main_child,department_head,department_mobilephone,department_telephone,department_fax,department_email,food_safety_persion,food_safety_mobilephone,food_safety_telephone,level2,students_amount,staff_amount,seat_province_id,seat_province_name,seat_city_id,seat_city_name,area,seat_district_name,creator,create_time,updater,last_update_time,canteen_mode,ledger_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
-          statement.setString(1, x._2._1)
-          statement.setString(2, x._2._2)
-          statement.setString(3, x._2._3)
-          statement.setString(4, x._2._4)
-          statement.setString(5, x._2._5)
-          statement.setString(6, x._2._6)
-          statement.setString(7, x._2._7)
-          statement.setString(8, x._2._8)
-          statement.setString(9, x._2._9)
-          statement.setString(10, x._2._10)
-          statement.setString(11, x._3._1)
-          statement.setString(12, x._3._2)
-          statement.setString(13, x._3._3)
-          statement.setString(14, x._3._4)
-          statement.setString(15, x._3._5)
-          statement.setString(16, x._3._6)
-          statement.setString(17, x._3._7)
-          statement.setString(18, x._3._8)
-          statement.setString(19, x._3._9)
-          statement.setString(20, x._3._10)
-          statement.setString(21, x._4._1)
-          statement.setString(22, x._4._2)
-          statement.setString(23, x._4._3)
-          statement.setString(24, x._4._4)
-          statement.setString(25, x._4._5)
-          statement.setString(26, x._4._6)
-          statement.setString(27, x._4._7)
-          statement.setString(28, x._4._8)
-          statement.setString(29, x._4._9)
-          statement.setString(30, x._4._10)
-          statement.setString(31, x._5._1)
-          statement.setString(32, x._5._2)
-          statement.setString(33, x._5._3)
-          statement.setString(34, x._5._4)
-          statement.setString(35, x._5._5)
-          statement.setString(36, x._5._6)
-          statement.setString(37, x._5._7)
-          statement.setString(38, x._5._8)
-          statement.setString(39, x._5._9)
-          statement.setString(40, x._5._10)
-          statement.setString(41, x._6._1)
-          statement.setString(42, x._6._2)
-          statement.setString(43, x._6._3)
-          statement.setString(44, x._6._4)
-          statement.setString(45, x._6._5)
-          statement.setString(46, x._6._6)
-          statement.setString(47, x._6._7)
-          statement.setString(48, x._6._8)
-          statement.setString(49,x._6._9)
-          statement.setString(50,x._6._10)
-          statement.executeUpdate()
+          val statement = conn.prepareStatement(
+            s"""
+               |update t_edu_school
+               |set org_parent_merchant_id =? ,
+               |id = ? ,
+               |school_parent_id =? ,
+               |parent_id =? ,
+               |school_id=? ,
+               |committee_org_merchant_id =? ,
+               |committee_id=? ,
+               |school_name=? ,
+               |corporation=? ,
+               |corporation_way = ? ,
+               |address =? ,
+               |level = ? ,
+               |supplier_id =? ,
+               |reviewed =? ,
+               |school_nature = ? ,
+               |stat = ? ,
+               |corporation_telephone =? ,
+               |is_branch_school =? ,
+               |social_credit_code =? ,
+               |school_nature_sub =? ,
+               |department_master_id =? ,
+               |department_slave_id =? ,
+               |school_area_id =? ,
+               |remark =? ,
+               |license_main_type =? ,
+               |license_main_child =? ,
+               |department_head =? ,
+               |department_mobilephone =? ,
+               |department_telephone =? ,
+               |department_fax =? ,
+               |department_email =? ,
+               |food_safety_persion =? ,
+               |food_safety_mobilephone =? ,
+               |food_safety_telephone =? ,
+               |level2 =? ,
+               |students_amount =? ,
+               |staff_amount =? ,
+               |seat_province_id =? ,
+               |seat_province_name =? ,
+               |seat_city_id =? ,
+               |seat_city_name =? ,
+               |area =? ,
+               |seat_district_name =? ,
+               |creator =? ,
+               |create_time =? ,
+               |updater =? ,
+               |last_update_time =? ,
+               |canteen_mode =? ,
+               |ledger_type =?
+               |where org_merchant_id = '${x._2._1}'
+             """.stripMargin)
+          statement.setString(1, x._2._2)
+          statement.setString(2, x._2._3)
+          statement.setString(3, x._2._4)
+          statement.setString(4, x._2._5)
+          statement.setString(5, x._2._6)
+          statement.setString(6, x._2._7)
+          statement.setString(7, x._2._8)
+          statement.setString(8, x._2._9)
+          statement.setString(9, x._2._10)
+          statement.setString(10, x._3._1)
+          statement.setString(11, x._3._2)
+          statement.setString(12, x._3._3)
+          statement.setString(13, x._3._4)
+          statement.setString(14, x._3._5)
+          statement.setString(15, x._3._6)
+          statement.setString(16, x._3._7)
+          statement.setString(17, x._3._8)
+          statement.setString(18, x._3._9)
+          statement.setString(19, x._3._10)
+          statement.setString(20, x._4._1)
+          statement.setString(21, x._4._2)
+          statement.setString(22, x._4._3)
+          statement.setString(23, x._4._4)
+          statement.setString(24, x._4._5)
+          statement.setString(25, x._4._6)
+          statement.setString(26, x._4._7)
+          statement.setString(27, x._4._8)
+          statement.setString(28, x._4._9)
+          statement.setString(29, x._4._10)
+          statement.setString(30, x._5._1)
+          statement.setString(31, x._5._2)
+          statement.setString(32, x._5._3)
+          statement.setString(33, x._5._4)
+          statement.setString(34, x._5._5)
+          statement.setString(35, x._5._6)
+          statement.setString(36, x._5._7)
+          statement.setString(37, x._5._8)
+          statement.setString(38, x._5._9)
+          statement.setString(39, x._5._10)
+          statement.setString(40, x._6._1)
+          statement.setString(41, x._6._2)
+          statement.setString(42, x._6._3)
+          statement.setString(43, x._6._4)
+          statement.setString(44, x._6._5)
+          statement.setString(45, x._6._6)
+          statement.setString(46, x._6._7)
+          statement.setString(47, x._6._8)
+          statement.setString(48,x._6._9)
+          statement.setString(49,x._6._10)
+          statement.execute()
           conn.close()
         } else {
           val conn = DriverManager.getConnection("jdbc:mysql://172.16.10.18:3306/saas_v1?characterEncoding=utf8", "maxwell", "S3cret_ssic_Bi")

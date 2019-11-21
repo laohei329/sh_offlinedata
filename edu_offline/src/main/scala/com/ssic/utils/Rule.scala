@@ -23,5 +23,14 @@ object Rule {
     }
   }
 
+  def emptyToNull(x: String): String = {
+    var lastData = "null"
+    if (StringUtils.isNoneEmpty(x) && !x.equals("null")) {
+      x
+    } else {
+      lastData
+    }
+  }
+
 
 }

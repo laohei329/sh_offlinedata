@@ -5,7 +5,7 @@ import java.{io, lang, util}
 
 import com.alibaba.fastjson.JSON
 import com.ssic.beans.SchoolBean
-import com.ssic.service.{GroupSupplierDetail,SchoolData , SupplierDetail, ZhongTaiDetailToLocal}
+import com.ssic.service.{GroupSupplierDetail, SchoolData, SupplierDetail, ZhongTaiDetailToLocal}
 import com.ssic.utils.{NewTools, SaveOnRedis}
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.rdd.RDD
@@ -36,23 +36,23 @@ object BigScreenModel {
     val ssc = new StreamingContext(session.sparkContext, Seconds(8))
 
 
-//    val school2CommiteeBro = ssc.sparkContext.broadcast(Tools.school2Commitee(session))
-//    val projid2CommiteeBro = ssc.sparkContext.broadcast(Tools.projid2Area(session))
-//    val school2schoolNature = ssc.sparkContext.broadcast(Tools.school2school_nature(session))
-//    val school2canteenMode = ssc.sparkContext.broadcast(Tools.school2canteen_mode(session))
-//    val school2level = ssc.sparkContext.broadcast(Tools.school2level(session))
-//    val school2level2 = ssc.sparkContext.broadcast(Tools.school2level2(session))
-//    //val supplierid2supplierName = ssc.sparkContext.broadcast(Tools.supplierid2supplierName(session))
-//    val supplierid2supplierName2 = ssc.sparkContext.broadcast(Tools.supplierid2supplierName2(session))
-//    val supplierid2Schoolmaster = ssc.sparkContext.broadcast(Tools.supplierid2Schoolmaster(session))
-//    val commiteeid2commiteename = ssc.sparkContext.broadcast(Tools.commiteeid2commiteename(session))
-//    val schoolid2masterid = ssc.sparkContext.broadcast(Tools.schoolid2masterid(session))
-//    val schoolsupplierid2schoolid = ssc.sparkContext.broadcast(Tools.schoolsupplierid2schoolid(session))
-//    val school2school_nature_sub = ssc.sparkContext.broadcast(Tools.school2school_nature_sub(session))
-//    val school2ledger_type = ssc.sparkContext.broadcast(Tools.school2ledger_type(session))
-//    val supplierid2district = ssc.sparkContext.broadcast(Tools.supplierid2district(session))
-//    val supplierid2companytype = ssc.sparkContext.broadcast(Tools.supplierid2companytype(session))
-//    val schoolid2schoolterm = ssc.sparkContext.broadcast(Tools.schoolid2schoolterm(session))
+    //    val school2CommiteeBro = ssc.sparkContext.broadcast(Tools.school2Commitee(session))
+    //    val projid2CommiteeBro = ssc.sparkContext.broadcast(Tools.projid2Area(session))
+    //    val school2schoolNature = ssc.sparkContext.broadcast(Tools.school2school_nature(session))
+    //    val school2canteenMode = ssc.sparkContext.broadcast(Tools.school2canteen_mode(session))
+    //    val school2level = ssc.sparkContext.broadcast(Tools.school2level(session))
+    //    val school2level2 = ssc.sparkContext.broadcast(Tools.school2level2(session))
+    //    //val supplierid2supplierName = ssc.sparkContext.broadcast(Tools.supplierid2supplierName(session))
+    //    val supplierid2supplierName2 = ssc.sparkContext.broadcast(Tools.supplierid2supplierName2(session))
+    //    val supplierid2Schoolmaster = ssc.sparkContext.broadcast(Tools.supplierid2Schoolmaster(session))
+    //    val commiteeid2commiteename = ssc.sparkContext.broadcast(Tools.commiteeid2commiteename(session))
+    //    val schoolid2masterid = ssc.sparkContext.broadcast(Tools.schoolid2masterid(session))
+    //    val schoolsupplierid2schoolid = ssc.sparkContext.broadcast(Tools.schoolsupplierid2schoolid(session))
+    //    val school2school_nature_sub = ssc.sparkContext.broadcast(Tools.school2school_nature_sub(session))
+    //    val school2ledger_type = ssc.sparkContext.broadcast(Tools.school2ledger_type(session))
+    //    val supplierid2district = ssc.sparkContext.broadcast(Tools.supplierid2district(session))
+    //    val supplierid2companytype = ssc.sparkContext.broadcast(Tools.supplierid2companytype(session))
+    //    val schoolid2schoolterm = ssc.sparkContext.broadcast(Tools.schoolid2schoolterm(session))
 
     val school2commitee = ssc.sparkContext.broadcast(NewTools.school2commitee(session))
     val school2commiteename = ssc.sparkContext.broadcast(NewTools.school2commiteename(session))
@@ -117,7 +117,7 @@ object BigScreenModel {
             schoolBean
         })
 
-//        //将中台的所在地表信息 迁移到 本地的area表
+        //        //将中台的所在地表信息 迁移到 本地的area表
         ZhongTaiDetailToLocal.Area(filterData)
         //将中台的所属表信息 迁移到 本地的t_edu_competent_department表
         ZhongTaiDetailToLocal.EduCompetentDepartment(filterData)
@@ -128,7 +128,7 @@ object BigScreenModel {
         //将中台的供应商公司信息 迁移到 本地的t_pro_supplier表
         ZhongTaiDetailToLocal.SupplierInfo(filterData)
         //将中台的学校信息 迁移到 本地的t_edu_school表
-        ZhongTaiDetailToLocal.SchoolDetail(filterData,school2commitee,school2commiteename)
+        ZhongTaiDetailToLocal.SchoolDetail(filterData, school2commitee, school2commiteename)
         //将华为云上的t_edu_calendar 迁移到 本地的t_edu_calendar表\
         ZhongTaiDetailToLocal.EduCalendar(filterData)
         //将华为云上的t_edu_schoolterm 迁移到 本地的t_edu_schoolterm表
@@ -139,43 +139,43 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.EduHoliday(filterData)
 
 
-//        //上海市排菜计划的详细的临时表
-        PlatoonPlan.PlatoonRealTimeData(filterData, school2Area,session)
+        //        //上海市排菜计划的详细的临时表
+        PlatoonPlan.PlatoonRealTimeData(filterData, school2Area, session)
           //时间，区号，schoolid，表操作类型，创建时间
           .map(x => (x._1, x._3, x._2, x._4, x._5))
           .foreachPartition({
             itr =>
               SaveOnRedis.PlatoonPlanReal(itr)
           })
-//
-//        //学校排菜实时使用情况功能展现（上海）
+        //
+        //        //学校排菜实时使用情况功能展现（上海）
         SchoolIdDisplay.SchoolIdShow(filterData, school2Area).map(x => (x._1, x._2)).filter(x => StringUtils.isNoneEmpty(x._2))
           .foreachPartition({
             itr =>
               SaveOnRedis.DisplayRealTime(itr)
           })
-//
-//        //用料计划的详细信息
+        //
+        //        //用料计划的详细信息
         MaterialConfirm.useMaterialdish(filterData, projid2Area, supplierid2supplierName)
-//
-//        //配送计划的上海市，各区计算指标
-//        //        Distribution.DistributionIndex((filterData, school2CommiteeBro)).filter(x => StringUtils.isNoneEmpty(x._3)).filter(x => StringUtils.isNoneEmpty(x._1))
-//        //          .foreachPartition({
-//        //            itr =>
-//        //              SaveOnRedis.DistributionRealTime(itr)
-//        //          })
-//
-//        //配送计划的详细信息
+        //
+        //        //配送计划的上海市，各区计算指标
+        //        //        Distribution.DistributionIndex((filterData, school2CommiteeBro)).filter(x => StringUtils.isNoneEmpty(x._3)).filter(x => StringUtils.isNoneEmpty(x._1))
+        //        //          .foreachPartition({
+        //        //            itr =>
+        //        //              SaveOnRedis.DistributionRealTime(itr)
+        //        //          })
+        //
+        //        //配送计划的详细信息
         Distribution.DistributionPlan(filterData).distinct().filter(x => !x._1.equals("null")).leftOuterJoin(Distribution.ProLedgerPlan(filterData).distinct())
           //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收时间
           .map(x => (x._1, x._2._1(0), x._2._1(1), x._2._1(2), x._2._1(3), x._2._1(4), x._2._1(5).toInt, x._2._2.getOrElse("null"), school2Area.value.getOrElse(x._2._1(2), "null"), x._2._1(7), x._2._1(8), x._2._1(10)))
-                .sortBy(x => x._7,true)
+          .sortBy(x => x._7, true)
           .foreachPartition({
             itr =>
               SaveOnRedis.DistributionDetailRealTime(itr)
           })
-//
-//
+        //
+        //
         //学校详情
         SchoolData.SchoolInsert(filterData, "null", school2commitee, school2commiteename)
         SchoolData.schoolImage(filterData)
@@ -193,9 +193,9 @@ object BigScreenModel {
 
 
         //
-        //        //  菜品详细信息
-        //        RetentionDish.dishDetail(filterData, school2CommiteeBro)
-        //        RetentionDish.dishUpdateDelete(filterData, school2CommiteeBro)
+        //        //  当天排菜的菜品详细信息
+        RetentionDish.dishDetail(filterData)
+        RetentionDish.dishUpdateDelete(filterData)
         //        RetentionDish.packageUpdateDelete(filterData, school2CommiteeBro)
         //       //留样信息
         RetentionDish.retentionDishDetail(filterData)

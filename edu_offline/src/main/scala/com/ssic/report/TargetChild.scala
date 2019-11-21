@@ -76,9 +76,9 @@ object TargetChild {
     new TargetChildStat().usematerialchild(platoonData,useValue,date,useMaterialChildData)
 
     //配送计划处理后的数据
-    val distributionDealData = new DealDataStat().distributiondealdata(distributionData,gongcanSchool,school2Area)
+    val distributionDealData = new DealDataStat().distributiondealdata(distributionData,gongcanSchool,school2Area,date)
     //配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
-    val disValue = distributionDealData.map(x => (x._1+"_"+x._4,x._6))
+    val disValue = distributionDealData.map(x => (x._1+"_"+x._4,x._6+"_"+x._7))
     new TargetChildStat().distributionchild(platoonData,disValue,date,distributionChildData)
 
     //留样计划处理后的数据

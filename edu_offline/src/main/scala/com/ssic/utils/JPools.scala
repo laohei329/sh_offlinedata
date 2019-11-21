@@ -22,7 +22,7 @@ object JPools {
   poolConfig.setMinIdle(2)
 
   private val nodes = new util.LinkedHashSet[HostAndPort]()
-  nodes.add(new HostAndPort("172.16.10.18", 7000))
+  //nodes.add(new HostAndPort("172.16.10.18", 7000))
   nodes.add(new HostAndPort("172.16.10.18", 7001))
   nodes.add(new HostAndPort("172.16.10.37", 7002))
   nodes.add(new HostAndPort("172.16.10.37", 7003))

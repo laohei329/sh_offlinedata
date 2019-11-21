@@ -29,6 +29,7 @@ object WarnHiveData {
     new WarnHiveDataStat().arealevelwarntotal(hiveContext)
 
 
+
     sc.stop()
   }
 

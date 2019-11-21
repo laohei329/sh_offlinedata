@@ -54,7 +54,7 @@ object PlatoonTotal {
       for (i <- 0 until departmentid.size){
         val id = departmentid(i)
         val jedis = JPools.getJedis
-        val keys = jedis.del(date+"_platoonfeed-total"+"_"+"department"+"_"+id)
+        jedis.del(date+"_platoonfeed-total"+"_"+"department"+"_"+id)
       }
 
       val total = jedis.hgetAll(date + "_platoonfeed-total")

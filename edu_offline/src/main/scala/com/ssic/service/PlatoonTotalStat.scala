@@ -48,7 +48,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -107,7 +107,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -167,7 +167,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -226,7 +226,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -287,7 +287,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }
@@ -348,7 +348,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }
@@ -409,7 +409,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }
@@ -482,7 +482,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }
@@ -536,7 +536,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }
@@ -581,7 +581,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -637,7 +637,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -694,7 +694,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
         itr.foreach({
           x =>
             jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+            jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
         })
     })
   }
@@ -758,7 +758,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }
@@ -813,7 +813,7 @@ class PlatoonTotalStat extends PlatoonTotalFunc {
           itr.foreach({
             x =>
               jedis.hset(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 194400)
+              jedis.expire(data._2 + "_platoonfeed-total" + "_" + "department" + "_" + x._1, 604800)
           })
       })
   }

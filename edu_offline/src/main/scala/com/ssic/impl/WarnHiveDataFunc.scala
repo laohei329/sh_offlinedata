@@ -14,4 +14,8 @@ trait WarnHiveDataFunc {
   //按照学制分类进行的统计，现只包含预警的未预警单位，预警总数，预警未处理数量
 
   def arealevelwarntotal(data:HiveContext)
+
+  //大屏预警数据
+
+  def dapingwarndata(data:HiveContext)
 }

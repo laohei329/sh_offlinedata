@@ -77,7 +77,7 @@ object NewSchoolToOldSchool {
       "5" //老市级的 市商务委i
     } else if ("0".equals(data._1) && "上海市经信委".equals(data._2)) {
       "6" //老市级的 市经信委id
-    } else if ("0".equals(data._1) && "上海市科艺中心".equals(data._2)) {
+    } else if ("0".equals(data._1) && "上海市教委".equals(data._2)) {
       "7" //老市级的 市教委id
     } else {
       department_slave_id
