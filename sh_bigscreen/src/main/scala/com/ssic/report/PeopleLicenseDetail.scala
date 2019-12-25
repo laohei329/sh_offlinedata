@@ -2,7 +2,7 @@ package com.ssic.report
 
 import com.ssic.beans.SchoolBean
 import com.ssic.utils.JPools
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory

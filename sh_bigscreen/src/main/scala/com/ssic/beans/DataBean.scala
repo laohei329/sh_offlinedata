@@ -7,7 +7,7 @@ package com.ssic.beans
 class DataBean(
                 //t_pro_material_plan_master
                 var id: String,
-                var `type`: Int,
+                var `type`: String,
                 var use_date: String,
                 var supplier_id: String,
                 var proj_id: String,
@@ -21,30 +21,16 @@ class DataBean(
 
                 //t_pro_ledger_master
                 var action_date: String,
-                var is_replenishment: Int,
                 var ledger_type: String,
                 var cater_type_id: String,
                 var cater_type_name: String,
                 var receiver_id: String,
                 var receiver_name: String,
                 var user_id: String,
-                var driver_name: String,
                 var source_id: String,
                 var ware_batch_no: String,
                 var image: String,
                 var haul_status: String,
-                var car_id: String,
-                var car_code: String,
-                var start_address: String,
-                var destination_id: String,
-                var destination_name: String,
-                var start_time: String,
-                var end_time: String,
-                var completion: Int,
-                var start_lat: String,
-                var start_lng: String,
-                var end_lat: String,
-                var end_lng: String,
                 var delivery_date: String,
 
                 //	t_pro_ledger
@@ -52,43 +38,25 @@ class DataBean(
                 var wares_id: String,
                 var menu_id: String,
                 var delivery_attr: Int,
-                var early_days: Int,
-                var material_id: String,
-                var supplier_material_id: String,
-                var supplier_material_name: String,
-                var first_num: String,
-                var second_num: String,
                 var wares_type: Int,
                 var wares_type_name: String,
                 var name: String,
-                var shelf_life: String,
-                var unit: String,
                 var supply_id: String,
                 var supply_name: String,
                 var supplier_code: String,
                 var supplier_name: String,
-                var quantity: Float,
+                var quantity: String,
                 var amount_unit: String,
-                var actual_quantity: Float,
-                var supplier_material_units_id: String,
-                var supplier_material_units: String,
-                var spce: String,
-                var other_quantity: Float,
-                var production_date: String,
-                var production_name: String,
+                var actual_quantity: String,
                 var batch_no: String,
                 var trace_code: String,
                 var paste_flag: Int,
                 var expiration_date: String,
                 var warn_flag: Int,
                 var delivery_number: String,
+                var menu_group_name:String,
 
                 //t_saas_package
-                var temp_id: String,
-                var temp_name: String,
-                var menu_group_id: String,
-                var menu_group_name: String,
-                var meal_type: Int,
                 var cater_package_id: String,
                 var package_name: String,
                 var supply_date: String,
@@ -101,6 +69,7 @@ class DataBean(
                 var cost: Float,
                 var is_publish: Int,
                 var reserved: Int,
+                var industry_type:String,
 
                 //t_pro_supplier
                 var company_type: String,
@@ -144,6 +113,20 @@ class DataBean(
                 var yidian_code: String,
                 var is_new: Int,
 
+                var region_id:String,
+                var supplier_contact_name:String,
+                var supplier_contact_mobilephone:String,
+                var registered_capital:String,
+                var legal_representative:String,
+                var create_username:String,
+                var update_username:String,
+                var update_time:String,
+                var is_available:String,
+                var is_deleted:String,
+                var audit_state:String,
+                var business_license_number:String,
+                var management_area_type:String,
+
                 //t_edu_school_supplier
                 var contact: String,
                 var mobile_no: String,
@@ -152,7 +135,6 @@ class DataBean(
                 var manager_name: String,
                 var manager_no: String,
                 var remark: String,
-                var vote: Int,
                 var pj_no: String,
                 var manager_status: Int,
                 var proj_type: Int,
@@ -163,6 +145,7 @@ class DataBean(
                 var worker_count: Int,
                 var student_count: Int,
                 var relation: Int,
+                var company_id:String,
 
                 //t_saas_package_dishes
                 var package_id: String,
@@ -221,35 +204,35 @@ class DataBean(
                 var students_amount: String,
                 var staff_amount: String,
 
-                //t_pro_warning_global_master
-                var title: String,
-                var level_id: String,
-                var warn_stat: String,
-                var warn_type: String,
-                var warn_type_child: String,
-                var warn_rule_id: String,
+                var org_merchant_id:String,
+                var org_parent_merchant_id:String,
+                var uuid:String,
+                var school_parent_id:String,
+                var committee_org_merchant_id:String,
+                var seat_province_id :String,
+                var seat_province_name:String,
+                var seat_city_id:String,
+                var seat_city_name:String,
+                var seat_district_id:String,
+                var seat_district_name:String,
 
                 //t_pro_warning_license
-                var warn_master_id: String,
-                var remain_time: String,
-                var license_id: String,
                 var lic_no: String,
                 var license: String,
                 var lic_pic: String,
                 var written_name: String,
-                var work_range: String,
-                var lose_start_time: String,
-                var lose_time: String,
-
 
                 //t_pro_reserve_sample
                 var reserve_hour: Int,
                 var reserve_minute: Int,
                 var district_name: String,
+                var compliance_status:String,
 
                 //t_pro_reserve_sample_dishes
                 var sample_id: String,
                 var dishes: String,
+                var is_consistent:String,
+                var is_consistent_remark:String,
 
 
                 //t_pro_recycler_waste
@@ -272,7 +255,6 @@ class DataBean(
                 var province_id: String,
                 var target: Int,
                 var target_id: String,
-                var read_stat: Int,
 
                 //t_pro_license
                 var lic_name: String,
@@ -290,6 +272,27 @@ class DataBean(
                 var certificate_no: String,
                 var operation: String,
                 var give_lic_date: String,
+
+              //area
+                var ID:String,
+                var code:String,
+                var abbreviation:String,
+                var IS_DELETED:String,
+                var Create_UserName:String,
+                var Update_UserName:String,
+
+                var the_day:String,
+                var have_class:String,
+                var create_id:String,
+                var create_name:String,
+                var reason:String,
+                var term_year:String,
+                var first_start_date:String,
+                var first_end_date:String,
+                var second_start_date:String,
+                var second_end_date:String,
+                var holiday_day:String,
+
 
               //t_pro_employee
                 var id_code:String

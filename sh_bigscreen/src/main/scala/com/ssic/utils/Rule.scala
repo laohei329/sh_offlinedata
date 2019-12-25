@@ -1,6 +1,6 @@
 package com.ssic.utils
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3._
 
 object Rule {
 
@@ -19,6 +19,15 @@ object Rule {
       "0"+x
     }else{
       x
+    }
+  }
+
+  def nullToZero(x:String):Int={
+    var lastData = 0
+    if (StringUtils.isNoneEmpty(x) && !x.equals("null")) {
+      x.toInt
+    } else {
+      lastData
     }
   }
 

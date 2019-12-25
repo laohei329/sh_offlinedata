@@ -23,12 +23,12 @@ object JPools {
 
 
   private val nodes = new util.LinkedHashSet[HostAndPort]()
-  nodes.add(new HostAndPort("172.16.10.18", 7000))
-  nodes.add(new HostAndPort("172.16.10.18", 7001))
-  nodes.add(new HostAndPort("172.16.10.37", 7002))
-  nodes.add(new HostAndPort("172.16.10.37", 7003))
-  nodes.add(new HostAndPort("172.16.10.52", 7004))
-  nodes.add(new HostAndPort("172.16.10.52", 7005))
+  nodes.add(new HostAndPort("172.18.14.20", 7000))
+  nodes.add(new HostAndPort("172.18.14.20", 7001))
+  nodes.add(new HostAndPort("172.18.14.20", 7002))
+  nodes.add(new HostAndPort("172.18.14.21", 7003))
+  nodes.add(new HostAndPort("172.18.14.21", 7004))
+  nodes.add(new HostAndPort("172.18.14.21", 7005))
 
 
   private val cluster = new JedisCluster(nodes,5000,5000,5,"5O1ecOhLH6bFNlt6", poolConfig)

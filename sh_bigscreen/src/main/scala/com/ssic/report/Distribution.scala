@@ -3,7 +3,8 @@ package com.ssic.report
 import java.util.Date
 
 import com.ssic.beans.SchoolBean
-import com.ssic.utils.{Rule, SchoolRule}
+import com.ssic.report.MaterialConfirm.format
+import com.ssic.utils.Rule
 import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
@@ -17,7 +18,7 @@ object Distribution {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def DistributionPlan(filterData: RDD[SchoolBean]): RDD[(String, List[String])] = {
-    val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master"))
+    val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master") && "1".equals(x.data.industry_type))
     val ledgerMasterData: RDD[(String, List[String])] = proLedgerMaster.map({
       x =>
         val id = x.data.id
@@ -33,18 +34,22 @@ object Distribution {
         val delivery_date = Rule.emptyToNull(x.data.delivery_date) //验收日期
 
         val now = format.format(new Date())
-        //时间没有过期
+
+        if (format.parse(now).getTime <= format.parse(date).getTime) {
           if (x.`type`.equals("insert") && stat.equals("1")) {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat,"null",delivery_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat, "null", delivery_date))
           } else if (x.`type`.equals("update")) {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, x.old.haul_status, "update", stat,x.old.stat,delivery_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, x.old.haul_status, "update", stat, x.old.stat, delivery_date))
           } else {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat,"null",delivery_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat, "null", delivery_date))
           }
+        }else{
+          ("null",List("null","null","null","null","null","null","null","null","null","null","null"))
+        }
 
 
 
-    })
+    }).filter(x => !"null".equals(x._1))
     ledgerMasterData
   }
 

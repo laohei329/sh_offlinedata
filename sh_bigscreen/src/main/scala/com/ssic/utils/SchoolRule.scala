@@ -1,7 +1,8 @@
 package com.ssic.utils
 
 import com.ssic.beans.{DataBean, SchoolBean}
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3._
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
 
@@ -13,14 +14,15 @@ import org.slf4j.LoggerFactory
 object SchoolRule {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def SchoolNew(filterData: SchoolBean): (String, String, String, String, String, String, String,String,String,String) = {
-    val stat = filterData.data.stat
+  def SchoolNew(filterData: (SchoolBean,String,String)): (String, String, String, String, String, String, String,String,String,String) = {
+    val stat = filterData._1.data.stat
     //区号
-    val area = filterData.data.area
+    //  将上海市各区的新的district_id映射 => 旧的area的映射
+    val area = NewSchoolToOldSchool.committeeToOldArea(filterData._1.data.seat_district_id)
     //学校类型
     var level_name = "null"
-    val level = filterData.data.level
-    val level2 = filterData.data.level2
+    val level = filterData._1.data.level
+    val level2 = filterData._1.data.level2
     if (StringUtils.isNoneEmpty(level2)) {
       level_name = level2
     } else {
@@ -85,8 +87,8 @@ object SchoolRule {
     //GNGB(0, "公办"),GNMB(2, "民办"),OTHER(4, "其他");3, "外籍人员子女学校"
     var school_nature_name = "null"
     var school_nature_sub_name = "null"
-    val school_nature = filterData.data.school_nature //公办，民办
-    val school_nature_sub = filterData.data.school_nature_sub //CTIVE(1, "集体办"),TROOPS(2, "部队办"),INSTITUTION(3, "企事业办"),COMPANY(4, "企业合作")INTERNATIONAL(5, "国际办"),OTHER(9, "其它"),
+    val school_nature = filterData._1.data.school_nature //公办，民办
+    val school_nature_sub = filterData._1.data.school_nature_sub //CTIVE(1, "集体办"),TROOPS(2, "部队办"),INSTITUTION(3, "企事业办"),COMPANY(4, "企业合作")INTERNATIONAL(5, "国际办"),OTHER(9, "其它"),
     if (StringUtils.isNoneEmpty(school_nature)) {
       if (school_nature.equals("1") || school_nature.equals("0")) {
         school_nature_name = "0"
@@ -112,8 +114,8 @@ object SchoolRule {
     //食堂经营
     var license_main_type_name = "null"
     var license_main_child_name = "null"
-    val license_main_type = filterData.data.license_main_type
-    val license_main_child = filterData.data.license_main_child
+    val license_main_type = filterData._1.data.license_main_type
+    val license_main_child = filterData._1.data.license_main_child
     if (StringUtils.isNoneEmpty(license_main_type)) {
       license_main_type_name = license_main_type
     } else {
@@ -129,29 +131,17 @@ object SchoolRule {
 
 
     //区属
-    var department_master_id_name ="null"
-    var department_slave_id_name ="null"
-    val department_master_id = filterData.data.department_master_id
-    val department_slave_id = filterData.data.department_slave_id
-    if(StringUtils.isNoneEmpty(department_master_id)){
-      department_master_id_name = department_master_id
-    }else{
-      department_master_id_name
-    }
-
-    if(StringUtils.isNoneEmpty(department_slave_id)){
-      department_slave_id_name = department_slave_id
-    }else{
-      department_slave_id_name
-    }
+    val department_master_id = filterData._2
+    val department_slave_id = filterData._3
 
     //是否审核通过
-    val reviewed = filterData.data.reviewed
+    val reviewed = filterData._1.data.reviewed
 
-    (area, level_name, school_nature_name, license_main_type_name, stat, license_main_child_name, school_nature_sub_name,department_master_id_name,department_slave_id_name,reviewed)
+    (area, level_name, school_nature_name, license_main_type_name, stat, license_main_child_name, school_nature_sub_name,department_master_id,department_slave_id,reviewed)
   }
 
-  def SchoolOld(filterData: SchoolBean): (String, String, String, String, String, String, String, String, String, String) = {
+
+  def SchoolOld(filterData: (SchoolBean,Broadcast[Map[String, String]], Broadcast[Map[String, String]])): (String, String, String, String, String, String, String, String, String, String) = {
     var oldbean: DataBean = null
     var stat_name = "null"
     var area_name = "null"
@@ -162,18 +152,18 @@ object SchoolRule {
     var license_main_child_name = "null"
     var department_master_id_name ="null"
     var department_slave_id_name ="null"
+    var committee_org_merchant_id_name="null"
     var reviewed_name ="null"
     try {
-      oldbean = filterData.old
+      oldbean = filterData._1.old
       stat_name = oldbean.stat
-      area_name = oldbean.area
+      area_name = NewSchoolToOldSchool.committeeToOldArea(oldbean.area)
       level_name = oldbean.level2
       school_nature_name = oldbean.school_nature
       school_nature_sub_name = oldbean.school_nature_sub
       license_main_type_name = oldbean.license_main_type
       license_main_child_name = oldbean.license_main_child
-      department_master_id_name = oldbean.department_master_id
-      department_slave_id_name = oldbean.department_slave_id
+      committee_org_merchant_id_name = oldbean.committee_org_merchant_id
       reviewed_name = oldbean.reviewed
     } catch {
       case e: Exception => {
@@ -190,10 +180,10 @@ object SchoolRule {
       stat_name = oldbean.stat
     }
 
-    if (StringUtils.isEmpty(oldbean.area)) {
+    if (StringUtils.isEmpty(oldbean.seat_district_id)) {
       area_name
     } else {
-      area_name = oldbean.area
+      area_name = NewSchoolToOldSchool.committeeToOldArea(oldbean.seat_district_id)
     }
 
     //学校类型
@@ -305,19 +295,17 @@ object SchoolRule {
     }
 
     //区属
-    val department_master_id = oldbean.department_master_id
-    val department_slave_id = oldbean.department_slave_id
-    if(StringUtils.isNoneEmpty(department_master_id)){
-      department_master_id_name = department_master_id
+    val committee_org_merchant_id = oldbean.committee_org_merchant_id
+    if(StringUtils.isNoneEmpty(committee_org_merchant_id)){
+      committee_org_merchant_id_name=committee_org_merchant_id
     }else{
-      department_master_id_name
+      committee_org_merchant_id_name
     }
+    val master_id = filterData._2.value.getOrElse(committee_org_merchant_id_name, "null")
+    department_master_id_name= NewSchoolToOldSchool.committeeToOldMasterId(master_id)  //将中台的关于教属的映射转到以前老的教属的映射
 
-    if(StringUtils.isNoneEmpty(department_slave_id)){
-      department_slave_id_name = department_slave_id
-    }else{
-      department_slave_id_name
-    }
+    val commite_name = filterData._3.value.getOrElse(committee_org_merchant_id_name, "null")
+    department_slave_id_name = NewSchoolToOldSchool.committeeToOldSlaveId((master_id,commite_name)) //将中台的关于教属的映射转到以前老的教属的映射department_slave_id
 
     val reviewed = oldbean.reviewed
     if(StringUtils.isNoneEmpty(reviewed)){
