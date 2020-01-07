@@ -255,4 +255,27 @@ public class FtpUtil {
 			}
 		}
 	}
+
+
+
+	/**
+	 * @Description: 从远程ftp服务器读取文件
+	 * @Param: [fileName]
+	 * @return: java.io.InputStream
+	 * @Author: jianghy
+	 * @Date: 2020/1/7
+	 * @Time: 17:08
+	 */
+	public static InputStream readRemoteFile(String fileName){
+		FTPClient ftpClient = new FTPClient();
+		InputStream ins = null;
+		try {
+			// 从服务器上读取指定的文件
+			ins = ftpClient.retrieveFileStream(fileName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ins;
+	}
+
 }

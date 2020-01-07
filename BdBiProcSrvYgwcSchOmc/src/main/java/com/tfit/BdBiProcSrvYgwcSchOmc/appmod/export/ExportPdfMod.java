@@ -1675,13 +1675,16 @@ public class ExportPdfMod {
         //保存文件到本地
         FileOutputStream fileOutputStream = null;
         try {
-            fileOutputStream = new FileOutputStream(newpdf_path);
-            fileOutputStream.write(os.toByteArray());
+//            fileOutputStream = new FileOutputStream(newpdf_path);
+//            fileOutputStream.write(os.toByteArray());
             FtpUtil.ftpServer(pathFileName, os,repFileResPath);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
