@@ -284,7 +284,18 @@ public class FtpUtil {
 			// 从服务器上读取指定的文件
 			ins = ftpClient.retrieveFileStream(fileName);
 		} catch (Exception e) {
+			logger.info("e:"+e.getMessage());
 			e.printStackTrace();
+		}finally {
+			try {
+				//关闭文件流
+				//退出
+				ftpClient.logout();
+				//断开连接
+				ftpClient.disconnect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return ins;
 	}
