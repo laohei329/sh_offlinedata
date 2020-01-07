@@ -79,6 +79,10 @@ public class ExportController {
 		new ExportPdfMod().appModFunc(db1Service, db2Service, saasService,dbHiveDishService,eduSchoolService,dbHiveService);
 	}
 
+    @RequestMapping(value = "/v1/getCommitteeList", method = RequestMethod.POST)
+    public String getCommitteeList(HttpServletRequest request){
+        return new ExportPdfMod().getCommitteeListMod(request,db1Service,db2Service);
+    }
 	
 	/** 
 	 * @Description: 下载pdf

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
+import com.tfit.BdBiProcSrvYgwcSchOmc.config.AppModConfig;
 import com.tfit.BdBiProcSrvYgwcSchOmc.config.ApplicationUtil;
 import com.tfit.BdBiProcSrvYgwcSchOmc.config.SpringConfig;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dao.AppCommonDao;
@@ -1329,7 +1330,7 @@ public class ExportPdfMod {
                                                        List<CheckOperateRateInfo> schTypeCheckCorrectRateList,List<CheckOperateRateInfo> totalCheckCorrectRateList,
                                                        List<AppOperateRateInfo> schTypeAppOperateRateList,List<AppOperateRateInfo> totalAppOperateRateList){
         //获取行政区划
-        List<Map<String, String>> committeeList = getCommitteeList(sourceDao, db1Service);
+        List<Map<String, String>> committeeList = getCommitteeList(db1Service);
         List<Map<String,Object>> totalList = new ArrayList<>();
         for (Map<String, String> committeeMap : committeeList) {
             String code = committeeMap.get("code");
@@ -1558,7 +1559,7 @@ public class ExportPdfMod {
      * @Date: 2019/12/30
      * @Time: 10:57       
      */
-    public List<Map<String,String>> getCommitteeList(List<AppCommonDao> sourceDao,Db1Service db1Service){
+    public List<Map<String,String>> getCommitteeList(Db1Service db1Service){
         List<AppCommonDao> committeeList = db1Service.getCommitteeList();
         List<Map<String,String>> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(committeeList)){
@@ -1592,9 +1593,13 @@ public class ExportPdfMod {
 
         // 生成的新文件路径
         String newpdf_path = env.getProperty("report.pdf.newfile");
-        String fileName = committeeName+"("+nowDate+").pdf";
+//        String fileName = committeeName+"("+nowDate+").pdf";
+        String fileName = committeeCode+"-"+nowDate+".pdf";
         newpdf_path = newpdf_path + fileName;
 //        String newpdf_path = "E:/word/pdf/"+committeeName+"("+nowDate+").pdf";//测试参数
+
+        // 生成到ftp文件服务器上目录的路径
+        String ftppath = env.getProperty("report.pdf.ftppath");
 
         PdfReader reader;
         FileOutputStream out;
@@ -1631,7 +1636,7 @@ public class ExportPdfMod {
             logger.info("生成pdf文件完成~~~~~~~~~~");
 
             //把本地pdf文件上传到ftp
-            uploadFtp(bos,newpdf_path,fileName);
+            uploadFtp(bos,newpdf_path,fileName,ftppath);
             logger.info("文件上传到ftp完成......");
 
             //存储记录
@@ -1661,9 +1666,7 @@ public class ExportPdfMod {
      * @Date: 2020/1/6
      * @Time: 22:59
      */
-    public void uploadFtp(ByteArrayOutputStream os,String newpdf_path,String fileName){
-        //存放在ftp上的目录
-        String repFileResPath = "/expYgwcOptpdf/";
+    public void uploadFtp(ByteArrayOutputStream os,String newpdf_path,String fileName,String repFileResPath){
         //文件的全路径
         String repFileName = repFileResPath + fileName;
         String pathFileName = SpringConfig.base_dir + repFileName;
@@ -1825,5 +1828,55 @@ public class ExportPdfMod {
             strResp = new ToolUtil().getInitJson();
         }
 		return strResp;
+    }
+
+
+
+    /** 
+     * @Description: 获取行政区划列表
+     * @Param: [request, db1Service, db2Service] 
+     * @return: java.lang.String 
+     * @Author: jianghy 
+     * @Date: 2020/1/7
+     * @Time: 10:19       
+     */
+    public String getCommitteeListMod(HttpServletRequest request, Db1Service db1Service,Db2Service db2Service) {
+        // 固定Dto层
+        AppCommonExternalModulesDto appCommonExternalModulesDto = new AppCommonExternalModulesDto();
+        AppCommonData appCommonData = new AppCommonData();
+        List<AppCommonDao> sourceDao = null;
+        AppCommonDao pageTotal = null;
+        List<Map<String,String>> dataList = new ArrayList();
+
+        // 业务操作
+        try {
+            // 授权码
+            String token = request.getHeader("Authorization");
+            // 验证授权
+//            boolean verTokenFlag = AppModConfig.verifyAuthCode2(token, db2Service, new int[2]);
+            boolean verTokenFlag = true;
+            if (verTokenFlag) {
+                dataList = getCommitteeList(db1Service);
+                appCommonExternalModulesDto.setData(dataList);
+                // 以上业务逻辑层修改
+                // 固定返回
+            } else {
+                appCommonExternalModulesDto.setResCode(IOTRspType.AUTHCODE_CHKERR.getCode().toString());
+                appCommonExternalModulesDto.setResMsg(IOTRspType.AUTHCODE_CHKERR.getMsg().toString());
+            }
+        } catch (Exception e) {
+            appCommonExternalModulesDto.setResCode(IOTRspType.System_ERR.getCode().toString());
+            appCommonExternalModulesDto.setResMsg(IOTRspType.System_ERR.getMsg().toString());
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String strResp = null;
+        try {
+            strResp = objectMapper.writeValueAsString(appCommonExternalModulesDto);
+            strResp = new ToolUtil().rmExternalStructure(strResp);
+        } catch (Exception e) {
+            strResp = new ToolUtil().getInitJson();
+        }
+        return strResp;
     }
 }
