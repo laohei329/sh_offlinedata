@@ -1,14 +1,10 @@
 package com.tfit.BdBiProcSrvYgwcSchOmc.service;
 
-import java.util.List;
-
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchIdNameDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchOptModeDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchOwnershipDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchTypeDo;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.AppCommonDao;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.*;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.edu.TEduDistrictDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.TEduSchoolDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.TEduSuperviseUserDo;
+
+import java.util.List;
 
 public interface Db1Service {
 	 //从数据库test_edu的数据表t_edu_district中查找id和区域名称
@@ -43,4 +39,41 @@ public interface Db1Service {
     
     //从数据源ds1的数据表t_edu_supervise_user中查找授权码以当前授权码
     String getAuthCodeByCurAuthCode(String token);
+
+
+
+    /**
+     * @Description: 获取上海各区的教育局信息
+     * @Param: []
+     * @return: java.util.List<com.tfit.BdBiProcSrvShEduOmc.dao.AppCommonDao>
+     * @Author: jianghy
+     * @Date: 2019/12/30
+     * @Time: 13:44
+     */
+    List<AppCommonDao> getCommitteeList();
+
+
+    /**
+     * @Description: 获取报告列表
+     * @Param: [map]
+     * @return: java.util.LinkedHashMap<java.lang.String,java.lang.Object>
+     * @Author: jianghy
+     * @Date: 2020/1/2
+     * @Time: 17:12
+     */
+    List<AppCommonDao> getWeekReportList(String year, String month, String committeeCode);
+
+
+
+    /**
+     * @Description: 插入周报告记录
+     * @Param: [createDate, startDate, endDate, committeeCode, committeeName]
+     * @return: boolean
+     * @Author: jianghy
+     * @Date: 2020/1/2
+     * @Time: 20:37
+     */
+    boolean doCreateReport(String createDate,String startDate,String endDate,String committeeCode,String committeeName);
+
+
 }

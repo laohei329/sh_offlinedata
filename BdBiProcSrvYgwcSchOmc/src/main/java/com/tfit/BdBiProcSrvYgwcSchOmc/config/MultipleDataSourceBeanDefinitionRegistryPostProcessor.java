@@ -80,7 +80,7 @@ public class MultipleDataSourceBeanDefinitionRegistryPostProcessor implements Be
                  bd = beanFactory.getBeanDefinition(entry.getKey());
                  mpv = bd.getPropertyValues();
                  dsMap = entry.getValue();
-                 mpv.addPropertyValue("driverClassName", dsMap.get("driverClassName"));
+                 mpv.addPropertyValue("driverClassName", dsMap.get("driver-class-name"));
                  mpv.addPropertyValue("url", dsMap.get("url"));
                  mpv.addPropertyValue("username", dsMap.get("username"));
                  mpv.addPropertyValue("password", dsMap.get("password"));

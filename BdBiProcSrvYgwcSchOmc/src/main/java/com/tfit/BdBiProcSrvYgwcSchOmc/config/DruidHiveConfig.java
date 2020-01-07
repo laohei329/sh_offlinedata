@@ -19,8 +19,8 @@ import javax.sql.DataSource;
  * @author: tianfang_infotech
  * @date: 2019/04/30 15:16
  */
-@Configuration
-@MapperScan(basePackages = DruidHiveConfig.PACKAGE_SCAN, sqlSessionFactoryRef = "sqlSessionFactoryHive")
+//@Configuration
+//@MapperScan(basePackages = DruidHiveConfig.PACKAGE_SCAN, sqlSessionFactoryRef = "sqlSessionFactoryHive")
 public class DruidHiveConfig {
 
     public static final String PACKAGE_SCAN = "com.tfit.BdBiProcSrvYgwcSchOmc.dao.mapper.edu";
@@ -29,8 +29,8 @@ public class DruidHiveConfig {
     @Autowired
     private DruidCommonConfig druidCommonConfig;
 
-    @Bean
-    @ConfigurationProperties("custom.datasource.dsHive")
+//    @Bean
+//    @ConfigurationProperties("custom.datasource.dsHive")
     public DataSource dataSourceHive() {
 
         DruidDataSource dataSource = new DruidDataSource();
@@ -51,7 +51,7 @@ public class DruidHiveConfig {
      *
      * @return
      */
-    @Bean
+//    @Bean
     public DataSourceTransactionManager dataSourceTransactionManagerHive() {
         return new DataSourceTransactionManager(dataSourceHive());
     }
@@ -62,7 +62,7 @@ public class DruidHiveConfig {
      * @return
      * @throws Exception
      */
-    @Bean
+//    @Bean
     public SqlSessionFactory sqlSessionFactoryHive() throws Exception {
 
         final SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();

@@ -1,32 +1,31 @@
 package com.tfit.BdBiProcSrvYgwcSchOmc.service.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.DataSource;
-
+import com.tfit.BdBiProcSrvYgwcSchOmc.config.ApplicationUtil;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.AppCommonDao;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.*;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.edu.TEduDistrictDo;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.mapper.edu.TEduDistrictV2DoMapper;
+import com.tfit.BdBiProcSrvYgwcSchOmc.dao.mapper.edu.TEduSchoolDoMapper;
+import com.tfit.BdBiProcSrvYgwcSchOmc.service.Db1Service;
+import com.tfit.BdBiProcSrvYgwcSchOmc.util.BCDTimeUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchIdNameDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchOptModeDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchOwnershipDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.SchTypeDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.edu.TEduDistrictDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.mapper.edu.TEduDistrictV2DoMapper;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.mapper.edu.TEduSchoolDoMapper;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.TEduSchoolDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.dao.domain.TEduSuperviseUserDo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.service.Db1Service;
-import com.tfit.BdBiProcSrvYgwcSchOmc.util.BCDTimeUtil;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class Db1ServiceImpl implements Db1Service {
@@ -478,4 +477,122 @@ public class Db1ServiceImpl implements Db1Service {
         
         return retToken;
     }
+
+
+
+
+	/**
+	 * @Description: 获取上海各区的教育局信息
+	 * @Param: []
+	 * @return: java.util.List<com.tfit.BdBiProcSrvShEduOmc.dao.AppCommonDao>
+	 * @Author: jianghy
+	 * @Date: 2019/12/30
+	 * @Time: 13:44
+	 */
+	@Override
+	public List<AppCommonDao> getCommitteeList(){
+		if (jdbcTemplate1 == null){
+			return null;
+		}
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select distinct name,district_id as code ");
+		sql.append(" from t_edu_committee ");
+		sql.append(" where 1=1 ");
+		logger.info("sql语句：" + sql.toString());
+		return (List<AppCommonDao>) jdbcTemplate1.query(sql.toString(), new RowMapper<AppCommonDao>() {
+			@Override
+			public AppCommonDao mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LinkedHashMap<String, Object> commonMap = new LinkedHashMap<String, Object>();
+				commonMap.put("code", rs.getString("code"));
+				commonMap.put("name", rs.getString("name"));
+				return new AppCommonDao(commonMap);
+			}
+		});
+	}
+
+
+	/**
+	 * @Description: 获取报告列表
+	 * @Param: [year, month, committeeCode]
+	 * @return: java.util.List<com.tfit.BdBiProcSrvShEduOmc.dao.AppCommonDao>
+	 * @Author: jianghy
+	 * @Date: 2020/1/2
+	 * @Time: 17:54
+	 */
+	@Override
+	public List<AppCommonDao> getWeekReportList(String year,String month,String committeeCode) {
+		if (jdbcTemplate1 == null){
+			return null;
+		}
+		String filterStr = "";
+		if (StringUtils.isNotBlank(year)){
+			filterStr += " and year_date = "+ year;
+		}
+		if (StringUtils.isNotBlank(month)){
+			filterStr += " and month_date = "+ month;
+		}
+		if (StringUtils.isNotBlank(committeeCode)){
+			filterStr += " and committee_code = "+ committeeCode;
+		}
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select * ");
+		sql.append(" from t_week_data_report ");
+		sql.append(" where 1=1 ");
+		sql.append(filterStr);
+		sql.append(" order by year_date,month_date,committee_code desc ");
+		logger.info("sql语句：" + sql.toString());
+		return (List<AppCommonDao>) jdbcTemplate1.query(sql.toString(), new RowMapper<AppCommonDao>() {
+			@Override
+			public AppCommonDao mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LinkedHashMap<String, Object> commonMap = new LinkedHashMap<String, Object>();
+				commonMap.put("id", rs.getString("id"));
+				commonMap.put("yearDate", rs.getString("year_date") + "年");
+				commonMap.put("monthDate", rs.getString("month_date") + "月份");
+				commonMap.put("committeeCode", rs.getString("committee_code"));
+				if ("0".equals(rs.getString("committee_type"))){
+					commonMap.put("committeeType", "市报告");
+				}else{
+					commonMap.put("committeeType", "区报告");
+				}
+				commonMap.put("committeeName", rs.getString("committee_name"));
+				commonMap.put("reportName", rs.getString("report_name"));
+				commonMap.put("createDate", rs.getString("create_date") + " 0:00");
+				commonMap.put("fileUrl", rs.getString("file_url"));
+				return new AppCommonDao(commonMap);
+			}
+		});
+	}
+
+
+	/**
+	 * @Description: 插入周报告记录
+	 * @Param: [createDate, startDate, endDate, committeeCode, committeeName]
+	 * @return: boolean
+	 * @Author: jianghy
+	 * @Date: 2020/1/2
+	 * @Time: 20:04
+	 */
+	@Override
+	public boolean doCreateReport(String createDate, String startDate, String endDate, String committeeCode, String committeeName) {
+		if (jdbcTemplate1 == null || StringUtils.isBlank(createDate) || StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate) || StringUtils.isBlank(committeeCode) || StringUtils.isBlank(committeeName)){
+			return false;
+		}
+		Environment env = ApplicationUtil.getBean(Environment.class);
+		String URL = env.getProperty("report_pdf_url");
+		String id = UUID.randomUUID().toString();
+		String year = createDate.substring(0,4);
+		String month = createDate.substring(5,7);
+		String type;
+		if (committeeName.equals("上海市教委")){
+			type = "0";//0:市报告
+		}else{
+			type = "1";//1:区报告
+		}
+		String reportName = startDate + "至 " + endDate + "周数据报告("+committeeName+")" ;
+		String file_url = URL +"/biOptAnl/v1/downloadPdf?createDate="+createDate+"&committeeName="+committeeName;
+		String sql = "insert into t_week_data_report(id,year_date,month_date,committee_type,committee_code,committee_name,report_name,create_date,file_url) values('"+id+"','"+year+"','"+month+"','"+type+"','"+committeeCode+"','"+committeeName+"','"+reportName+"','"+createDate+"','"+file_url+"')";
+		logger.info("sql语句：" + sql);
+		jdbcTemplate1.execute(sql);
+		return true;
+	}
 }
