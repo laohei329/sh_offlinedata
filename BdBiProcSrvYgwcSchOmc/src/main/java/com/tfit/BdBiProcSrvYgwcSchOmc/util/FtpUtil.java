@@ -1,5 +1,6 @@
 package com.tfit.BdBiProcSrvYgwcSchOmc.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tfit.BdBiProcSrvYgwcSchOmc.appmod.export.ExportPdfMod;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -67,6 +68,7 @@ public class FtpUtil {
 		    String name = new String(pathFileName.getBytes("GBK"), "iso-8859-1");//涉及到中文问题 根据系统实际编码改变 
 		    logger.info("name:"+name);
 		    logger.info("pathFileName:"+pathFileName);
+		    logger.info("in:"+ JSONObject.toJSONString(in));
 		    boolean bResult = ftp.storeFile(name, in);
 		    if(bResult) {
 		    	 logger.info("文件"+pathFileName+"推送成功！");
