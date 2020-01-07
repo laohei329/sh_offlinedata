@@ -1609,8 +1609,10 @@ public class ExportPdfMod {
              //这个是字体文件
 //            BaseFont bf = BaseFont.createFont("C://Users//fu//Downloads//simsunttc//simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 //            Font FontChinese = new Font(bf, 5, Font.NORMAL);
-            out = new FileOutputStream(newpdf_path);// 输出流
             reader = new PdfReader(template_path);// 读取pdf模板
+            logger.info("读取到的reader:" + reader);
+            out = new FileOutputStream(newpdf_path);// 输出流
+            logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);
             AcroFields form = stamper.getAcroFields();
