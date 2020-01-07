@@ -1610,7 +1610,9 @@ public class ExportPdfMod {
 //            BaseFont bf = BaseFont.createFont("C://Users//fu//Downloads//simsunttc//simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 //            Font FontChinese = new Font(bf, 5, Font.NORMAL);
 //            reader = new PdfReader(template_path);// 读取pdf模板
+            logger.info("开始进行pdf导出==================");
             InputStream inputStream = FtpUtil.readRemoteFile(ftppath + fileName);
+            logger.info("inputStream:-----------"+inputStream);
             reader = new PdfReader(inputStream);
             logger.info("读取到的reader:" + inputStream);
             logger.info("读取到的reader:" + reader);
