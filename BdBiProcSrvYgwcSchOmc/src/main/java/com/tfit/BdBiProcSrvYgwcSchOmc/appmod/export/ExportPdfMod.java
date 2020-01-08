@@ -1609,15 +1609,15 @@ public class ExportPdfMod {
              //这个是字体文件
 //            BaseFont bf = BaseFont.createFont("C://Users//fu//Downloads//simsunttc//simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 //            Font FontChinese = new Font(bf, 5, Font.NORMAL);
-//            reader = new PdfReader(template_path);// 读取pdf模板
+            reader = new PdfReader(template_path);// 读取pdf模板
             logger.info("开始进行pdf导出==================");
-            InputStream inputStream = FtpUtil.readRemoteFile(template_path);
-            logger.info("inputStream:-----------"+inputStream);
-            reader = new PdfReader(inputStream);
-            logger.info("读取到的reader:" + inputStream);
+//            InputStream inputStream = FtpUtil.readRemoteFile(template_path);
+//            logger.info("inputStream:-----------"+inputStream);
+//            reader = new PdfReader(inputStream);
+//            logger.info("读取到的reader:" + inputStream);
             logger.info("读取到的reader:" + reader);
-//            out = new FileOutputStream(newpdf_path);// 输出流
-            out = null;// 输出流
+            out = new FileOutputStream(newpdf_path);// 输出流
+//            out = null;// 输出流
             logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);
@@ -1681,18 +1681,18 @@ public class ExportPdfMod {
         //保存文件到本地
         FileOutputStream fileOutputStream = null;
         try {
-//            fileOutputStream = new FileOutputStream(newpdf_path);
-//            fileOutputStream.write(os.toByteArray());
+            fileOutputStream = new FileOutputStream(newpdf_path);
+            fileOutputStream.write(os.toByteArray());
             FtpUtil.ftpServer(pathFileName, os,repFileResPath);
 
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -1704,7 +1704,7 @@ public class ExportPdfMod {
      * @Date: 2020/1/1
      * @Time: 21:44
      */
-    public int downloadPdf(Db1Service db1Service, String createDate, String committeeName, String token, HttpServletRequest request, HttpServletResponse response) {
+    public int downloadPdf(Db1Service db1Service, String createDate, String committeeCode, String token, HttpServletRequest request, HttpServletResponse response) {
         AppCommonExternalModulesDto appCommonExternalModulesDto = new AppCommonExternalModulesDto();
         DownloadRecord downloadRecord = null;
         // 业务操作
@@ -1713,9 +1713,12 @@ public class ExportPdfMod {
 //            boolean verTokenFlag = AppModConfig.verifyAuthCode2(token, db2Service,new int[2]);
             boolean verTokenFlag = true;
             if (verTokenFlag) {
+                    Environment env = ApplicationUtil.getBean(Environment.class);
+                    String newfile = env.getProperty("report.pdf.newfile");
                     //文件名
-                    String fileName = committeeName+"("+createDate+").pdf";
-                    String filePath = "E:/word/pdf/"+fileName;
+                    String fileName = committeeCode+"-"+createDate+".pdf";
+//                    String filePath = "E:/word/pdf/"+fileName;
+                    String filePath = newfile+fileName;
                     //声明本次下载状态的记录对象
                     downloadRecord = new DownloadRecord(fileName, filePath, request);
                     //设置响应头和客户端保存文件名
