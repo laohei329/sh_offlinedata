@@ -1628,7 +1628,7 @@ public class ExportPdfMod {
                 String value = String.valueOf(dataMap.get(key));
                 form.setField(key, value);
             }
-            stamper.setFormFlattening(true);// 如果为false，生成的PDF文件可以编辑，如果为true，生成的PDF文件不可以编辑
+            stamper.setFormFlattening(false);// 如果为false，生成的PDF文件可以编辑，如果为true，生成的PDF文件不可以编辑
             stamper.close();
             Document doc = new Document();
 //            Font font = new Font(bf, 32);

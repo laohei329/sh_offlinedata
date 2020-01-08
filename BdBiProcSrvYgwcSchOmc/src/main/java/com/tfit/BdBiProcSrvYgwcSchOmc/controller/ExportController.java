@@ -97,7 +97,7 @@ public class ExportController {
         //生成时间
         String createDate = request.getParameter("createDate");
         //教育局的名称
-        String committeeName = request.getParameter("committeeName");
+        String committeeName = request.getParameter("committeeCode");
         //授权码
         String token = request.getHeader("Authorization");
         int status = new ExportPdfMod().downloadPdf(db1Service,createDate,committeeName,token,request,response);
