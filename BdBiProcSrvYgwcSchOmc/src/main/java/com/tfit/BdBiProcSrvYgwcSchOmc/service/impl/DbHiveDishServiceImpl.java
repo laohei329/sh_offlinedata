@@ -246,7 +246,7 @@ public class DbHiveDishServiceImpl implements DbHiveDishService {
 		StringBuffer sb = new StringBuffer();
 		sb.append(" select                                                                          ");
 		sb.append(" from_unixtime(unix_timestamp(delivery_date,'yyyy-MM-dd'),'yyyy-MM-dd') as dishDate,                                         ");
-		sb.append(" ta1.area,                                                                       ");
+		sb.append(" ta1.area as area,                                                                       ");
 		sb.append(" case when ta1.level_name in ('0','1','2','3','4','5','6') then '幼托'           ");
 		sb.append("      when ta1.level_name in ('7','8','9','10','11','12','13') then '中小学'     ");
 		sb.append("      else '其他'                                                                ");
@@ -267,7 +267,7 @@ public class DbHiveDishServiceImpl implements DbHiveDishService {
 			@Override
 			public CheckOperateRateInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CheckOperateRateInfo checkOperateRateInfo = new CheckOperateRateInfo();
-				checkOperateRateInfo.setDishDate(rs.getString("actionDate"));
+				checkOperateRateInfo.setDishDate(rs.getString("dishDate"));
 				checkOperateRateInfo.setArea(rs.getString("area"));
 				checkOperateRateInfo.setSchType(rs.getString("schType"));
 				checkOperateRateInfo.setMaterialNum(rs.getInt("materialNum"));
