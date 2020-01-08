@@ -497,7 +497,7 @@ public class Db1ServiceImpl implements Db1Service {
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select distinct name,district_id as code ");
 		sql.append(" from t_edu_committee ");
-		sql.append(" where 1=1 ");
+		sql.append(" where 1=1 and district_id <> 0");
 		logger.info("sql语句：" + sql.toString());
 		return (List<AppCommonDao>) jdbcTemplate1.query(sql.toString(), new RowMapper<AppCommonDao>() {
 			@Override
