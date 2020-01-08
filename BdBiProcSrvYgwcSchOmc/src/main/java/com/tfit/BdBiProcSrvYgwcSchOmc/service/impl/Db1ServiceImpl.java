@@ -539,7 +539,7 @@ public class Db1ServiceImpl implements Db1Service {
 		sql.append(" from t_week_data_report ");
 		sql.append(" where 1=1 ");
 		sql.append(filterStr);
-		sql.append(" order by year_date,month_date,committee_code desc ");
+		sql.append(" order by create_date desc ");
 		logger.info("sql语句：" + sql.toString());
 		return (List<AppCommonDao>) jdbcTemplate1.query(sql.toString(), new RowMapper<AppCommonDao>() {
 			@Override
