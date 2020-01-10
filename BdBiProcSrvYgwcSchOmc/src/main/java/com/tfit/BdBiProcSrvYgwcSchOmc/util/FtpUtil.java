@@ -2,12 +2,14 @@ package com.tfit.BdBiProcSrvYgwcSchOmc.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tfit.BdBiProcSrvYgwcSchOmc.appmod.export.ExportPdfMod;
+import com.tfit.BdBiProcSrvYgwcSchOmc.config.ApplicationUtil;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -36,10 +38,18 @@ public class FtpUtil {
 		
 		FTPClient ftp = new FTPClient();
 		try {
+			//获取环境参数
+			Environment env = ApplicationUtil.getBean(Environment.class);
+			// ftp账户信息
+			String ip = env.getProperty("ftp.ip");
+			String port = env.getProperty("ftp.port");
+			String username = env.getProperty("ftp.username");
+			String password = env.getProperty("ftp.password");
+
 			// 连接ftp服务器
-			ftp.connect("172.20.105.205", 21);
+			ftp.connect(ip, Integer.parseInt(port));
 			// 登录
-			ftp.login("ftp-user1", "123456");
+			ftp.login(username, password);
 			
 			//编码
 			ftp.setControlEncoding("UTF-8");
