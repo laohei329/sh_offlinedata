@@ -5,6 +5,7 @@ import com.tfit.BdBiProcSrvYgwcSchOmc.appmod.export.ExportPdfMod;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
@@ -279,6 +280,13 @@ public class FtpUtil {
 			ftpClient.login("ftp-user1", "123456");
 			//编码
 			ftpClient.setControlEncoding("UTF-8");
+			int replyCode = ftpClient.getReplyCode();
+			if (!FTPReply.isPositiveCompletion(replyCode)) {
+				System.out.println("connect failed...ftp:");
+			} else {
+				System.out.println("connect successfu...ftp:");
+			}
+
 			//启动被动模式的
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.changeWorkingDirectory(ftpPath);
