@@ -11,6 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class FtpUtil {
 	
@@ -311,4 +314,32 @@ public class FtpUtil {
 		return ins;
 	}
 
+
+
+	/**
+	 * @Description: 通过url获取远程ftp上的文件
+	 * @Param: [path]
+	 * @return: java.io.InputStream
+	 * @Author: jianghy
+	 * @Date: 2020/1/10
+	 * @Time: 14:07
+	 */
+	public static InputStream readRemoteFileFromUrl(String path) {
+		URL url = null;
+		InputStream is =null;
+		try {
+			url = new URL(path);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		try {
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();//利用HttpURLConnection对象,我们可以从网络中获取网页数据.
+			conn.setDoInput(true);
+			conn.connect();
+			is = conn.getInputStream();	//得到网络返回的输入流
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return is;
+	}
 }
