@@ -1621,6 +1621,7 @@ public class ExportPdfMod {
             logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);
+            logger.info("读取到的stamper:" + stamper);
             AcroFields form = stamper.getAcroFields();
             Map<String, String> dataMap = (Map<String, String>) o.get("dataMap");
 //            form.addSubstitutionFont(bf);
