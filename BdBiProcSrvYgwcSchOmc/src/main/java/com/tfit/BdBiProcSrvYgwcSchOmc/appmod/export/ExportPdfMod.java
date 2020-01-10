@@ -1595,7 +1595,7 @@ public class ExportPdfMod {
         String newpdf_path = env.getProperty("report.pdf.newfile");
 //        String fileName = committeeName+"("+nowDate+").pdf";
         String fileName = committeeCode+"-"+nowDate+".pdf";
-        newpdf_path = newpdf_path + fileName;
+//        newpdf_path = newpdf_path + fileName;
 //        String newpdf_path = "E:/word/pdf/"+committeeName+"("+nowDate+").pdf";//测试参数
 
         // 生成到ftp文件服务器上目录的路径
@@ -1616,9 +1616,13 @@ public class ExportPdfMod {
             reader = new PdfReader(inputStream);
             logger.info("读取到的reader:" + inputStream);
             logger.info("读取到的reader:" + reader);
+            File file = new File(newpdf_path);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
             out = new FileOutputStream(newpdf_path);// 输出流
 //            out = null;// 输出流
-            logger.info("读取到的out:" + out);
+//            logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);
             logger.info("读取到的stamper:" + stamper);
@@ -1645,7 +1649,8 @@ public class ExportPdfMod {
             logger.info("生成pdf文件完成~~~~~~~~~~");
 
             //把本地pdf文件上传到ftp
-            uploadFtp(bos,newpdf_path,fileName,ftppath);
+//            uploadFtp(bos,newpdf_path,fileName,ftppath);
+            uploadFtp(bos,fileName,ftppath);
             logger.info("文件上传到ftp完成......");
 
             //存储记录
@@ -1675,25 +1680,26 @@ public class ExportPdfMod {
      * @Date: 2020/1/6
      * @Time: 22:59
      */
-    public void uploadFtp(ByteArrayOutputStream os,String newpdf_path,String fileName,String repFileResPath){
+//    public void uploadFtp(ByteArrayOutputStream os,String newpdf_path,String fileName,String repFileResPath){
+    public void uploadFtp(ByteArrayOutputStream os,String fileName,String repFileResPath){
         //文件的全路径
         String repFileName = repFileResPath + fileName;
         String pathFileName = SpringConfig.base_dir + repFileName;
         //保存文件到本地
-        FileOutputStream fileOutputStream = null;
+//        FileOutputStream fileOutputStream = null;
         try {
-            fileOutputStream = new FileOutputStream(newpdf_path);
-            fileOutputStream.write(os.toByteArray());
+//            fileOutputStream = new FileOutputStream(newpdf_path);
+//            fileOutputStream.write(os.toByteArray());
             FtpUtil.ftpServer(pathFileName, os,repFileResPath);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        } catch (Exception e) {
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
