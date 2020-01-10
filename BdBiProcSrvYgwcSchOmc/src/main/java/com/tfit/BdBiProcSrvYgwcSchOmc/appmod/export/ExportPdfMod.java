@@ -1617,8 +1617,8 @@ public class ExportPdfMod {
             logger.info("读取到的reader:" + inputStream);
             logger.info("读取到的reader:" + reader);
             File file = new File(newpdf_path);
-            if (!file.exists()) {
-                file.mkdirs();
+            if (!file.exists() && !file.isDirectory()) {
+                file.mkdir();
             }
             out = new FileOutputStream(newpdf_path);// 输出流
 //            out = null;// 输出流
