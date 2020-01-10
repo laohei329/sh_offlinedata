@@ -221,7 +221,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
           if ("3".equals(v(5))) {
             ((v(5), data._5.value.getOrElse(v(6), "null"), x._2), 1)
           } else {
-            ((v(5), v(5), x._2), 1)
+            ((v(5), v(6), x._2), 1)
           }
         } else {
           (("null", "null", x._2), 1)
@@ -254,7 +254,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
           if ("3".equals(v(5))) {
             ((department, v(5), data._4.value.getOrElse(v(6), "null"), x._2), 1)
           } else {
-            ((department, v(5), v(5), x._2), 1)
+            ((department, v(5), v(6), x._2), 1)
           }
         } else {
           ((department, "null", "null", x._2), 1)
@@ -279,7 +279,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
           if ("3".equals(v(5))) {
             ((v(5), data._5.value.getOrElse(v(6), "null"), x._4), 1)
           } else {
-            ((v(5), v(5), x._4), 1)
+            ((v(5), v(6), x._4), 1)
           }
         } else {
           (("null", "null", x._4), 1)
@@ -310,7 +310,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
           if ("3".equals(v(5))) {
             ((department, v(5), data._4.value.getOrElse(v(6), "null"), x._4), 1)
           } else {
-            ((department, v(5), v(5), x._4), 1)
+            ((department, v(5), v(6), x._4), 1)
           }
         } else {
           ((department, "null", "null", x._4), 1)

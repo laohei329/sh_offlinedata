@@ -157,7 +157,7 @@ object WeekToExcelDepartment {
       //"hdfs://172.16.10.17:9000/edu_week_report/shanghai/"+year+"年食安管理平台使用、验收及证照逾期处理情况_上海市_"+date1+"-"+date+"_"+date2+".xls"
       val filename = year + "年食安管理平台使用、验收及证照逾期处理情况_" + departName + "_" + datetime + "__" + datetime1 + "__" + date3 + "000000" + ".xls"
 
-      val file = new File("/opt/" + filename)
+      val file = new File("/data/" + filename)
 
       val workbook = new HSSFWorkbook()
 

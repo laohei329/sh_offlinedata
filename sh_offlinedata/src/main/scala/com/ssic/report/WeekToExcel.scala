@@ -222,7 +222,6 @@ object WeekToExcel {
     val licenseWarnDetail = licenseWarnData.filter(x => !"其他".equals(x._1)).filter(x => "逾期".equals(x._16)).filter(x => x._11 != 4).sortBy(x => (x._1, x._6)).collect()
     new ShanghaiWeekReport().arealicensewarnweek(sheet13, licenseWarnDetail)
 
-
     val stream = new FileOutputStream(file)
 
     workbook.write(stream)

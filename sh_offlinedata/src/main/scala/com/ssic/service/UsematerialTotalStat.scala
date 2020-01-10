@@ -225,7 +225,7 @@ class UsematerialTotalStat extends UsematerialTotalFunc {
           if ("3".equals(v(5))) {
             (v(5), data._5.value.getOrElse(v(6), "null"), status)
           } else {
-            (v(5), v(6), "status")
+            (v(5), v(6), status)
           }
         } else {
           ("null", "null", status)
@@ -263,7 +263,7 @@ class UsematerialTotalStat extends UsematerialTotalFunc {
           if ("3".equals(v(5))) {
             ((department, v(5), data._4.value.getOrElse(v(6), "null"), status), 1)
           } else {
-            ((department, v(5), v(6), "status"), 1)
+            ((department, v(5), v(6), status), 1)
           }
         } else {
           ((department, "null", "null", status), 1)
