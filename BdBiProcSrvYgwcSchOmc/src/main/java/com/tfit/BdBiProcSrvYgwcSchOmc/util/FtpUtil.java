@@ -282,9 +282,9 @@ public class FtpUtil {
 			ftpClient.setControlEncoding("UTF-8");
 			int replyCode = ftpClient.getReplyCode();
 			if (!FTPReply.isPositiveCompletion(replyCode)) {
-				System.out.println("connect failed...ftp:");
+				logger.info("connect failed...ftp:");
 			} else {
-				System.out.println("connect successfu...ftp:");
+				logger.info("connect successfu...ftp:");
 			}
 
 			//启动被动模式的
