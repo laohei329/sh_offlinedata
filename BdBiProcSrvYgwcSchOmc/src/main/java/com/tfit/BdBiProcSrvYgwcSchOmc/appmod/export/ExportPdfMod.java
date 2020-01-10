@@ -1616,8 +1616,8 @@ public class ExportPdfMod {
             reader = new PdfReader(inputStream);
             logger.info("读取到的reader:" + inputStream);
             logger.info("读取到的reader:" + reader);
-//            out = new FileOutputStream(newpdf_path);// 输出流
-            out = null;// 输出流
+            out = new FileOutputStream(newpdf_path);// 输出流
+//            out = null;// 输出流
             logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);
