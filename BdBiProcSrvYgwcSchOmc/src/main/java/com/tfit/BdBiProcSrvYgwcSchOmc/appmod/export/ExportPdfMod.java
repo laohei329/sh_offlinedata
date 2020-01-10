@@ -1619,10 +1619,12 @@ public class ExportPdfMod {
             File file = new File(newpdf_path);
             if (!file.exists() && !file.isDirectory()) {
                 file.mkdir();
+                logger.info("创建目录成功");
             }
-            out = new FileOutputStream(newpdf_path);// 输出流
+            logger.info("文件路径："+ newpdf_path + fileName);
+            out = new FileOutputStream(newpdf_path + fileName);// 输出流
 //            out = null;// 输出流
-//            logger.info("读取到的out:" + out);
+            logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);
             logger.info("读取到的stamper:" + stamper);
