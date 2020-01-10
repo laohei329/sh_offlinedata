@@ -278,7 +278,7 @@ public class FtpUtil {
 		FTPClient ftpClient = new FTPClient();
 		try {
 			// 连接ftp服务器
-			ftpClient.connect("172.18.14.41", 21);
+			ftpClient.connect("172.20.105.205", 21);
 			// 登录
 			ftpClient.login("ftp-user1", "123456");
 			//编码

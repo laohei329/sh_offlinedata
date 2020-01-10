@@ -1618,7 +1618,7 @@ public class ExportPdfMod {
             logger.info("读取到的reader:" + reader);
             File file = new File(newpdf_path);
             if (!file.exists() && !file.isDirectory()) {
-                file.mkdir();
+                file.mkdirs();
                 logger.info("创建目录成功");
             }
             logger.info("文件路径："+ newpdf_path + fileName);
