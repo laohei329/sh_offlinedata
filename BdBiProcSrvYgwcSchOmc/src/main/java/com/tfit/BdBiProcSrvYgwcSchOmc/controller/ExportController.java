@@ -9,6 +9,7 @@ import com.tfit.BdBiProcSrvYgwcSchOmc.util.ToolUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,7 +67,7 @@ public class ExportController {
 	ObjectMapper objectMapper;
 
 	/** 
-	 * @Description: 导出pdf 
+	 * @Description: 导出pdf（手动触发）
 	 * @Param: [] 
 	 * @return: void 
 	 * @Author: jianghy 
@@ -74,11 +75,34 @@ public class ExportController {
 	 * @Time: 20:42       
 	 */
 	@RequestMapping(value = "/v1/exportPdf", method = RequestMethod.POST)
-	public void exportPdf(){
-		logger.info("exportPdf 定时任务开始！"+ new ToolUtil().currentTime());
-		new ExportPdfMod().appModFunc(db1Service, db2Service, saasService,dbHiveDishService,eduSchoolService,dbHiveService);
+	public void exportPdf(HttpServletRequest request){
+		logger.info("exportPdf 手动触发任务开始！"+ new ToolUtil().currentTime());
+		new ExportPdfMod().appModFunc(request,db1Service, db2Service, saasService,dbHiveDishService,eduSchoolService,dbHiveService);
 	}
 
+    /**
+     * @Description: 导出pdf（自动触发）
+     * @Param: []
+     * @return: void
+     * @Author: jianghy
+     * @Date: 2020/1/1
+     * @Time: 20:42       
+     */
+    @Scheduled(cron = "0 0 1 ? * WED")
+    public void exportPdfTask(){
+        logger.info("exportPdf 定时触发任务开始！"+ new ToolUtil().currentTime());
+        new ExportPdfMod().appModFunc(null,db1Service, db2Service, saasService,dbHiveDishService,eduSchoolService,dbHiveService);
+    }
+	
+
+    /** 
+     * @Description: 获取行政区划列表
+     * @Param: [request] 
+     * @return: java.lang.String 
+     * @Author: jianghy 
+     * @Date: 2020/1/10
+     * @Time: 18:05       
+     */
     @RequestMapping(value = "/v1/getCommitteeList", method = RequestMethod.POST)
     public String getCommitteeList(HttpServletRequest request){
         return new ExportPdfMod().getCommitteeListMod(request,db1Service,db2Service);

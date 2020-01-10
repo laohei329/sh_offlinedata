@@ -50,7 +50,7 @@ public class ExportPdfMod {
     int curPageNum = 1, pageTotal = 1, pageSize = 20;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public void appModFunc(Db1Service db1Service, Db2Service db2Service,
+    public void appModFunc(HttpServletRequest request,Db1Service db1Service, Db2Service db2Service,
                            SaasService saasService, DbHiveDishService dbHiveDishService, EduSchoolService eduSchoolService, DbHiveService dbHiveService) {
         // 固定Dto层
         List<AppCommonDao> sourceDao = null;
@@ -59,10 +59,22 @@ public class ExportPdfMod {
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
         // 业务操作
         try {
-            Map<String, String> date = getDate();
-            String startDate = date.get("startDate");
-            String endDate = date.get("endDate");
-            String nowDate = date.get("nowDate");
+            String startDate = "";
+            String endDate = "";
+            String nowDate = "";
+
+            //如果request不为空，代表是自动传入日期
+            if (null != request){
+                startDate = request.getParameter("startDate");
+                endDate = request.getParameter("endDate");
+                nowDate = request.getParameter("nowDate");
+            }else{
+                Map<String, String> date = getDate();
+                startDate = date.get("startDate");
+                endDate = date.get("endDate");
+                nowDate = date.get("nowDate");
+            }
+
 //            String startDate = "2017-10-09";//测试参数
 //            String endDate = "2017-10-15";//测试参数
 //            String nowDate = "2017-10-16";//测试参数
