@@ -43,10 +43,9 @@ object Distribution {
           } else {
             (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat, "null", delivery_date))
           }
-        }else{
-          ("null",List("null","null","null","null","null","null","null","null","null","null","null"))
+        } else {
+          ("null", List("null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null"))
         }
-
 
 
     }).filter(x => !"null".equals(x._1))
@@ -63,18 +62,16 @@ object Distribution {
         val typ = x._2(7)
         val stat = x._2(8)
         val quhao = DistriData._2.value.getOrElse(receiver_id, "null")
-        if("insert".equals(typ) && stat.equals("1")){
-          (date, "shanghai", quhao, haul_status, old_haul_status,typ,stat,x._2(9))
-        }else if("update".equals(typ)){
-          (date, "shanghai", quhao, haul_status, old_haul_status,typ,stat,x._2(9))
-        }else{
-          (date, "shanghai", quhao, haul_status, old_haul_status,typ,stat,x._2(9))
+        if ("insert".equals(typ) && stat.equals("1")) {
+          (date, "shanghai", quhao, haul_status, old_haul_status, typ, stat, x._2(9))
+        } else if ("update".equals(typ)) {
+          (date, "shanghai", quhao, haul_status, old_haul_status, typ, stat, x._2(9))
+        } else {
+          (date, "shanghai", quhao, haul_status, old_haul_status, typ, stat, x._2(9))
         }
     })
     ledger
   }
-
-
 
 
   def ProLedgerPlan(filterData: RDD[SchoolBean]): RDD[(String, String)] = {
@@ -97,7 +94,6 @@ object Distribution {
     })
     proLedgerData
   }
-
 
 
 }
