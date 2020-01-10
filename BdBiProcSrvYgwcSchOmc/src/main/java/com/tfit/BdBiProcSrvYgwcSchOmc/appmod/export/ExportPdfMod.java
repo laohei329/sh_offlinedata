@@ -1609,15 +1609,15 @@ public class ExportPdfMod {
              //这个是字体文件
 //            BaseFont bf = BaseFont.createFont("C://Users//fu//Downloads//simsunttc//simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 //            Font FontChinese = new Font(bf, 5, Font.NORMAL);
-            reader = new PdfReader(template_path);// 读取pdf模板
+//            reader = new PdfReader(template_path);// 读取pdf模板
             logger.info("开始进行pdf导出==================");
-//            InputStream inputStream = FtpUtil.readRemoteFile(template_path);
-//            logger.info("inputStream:-----------"+inputStream);
-//            reader = new PdfReader(inputStream);
-//            logger.info("读取到的reader:" + inputStream);
+            InputStream inputStream = FtpUtil.readRemoteFile(template_path,ftppath);
+            logger.info("inputStream:-----------"+inputStream);
+            reader = new PdfReader(inputStream);
+            logger.info("读取到的reader:" + inputStream);
             logger.info("读取到的reader:" + reader);
-            out = new FileOutputStream(newpdf_path);// 输出流
-//            out = null;// 输出流
+//            out = new FileOutputStream(newpdf_path);// 输出流
+            out = null;// 输出流
             logger.info("读取到的out:" + out);
             bos = new ByteArrayOutputStream();
             stamper = new PdfStamper(reader, bos);

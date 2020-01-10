@@ -268,7 +268,7 @@ public class FtpUtil {
 	 * @Date: 2020/1/7
 	 * @Time: 17:08
 	 */
-	public static InputStream readRemoteFile(String fileName){
+	public static InputStream readRemoteFile(String fileName,String ftpPath){
 		logger.info("需要读取的远程的pdf的路径"+fileName);
 		InputStream ins = null;
 		FTPClient ftpClient = new FTPClient();
@@ -281,6 +281,9 @@ public class FtpUtil {
 			ftpClient.setControlEncoding("UTF-8");
 			//启动被动模式的
 			ftpClient.enterLocalPassiveMode();
+			ftpClient.changeWorkingDirectory(ftpPath);
+			int status = ftpClient.getReplyCode();
+			logger.info("FTP status = " + status);
 			// 从服务器上读取指定的文件
 			ins = ftpClient.retrieveFileStream(fileName);
 		} catch (Exception e) {
