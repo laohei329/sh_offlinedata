@@ -578,8 +578,7 @@ public class Db1ServiceImpl implements Db1Service {
 			return false;
 		}
 		Environment env = ApplicationUtil.getBean(Environment.class);
-		String URL = env.getProperty("report.pdf.url");
-		String ftpPath = env.getProperty("report.pdf.ftppath");
+		String projectPath = env.getProperty("project.url");
 		String id = UUID.randomUUID().toString();
 		String year = createDate.substring(0,4);
 		String month = createDate.substring(5,7);
@@ -590,8 +589,8 @@ public class Db1ServiceImpl implements Db1Service {
 			type = "1";//1:区报告
 		}
 		String reportName = startDate + "至 " + endDate + "周数据报告("+committeeName+")" ;
-//		String file_url = URL + ftpPath +"/biOptAnl/v1/downloadPdf?createDate="+createDate+"&committeeName="+committeeName;
-		String file_url = URL + ftpPath +committeeCode+"-"+createDate+".pdf";
+		String file_url = projectPath +"bdbiprocsrvshygwcsch/biOptAnl/v1/downloadPdf?createDate="+createDate+"&committeeName="+committeeName;
+//		String file_url = URL + ftpPath +committeeCode+"-"+createDate+".pdf";
 		String sql = "insert into t_week_data_report(id,year_date,month_date,committee_type,committee_code,committee_name,report_name,create_date,file_url) values('"+id+"','"+year+"','"+month+"','"+type+"','"+committeeCode+"','"+committeeName+"','"+reportName+"','"+createDate+"','"+file_url+"')";
 		logger.info("sql语句：" + sql);
 		jdbcTemplate1.execute(sql);

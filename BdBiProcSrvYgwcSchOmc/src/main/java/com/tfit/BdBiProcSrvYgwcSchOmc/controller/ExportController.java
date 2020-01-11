@@ -88,7 +88,7 @@ public class ExportController {
      * @Date: 2020/1/1
      * @Time: 20:42       
      */
-    @Scheduled(cron = "0 0 1 ? * WED")
+    @Scheduled(cron = "0 0 1 ? * MON")
     public void exportPdfTask(){
         logger.info("exportPdf 定时触发任务开始！"+ new ToolUtil().currentTime());
         new ExportPdfMod().appModFunc(null,db1Service, db2Service, saasService,dbHiveDishService,eduSchoolService,dbHiveService);
@@ -121,10 +121,10 @@ public class ExportController {
         //生成时间
         String createDate = request.getParameter("createDate");
         //教育局的名称
-        String committeeName = request.getParameter("committeeCode");
+        String committeeCode = request.getParameter("committeeCode");
         //授权码
         String token = request.getHeader("Authorization");
-        int status = new ExportPdfMod().downloadPdf(db1Service,createDate,committeeName,token,request,response);
+        int status = new ExportPdfMod().downloadPdf(db1Service,createDate,committeeCode,token,request,response);
         String msg ;
         if (DownloadRecord.STATUS_SUCCESS == status){
             msg = "下载成功";
