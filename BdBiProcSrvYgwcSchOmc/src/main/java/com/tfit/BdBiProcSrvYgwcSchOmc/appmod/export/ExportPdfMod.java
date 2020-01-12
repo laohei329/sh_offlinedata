@@ -208,6 +208,10 @@ public class ExportPdfMod {
                 o.put("bgscrq",getFormatDate(nowDate));
                 o.put("bgzq_start",getFormatDate(startDate));
                 o.put("bgzq_end",getFormatDate(endDate));
+                //报告生成日期（无转换）
+                o.put("bgscrq_no",nowDate);
+                o.put("bgzq_start_no",startDate);
+                o.put("bgzq_end_no",endDate);
 
                 String committeeName = String.valueOf(strObjMap.get("committeeName"));
                 String committeeCode = String.valueOf(strObjMap.get("committeeCode"));
@@ -1667,9 +1671,9 @@ public class ExportPdfMod {
             logger.info("文件上传到ftp完成......");
 
             //存储记录
-            String createDate = dataMap.get("bgscrq");
-            String startDate = dataMap.get("bgzq_start");
-            String endDate = dataMap.get("bgzq_end");
+            String createDate = dataMap.get("bgscrq_no");
+            String startDate = dataMap.get("bgzq_start_no");
+            String endDate = dataMap.get("bgzq_end_no");
             boolean status = db1Service.doCreateReport(createDate,startDate,endDate,committeeCode,committeeName);
             if (status){
                 logger.info(committeeName+"插入记录成功~~~~~~~~~~");
