@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
-import com.tfit.BdBiProcSrvYgwcSchOmc.config.AppModConfig;
 import com.tfit.BdBiProcSrvYgwcSchOmc.config.ApplicationUtil;
 import com.tfit.BdBiProcSrvYgwcSchOmc.config.SpringConfig;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dao.AppCommonDao;
@@ -1925,10 +1924,9 @@ public class ExportPdfMod {
      * @Time: 12:03
      */
     public String getFormatDate(String strDate){
-        // 准备第二个模板，将提取后的日期数字变为指定的格式
-        String pat = "yyyy年MM月dd日" ;
         // 实例化模板对象
-        SimpleDateFormat sdf = new SimpleDateFormat(pat) ;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日") ;
         // 实例化模板对象
         Date d = null ;
         try{
@@ -1936,6 +1934,7 @@ public class ExportPdfMod {
         }catch(Exception e){            // 如果提供的字符串格式有错误，则进行异常处理
             e.printStackTrace() ;       // 打印异常信息
         }
-        return sdf.format(d);    // 将日期变为新的格式
+        return sdf2.format(d);    // 将日期变为新的格式
     }
+
 }
