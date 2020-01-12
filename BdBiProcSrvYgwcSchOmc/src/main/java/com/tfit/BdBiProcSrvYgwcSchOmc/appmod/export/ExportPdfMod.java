@@ -198,17 +198,17 @@ public class ExportPdfMod {
 
 
                 //查询开始时间
-                o.put(key1 + "start",startDate);
-                o.put(key2 + "start",startDate);
-                o.put(key3 + "start",startDate);
+                o.put(key1 + "start",getFormatDate(startDate));
+                o.put(key2 + "start",getFormatDate(startDate));
+                o.put(key3 + "start",getFormatDate(startDate));
                 //查询结束时间
-                o.put(key1 + "end",endDate);
-                o.put(key2 + "end",endDate);
-                o.put(key3 + "end",endDate);
+                o.put(key1 + "end",getFormatDate(endDate));
+                o.put(key2 + "end",getFormatDate(endDate));
+                o.put(key3 + "end",getFormatDate(endDate));
                 //报告生成日期
-                o.put("bgscrq",nowDate);
-                o.put("bgzq_start",startDate);
-                o.put("bgzq_end",endDate);
+                o.put("bgscrq",getFormatDate(nowDate));
+                o.put("bgzq_start",getFormatDate(startDate));
+                o.put("bgzq_end",getFormatDate(endDate));
 
                 String committeeName = String.valueOf(strObjMap.get("committeeName"));
                 String committeeCode = String.valueOf(strObjMap.get("committeeCode"));
@@ -1913,5 +1913,29 @@ public class ExportPdfMod {
             strResp = new ToolUtil().getInitJson();
         }
         return strResp;
+    }
+
+
+    /**
+     * @Description:  日期格式化
+     * @Param: [strDate]
+     * @return: java.lang.String
+     * @Author: jianghy
+     * @Date: 2020/1/12
+     * @Time: 12:03
+     */
+    public String getFormatDate(String strDate){
+        // 准备第二个模板，将提取后的日期数字变为指定的格式
+        String pat = "yyyy年MM月dd日" ;
+        // 实例化模板对象
+        SimpleDateFormat sdf = new SimpleDateFormat(pat) ;
+        // 实例化模板对象
+        Date d = null ;
+        try{
+            d = sdf.parse(strDate) ;   // 将给定的字符串中的日期提取出来
+        }catch(Exception e){            // 如果提供的字符串格式有错误，则进行异常处理
+            e.printStackTrace() ;       // 打印异常信息
+        }
+        return sdf.format(d);    // 将日期变为新的格式
     }
 }
