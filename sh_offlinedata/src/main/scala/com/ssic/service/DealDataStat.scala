@@ -1,6 +1,7 @@
 package com.ssic.service
 
 import com.ssic.impl.DealDataFunc
+import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 
@@ -60,7 +61,7 @@ class DealDataStat extends DealDataFunc {
         val gongcan = data._4.value.getOrElse(area + "_" + schoolid, "null")
 
         (area, gongcan, status, key, schoolname, schoolid)
-    }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐")).filter(x => !x._4.split("suppliername_")(1).equals("null")).filter(x => !x._5.equals("null")).filter(x => !x._6.equals("null"))
+    }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐")).filter(x => !x._5.equals("null")).filter(x => !x._6.equals("null"))
 
     useMaterialData
   }
@@ -117,28 +118,44 @@ class DealDataStat extends DealDataFunc {
         var status = "null"
         var valuedata = "null"
         var disstatus = "null"
-        //if(x._2.contains("_").equals(true)){
-        if ("4".equals(x._2.split("_")(0))) {
-          status = "-1"
-          valuedata = "-1" + "_" + x._2.split("_")(1) + "_" + "disstatus" + "_" + "4"
-          disstatus = "4"
-        } else {
+        if(x._2.split("_").length >= 4) {
+          if (StringUtils.isNoneEmpty(x._2.split("_")(4)) && !"null".equals(x._2.split("_")(4))) {
+            if ("4".equals(x._2.split("_")(0))) {
+              status = "-1"
+              valuedata = "-1" + "_" + x._2.split("_")(1)
+              disstatus = x._2.split("_")(4)
+            } else {
+              val deliveryDate = x._2.split("_")(2)
+              disstatus = x._2.split("_")(4)
+              valuedata = x._2
+              status = x._2.split("_")(0)
+            }
+          } else {
+            if ("4".equals(x._2.split("_")(0))) {
+              status = "-1"
+              valuedata = "-1" + "_deliveryDate_" + x._2.split("_")(2) + "_disstatus_" + "4" + "_purchaseDate" + x._2.split("_purchaseDate")(1)
+              disstatus = "4"
+            } else {
+              val deliveryDate = x._2.split("_")(2)
+              disstatus = new RuleStatusStat().distributionstatus(data._4, deliveryDate).toString
+              valuedata = x._2.split("_disstatus_")(0) + "_disstatus_" + disstatus + "_purchaseDate" + x._2.split("_purchaseDate")(1)
+              status = x._2.split("_")(0)
+            }
+          }
+        }else{
+          if ("4".equals(x._2.split("_")(0))) {
+            status = "-1"
+            valuedata = "-1" + "_deliveryDate_" + x._2.split("_")(2) + "_" + "disstatus" + "_" + "4" + "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
+            disstatus = "4"
+          } else {
 
-          val deliveryDate = x._2.split("_")(2)
-          disstatus = new RuleStatusStat().distributionstatus(data._4, deliveryDate).toString
-          valuedata = x._2 + "_" + "disstatus" + "_" + disstatus
-          status = x._2.split("_")(0)
+            val deliveryDate = x._2.split("_")(2)
+            disstatus = new RuleStatusStat().distributionstatus(data._4, deliveryDate).toString
+            valuedata = x._2 + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
+            status = x._2.split("_")(0)
+          }
         }
 
-        //        }else{
-        //          if("4".equals(x._2)){
-        //            status = "-1"
-        //            valuedata = "-1"
-        //          }else{
-        //            status = x._2
-        //            valuedata = x._2
-        //          }
-        //        }
         val key = x._1.split("area")(0) + "area" + "_" + area + "_" + "sourceid" + x._1.split("sourceid")(1)
 
         (area, value, valuedata, schoolid, key, status, disstatus)
@@ -218,7 +235,8 @@ class DealDataStat extends DealDataFunc {
         val liuyang = x._2.split("_")(14)
         val schoolid = x._2.split("_")(5)
         val reservestatus = x._2.split("_")(26)
-        (area, liuyang, schoolid,reservestatus)
+        val createtime = x._2.split("_")(16)
+        (area, liuyang, schoolid,reservestatus,createtime)
     })
 
     retentoinData

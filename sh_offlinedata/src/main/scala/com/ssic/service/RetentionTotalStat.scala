@@ -7,7 +7,7 @@ import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 
 class RetentionTotalStat extends RetentionTotalFunc {
-  override def arearetentiontotal(data: (RDD[(String, String, String, String)], String)): Unit = {
+  override def arearetentiontotal(data: (RDD[(String, String, String, String, String)], String)): Unit = {
 
     data._1.map(x => (x._1, 1)).reduceByKey(_ + _).foreachPartition({
       itr =>
@@ -20,7 +20,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentarearetentiontotal(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentarearetentiontotal(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map({
       x =>
         val area = x._1
@@ -37,7 +37,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def arearetentionstatustotal(data: (RDD[(String, String, String, String)], String, RDD[(String, String)])): Unit = {
+  override def arearetentionstatustotal(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)])): Unit = {
     data._1.map(x => (x._1 + "_" + x._2, 1)).reduceByKey(_ + _).cogroup(data._3)
       .filter(x => x._1.size > 2).foreachPartition({
       itr =>
@@ -54,7 +54,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentarearetentionstatustotal(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentarearetentionstatustotal(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map({
       x =>
         val area = x._1
@@ -72,7 +72,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def arearetentionrulestatustotal(data: (RDD[(String, String, String, String)], String, RDD[(String, String)])): Unit = {
+  override def arearetentionrulestatustotal(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)])): Unit = {
     data._1.map({
       x =>
         val area = x._1
@@ -95,7 +95,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def departmentarearetentionrulestatustotal(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentarearetentionrulestatustotal(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map({
       x =>
         val area = x._1
@@ -212,7 +212,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def masteridretentiontotal(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
+  override def masteridretentiontotal(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
 
     data._1.map({
       x =>
@@ -244,7 +244,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentmasteridretentiontotal(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
+  override def departmentmasteridretentiontotal(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
     data._1.map({
       x =>
         val school_id = x._3
@@ -270,7 +270,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def masteridretentionruletotal(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
+  override def masteridretentionruletotal(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
     data._1.map({
       x =>
         val school_id = x._3
@@ -300,7 +300,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentmasteridretentionruletotal(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
+  override def departmentmasteridretentionruletotal(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
     data._1.map({
       x =>
         val school_id = x._3
@@ -478,7 +478,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def natureretentionstatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def natureretentionstatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
 
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
@@ -505,7 +505,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentnatureretentionstatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentnatureretentionstatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -525,7 +525,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def natureretentionrulestatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def natureretentionrulestatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -550,7 +550,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentnatureretentionrulestatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentnatureretentionrulestatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -570,7 +570,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def areanatureretentionstatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def areanatureretentionstatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
 
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
@@ -761,7 +761,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def levelreretentionstatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def levelreretentionstatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
 
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
@@ -788,7 +788,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentlevelreretentionstatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentlevelreretentionstatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -808,7 +808,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def levelreretentionrulestatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def levelreretentionrulestatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -833,7 +833,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentlevelreretentionrulestatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentlevelreretentionrulestatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -853,7 +853,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def arealevelreretentionstatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def arealevelreretentionstatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
 
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
@@ -1041,7 +1041,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentstatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentstatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._4.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -1061,7 +1061,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentdepartmentstatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentdepartmentstatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
       val department = v(9)
@@ -1077,7 +1077,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def departmentrulestatus(data: (RDD[(String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentrulestatus(data: (RDD[(String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val schoolid = x._3
       val reservestatus = x._4
@@ -1099,7 +1099,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
     })
   }
 
-  override def departmentdepartmentrulestatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentdepartmentrulestatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val schoolid = x._3
       val reservestatus = x._4
@@ -1211,7 +1211,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
       })
   }
 
-  override def departmentareanatureretentionstatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentareanatureretentionstatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
 
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
@@ -1233,7 +1233,7 @@ class RetentionTotalStat extends RetentionTotalFunc {
 
   }
 
-  override def departmentarealevelreretentionstatus(data: (RDD[(String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentarealevelreretentionstatus(data: (RDD[(String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
     data._1.map(x => {
       val v = data._3.value.getOrElse(x._3, List("null"))
       val department = v(9)

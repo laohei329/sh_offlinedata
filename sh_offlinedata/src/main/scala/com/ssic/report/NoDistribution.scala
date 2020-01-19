@@ -53,30 +53,31 @@ object NoDistribution {
                 val accept = Rule.emptyToInt(value.split("accept_")(1).split("_")(0))   //已验收数量
                 val disTotalNum = Rule.emptyToInt(value.split("total_")(1).split("_")(0))  //总数
                 val disstatus = value.split("disstatus_")(1)  //验收操作状态
+                val deliveryDate=value.split("deliveryDate_")(1) //验收上报时间
 
                 if(disTotalNum != 0) {
 
                   if((disTotalNum  - assign) != 0){
                     //未指派不为0的时候，所有状态为否
-                    jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1"+"_"+"disstatus"+"_"+"4")
+                    jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1"+"_"+"disstatus"+"_"+"4"+"_"+"deliveryDate"+"_"+"null")
                   }else{
                     if(disTotalNum  - shipp != 0){
                       //未指派为0的时候,已指派为0的时候,未配送不为0的时候，指派状态为是，其他状态为否
-                      jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"1"+"_"+"disstatus"+"_"+"4")
+                      jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"1"+"_"+"disstatus"+"_"+"4"+"_"+"deliveryDate"+"_"+"null")
                     }else{
                       if(disTotalNum  - accept != 0){
                         //未指派为0的时候,已指派为0的时候,未配送为0的时候，已配送不为0的时候，指派状态为是，配送状态为是，其他状态为否
-                        jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"2"+"_"+"disstatus"+"_"+"4")
+                        jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"2"+"_"+"disstatus"+"_"+"4"+"_"+"deliveryDate"+"_"+"null")
                       }else{
-                        jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"3"+"_"+"disstatus"+"_"+disstatus)
+                        jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"3"+"_"+"disstatus"+"_"+disstatus+"_"+"deliveryDate"+"_"+deliveryDate)
                       }
                     }
                   }
                 }else{
-                  jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1"+"_"+"disstatus"+"_"+"4")
+                  jedis.hset(date + "_DistributionTotal_child",k,value.split("status")(0)+"status"+"_"+"-1"+"_"+"disstatus"+"_"+"4"+"_"+"deliveryDate"+"_"+"null")
                 }
               }else{
-                jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1"+"_"+"disstatus"+"_"+"4")
+                jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" +"0"+"_"+ "assign"+"_"+"0"+"_"+"shipp"+"_"+"0"+"_"+"status"+"_"+"-1"+"_"+"disstatus"+"_"+"4"+"_"+"deliveryDate"+"_"+"null")
               }
 
             }

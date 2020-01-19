@@ -21,7 +21,7 @@ trait DealDataFunc {
   def distributiondealtotaldata (data: RDD[(String, String)]):RDD[(String,(String, String))]
 
   //对留样计划的详情数据进行数据处理
-  def retentiondealdata(data:RDD[(String, String)]): RDD[(String, String,String,String)]
+  def retentiondealdata(data:RDD[(String, String)]): RDD[(String, String,String,String,String)]
 
   //对留样的统计数据进行数据处理
   def retentiondealtotaldata (data: RDD[(String, String)]):RDD[(String,(String, String))]

@@ -91,6 +91,7 @@ object MonthTargetDetail {
           val school_id = Rule.emptyToNull(row.getAs[String]("school_id"))
           val menu_group_name = Rule.emptyToNull(row.getAs[String]("menu_group_name"))
           val dishes_name = Rule.emptyToNull(row.getAs[String]("dishes_name"))
+          val dishes_names = dishes_name.replaceAll("_","")
           val dishes_number = row.getAs[Integer]("dishes_number")
           val cater_type_name = Rule.emptyToNull(row.getAs[String]("cater_type_name"))
           val reserve_create_time = row.getAs[Timestamp]("reserve_create_time")
@@ -102,19 +103,20 @@ object MonthTargetDetail {
           val reserve_deal_status = row.getAs[String]("reserve_deal_status")
           val have_reserve = Rule.emptyToNull(row.getAs[Integer]("have_reserve").toString)
           val reserve_creator = Rule.emptyToNull(row.getAs[String]("reserve_creator"))
-
+          val is_consistent = row.getAs[Integer]("is_consistent")
+          val is_consistent_remark = Rule.emptyToNull(row.getAs[String]("is_consistent_remark"))
 
 
           if ("1".equals(have_reserve)) {
 
-            val value = "area" + "_" + area + "_" + "supplierid" + "_" + supplier_id + "_" + "schoolid" + "_" + school_id + "_" + "groupname" + "_" + menu_group_name + "_" + "dishesname" + "_" + dishes_name + "_" + "dishesnumber" + "_" + dishes_number + "_" + "catertypename" + "_" + cater_type_name + "_" + "已留样" + "_" + "createtime" + "_" + format3.format(reserve_create_time) + "_" + "creator" + "_" + reserve_creator + "_" + "quantity" + "_" + quantity + "_" + "remark" + "_" + remark + "_" + "reservedata" + "_" + datetime + " " + reserve_hour + ":" + reserve_minute + ":" + "00" + "_" + "reservestatus" + "_" + reserve_deal_status
+            val value = "area" + "_" + area + "_" + "supplierid" + "_" + supplier_id + "_" + "schoolid" + "_" + school_id + "_" + "groupname" + "_" + menu_group_name + "_" + "dishesname" + "_" + dishes_names + "_" + "dishesnumber" + "_" + dishes_number + "_" + "catertypename" + "_" + cater_type_name + "_" + "已留样" + "_" + "createtime" + "_" + format3.format(reserve_create_time) + "_" + "creator" + "_" + reserve_creator + "_" + "quantity" + "_" + quantity + "_" + "remark" + "_" + remark + "_" + "reservedata" + "_" + datetime + " " + reserve_hour + ":" + reserve_minute + ":" + "00" + "_" + "reservestatus" + "_" + reserve_deal_status+ "_" + "consistent" + "_" + is_consistent + "_" + "cremark" + "_" + is_consistent_remark
 
-            (package_id+"_"+menu_group_name+"_"+"catertypename"+"_"+cater_type_name+"_"+"dishesname"+"_"+dishes_name,value)
+            (package_id+"_"+menu_group_name+"_"+"catertypename"+"_"+cater_type_name+"_"+"dishesname"+"_"+dishes_names,value)
 
           } else {
 
-            val value = "area" + "_" + area + "_" + "supplierid" + "_" + supplier_id + "_" + "schoolid" + "_" + school_id + "_" + "groupname" + "_" + menu_group_name + "_" + "dishesname" + "_" + dishes_name + "_" + "dishesnumber" + "_" + dishes_number + "_" + "catertypename" + "_" + cater_type_name + "_" + "未留样" + "_" + "createtime" + "_" + "null" + "_" + "creator" + "_" + "null" + "_" + "quantity" + "_" + "null" + "_" + "remark" + "_" + remark + "_" + "reservedata" + "_" +"null" + "_" + "reservestatus" + "_" + reserve_deal_status
-            (package_id+"_"+menu_group_name+"_"+"catertypename"+"_"+cater_type_name+"_"+"dishesname"+"_"+dishes_name,value)
+            val value = "area" + "_" + area + "_" + "supplierid" + "_" + supplier_id + "_" + "schoolid" + "_" + school_id + "_" + "groupname" + "_" + menu_group_name + "_" + "dishesname" + "_" + dishes_names + "_" + "dishesnumber" + "_" + dishes_number + "_" + "catertypename" + "_" + cater_type_name + "_" + "未留样" + "_" + "createtime" + "_" + "null" + "_" + "creator" + "_" + "null" + "_" + "quantity" + "_" + "null" + "_" + "remark" + "_" + remark + "_" + "reservedata" + "_" +"null" + "_" + "reservestatus" + "_" + reserve_deal_status + "_" + "consistent" + "_" + "null" + "_" + "cremark" + "_" + "null"
+            (package_id+"_"+menu_group_name+"_"+"catertypename"+"_"+cater_type_name+"_"+"dishesname"+"_"+dishes_names,value)
           }
 
       }).cogroup(gcretentiondishData).foreachPartition({

@@ -36,6 +36,7 @@ object Tools {
   val pro_supplier =config.getString("db.default.pro_supplier")
   val edu_bd_department = config.getString("db.default.edu_bd_department")
   val edu_bd_pro_license = config.getString("db.default.edu_bd_pro_license")
+  val pro_reserve_sample = config.getString("db.default.pro_reserve_sample")
 
   val conn = new Properties()
   conn.setProperty("user", user)

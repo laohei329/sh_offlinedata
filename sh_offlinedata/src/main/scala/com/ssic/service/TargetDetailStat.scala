@@ -128,7 +128,8 @@ class TargetDetailStat extends TargetDetailFunc {
     val dishmenu = data._1.map({
       x =>
         val value = data._4.value.getOrElse(x._3 + "_" + x._2, "null")
-        (x._1, x._2, x._3, x._4, x._5, x._6, x._7, x._8, value)
+        val dishesname = x._5.replaceAll("_","")
+        (x._1, x._2, x._3, x._4, dishesname, x._6, x._7, x._8, value)
     }).filter(x => !x._9.equals("null")).filter(x => !x._5.equals("null")).filter(x => !x._9.split("_")(0).equals("不供餐")).map({
       x =>
         //package_id,school_id,area,menu_group_name,dishes_name,cater_type_name,dishes_number,supplier_id
@@ -139,23 +140,26 @@ class TargetDetailStat extends TargetDetailFunc {
     val retentiondishDa = data._2.map({
       x =>
         val id = x._2.split("_")(1)
-        if (x._2.contains("reservedata").equals(true)) {
-          (id + "_" + x._2.split("groupname_")(1).split("_reservedata")(0), x._2)
-        } else {
-          (id + "_" + x._2.split("groupname_")(1), x._2)
-        }
+        (id + "_" + x._2.split("groupname_")(1).split("_reservedata")(0), x._2)
+//        if (x._2.contains("reservedata").equals(true)) {
+//          (id + "_" + x._2.split("groupname_")(1).split("_reservedata")(0), x._2)
+//        } else {
+//          (id + "_" + x._2.split("groupname_")(1), x._2)
+//        }
     })
 
     dishmenu.leftOuterJoin(retentiondishDa).map(x => (x._1, x._2._1, x._2._2.getOrElse("null"))).map({
       x =>
         if ("null".equals(x._3)) {
 
-          (x._1, "area" + x._2.split("area")(1) + "_" + "未留样" + "_createtime_" + "null" + "_" + "creator" + "_" + "null" + "_" + "quantity" + "_" + "null" + "_" + "remark" + "_" + "null" + "_" + "reservedata" + "_" + "null"+"_"+"reservestatus"+"_"+"4")
+          (x._1, "area" + x._2.split("area")(1) + "_" + "未留样" + "_createtime_" + "null" + "_" + "creator" + "_" + "null" + "_" + "quantity" + "_" + "null" + "_" + "remark" + "_" + "null" + "_" + "reservedata" + "_" + "null"+"_"+"reservestatus"+"_"+"4"+"_"+"consistent"+"_"+"null"+"_"+"cremark"+"_"+"null")
 
         } else {
+
           val reserveStatus = new RuleStatusStat().reservestatus((data._3,x._3.split("createtime_")(1).split("_")(0)))
+
           if (x._3.contains("reservedata").equals(true)) {
-            (x._1, "area" + x._2.split("area")(1) + "_" + "已留样" + "_createtime_" + x._3.split("createtime_")(1).split("_")(0) + "_" + "creator" + "_" + x._3.split("createtime_")(1).split("_")(2) + "_" + "quantity" + "_" + x._3.split("createtime_")(1).split("_")(4) + "_" + "remark" + "_" + x._3.split("createtime_")(1).split("_")(6) + "_" + "reservedata_" + x._3.split("reservedata_")(1)+"_"+"reservestatus"+"_"+reserveStatus)
+            (x._1, "area" + x._2.split("area")(1) + "_" + "已留样" + "_createtime_" + x._3.split("createtime_")(1).split("_")(0) + "_" + "creator" + "_" + x._3.split("createtime_")(1).split("_")(2) + "_" + "quantity" + "_" + x._3.split("createtime_")(1).split("_")(4) + "_" + "remark" + "_" + x._3.split("createtime_")(1).split("_")(6) + "_" + "reservedata_" + x._3.split("reservedata_")(1))
             //            if(x._3.split("reservedata_")(1).size >=28){
             //              (x._1, "area" + x._2.split("area")(1) + "_" + "已留样" + "_createtime_" + x._3.split("createtime_")(1).split("_")(0) + "_" + "creator" + "_" + x._3.split("createtime_")(1).split("_")(2) + "_" + "quantity" + "_" + x._3.split("createtime_")(1).split("_")(4) + "_" + "remark" + "_" + x._3.split("createtime_")(1).split("_")(6)+"_"+"reservedata_"+x._3.split("reservedata_")(1).split(" ")(0)+" "+x._3.split("reservedata_")(1).split(" ")(2))
             //            }else{
@@ -163,7 +167,7 @@ class TargetDetailStat extends TargetDetailFunc {
             //            }
 
           } else {
-            (x._1, "area" + x._2.split("area")(1) + "_" + "已留样" + "_createtime_" + x._3.split("createtime_")(1).split("_")(0) + "_" + "creator" + "_" + x._3.split("createtime_")(1).split("_")(2) + "_" + "quantity" + "_" + x._3.split("createtime_")(1).split("_")(4) + "_" + "remark" + "_" + x._3.split("createtime_")(1).split("_")(6)+ "_" + "reservedata" + "_" + "null"+"_"+"reservestatus"+"_"+reserveStatus)
+            (x._1, "area" + x._2.split("area")(1) + "_" + "已留样" + "_createtime_" + x._3.split("createtime_")(1).split("_")(0) + "_" + "creator" + "_" + x._3.split("createtime_")(1).split("_")(2) + "_" + "quantity" + "_" + x._3.split("createtime_")(1).split("_")(4) + "_" + "remark" + "_" + x._3.split("createtime_")(1).split("_")(6)+ "_" + "reservedata" + "_" + "null"+"_"+"reservestatus"+"_"+"4"+"_"+"consistent"+"_"+"null"+"_"+"cremark"+"_"+"null")
           }
         }
 

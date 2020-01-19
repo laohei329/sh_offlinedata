@@ -52,7 +52,7 @@ object RetentionDetail {
       .map({
         x =>
           //69fea856-532c-4c03-b57b-100ad4193367_a36490e5-765f-4500-8983-1ac375f385cd
-        // packageid_614c4a87-b675-4ba8-829b-933e88b6f791_createtime_2019-11-22 08:08:12_creator_admin_quantity_250_remark_null_groupname_中大班_catertypename_午点_dishesname_清肺罗汉果茶_reservedata_2019-11-22 00:00:00 14:00:00
+        // packageid_614c4a87-b675-4ba8-829b-933e88b6f791_createtime_2019-11-22 08:08:12_creator_admin_quantity_250_remark_null_groupname_中大班_catertypename_午点_dishesname_清肺罗汉果茶_reservedata_2019-11-22 00:00:00 14:00:00_reservestatus_1_consistent_1_cremark_null
 
           val sampleid = x._1
           val dishid = x._3.split("_")(1)
@@ -65,10 +65,26 @@ object RetentionDetail {
           val reservedata = x._2.split("_")(13)
           val quantity = x._3.split("_")(5)
           val dishes = x._3.split("_")(7)
+          var reservestatus_name ="null"
+          if(x._2.split("_").length >= 16){
+            reservestatus_name = x._2.split("_")(15)
+          }else{
+            reservestatus_name
+          }
+
+          var consistent_name ="null"
+          var cremark_name="null"
+          if(x._3.split("_").length >= 10){
+            consistent_name = x._3.split("_")(9)
+            cremark_name = x._3.split("_")(11)
+          }else{
+            consistent_name
+            cremark_name
+          }
 
           val key = x._1 + "_" + dishid
 
-          val value ="packageid"+"_"+packageid+"_"+"createtime"+"_"+createtime+"_"+"creator"+"_"+creator+"_"+"quantity"+"_"+quantity+"_"+"remark"+"_"+remark+"_"+"groupname"+"_"+groupname+"_"+"catertypename"+"_"+catertypename+"_"+"dishesname"+"_"+dishes+"_"+"reservedata"+"_"+reservedata
+          val value ="packageid"+"_"+packageid+"_"+"createtime"+"_"+createtime+"_"+"creator"+"_"+creator+"_"+"quantity"+"_"+quantity+"_"+"remark"+"_"+remark+"_"+"groupname"+"_"+groupname+"_"+"catertypename"+"_"+catertypename+"_"+"dishesname"+"_"+dishes+"_"+"reservedata"+"_"+reservedata+"_"+"reservestatus"+"_"+reservestatus_name+"_"+"consistent"+"_"+consistent_name+"_"+"cremark"+"_"+cremark_name
 
           (key,value)
       }).cogroup(retentiondishData).foreachPartition({
