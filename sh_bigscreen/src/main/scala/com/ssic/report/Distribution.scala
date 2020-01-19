@@ -31,20 +31,23 @@ object Distribution {
       val ware_batch_no = x.data.ware_batch_no //发货批次
       val haul_status = x.data.haul_status //配送状态 -2 信息不完整 -1 未指派 0 已指派（未配送） 1配送中 2 待验收（已配送）3已验收 4已取消,',
       val stat = x.data.stat
-        val delivery_date = Rule.emptyToNull(x.data.delivery_date) //验收日期
+        val delivery_date = Rule.emptyToNull(x.data.delivery_date) //验收上报日期
+      val purchase_date = Rule.emptyToNull(x.data.purchase_date) //进货日期
+      val compliance = Rule.emptyToNull(x.data.compliance) //验收规则
+      val delivery_record_date = Rule.emptyToNull(x.data.delivery_record_date) //验收日期
 
         val now = format.format(new Date())
 
         if (format.parse(now).getTime <= format.parse(date).getTime) {
           if (x.`type`.equals("insert") && stat.equals("1")) {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat, "null", delivery_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat, "null", delivery_date,purchase_date,compliance,delivery_record_date))
           } else if (x.`type`.equals("update")) {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, x.old.haul_status, "update", stat, x.old.stat, delivery_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, x.old.haul_status, "update", stat, x.old.stat, delivery_date,purchase_date,compliance,delivery_record_date))
           } else {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat, "null", delivery_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat, "null", delivery_date,purchase_date,compliance,delivery_record_date))
           }
         } else {
-          ("null", List("null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null"))
+          ("null", List("null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null"))
         }
 
 

@@ -15,12 +15,21 @@ object SaveOnRedis {
   //时间，区号，schoolid，经营模式，学校性质，学校类型,school_nature_sub_name，ledger_type_name
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def PlatoonPlanReal(itr: Iterator[(String, String, String, String, String)]) = {
+  def PlatoonPlanReal(itr: Iterator[(String, String, String, String, String, String)]) = {
     val jedis = JPools.getJedis
     itr.foreach({
       x =>
+
         if ("delete".equals(x._4)) {
           jedis.hdel(x._1 + "_" + "platoon", x._2 + "_" + x._3)
+          jedis.hdel(x._1 + "_" + "platoon", "null" + "_" + x._3)
+        } else if ("update".equals(x._4)) {
+          if ("0".equals(x._6)) {
+            jedis.hdel(x._1 + "_" + "platoon", x._2 + "_" + x._3)
+            jedis.hdel(x._1 + "_" + "platoon", "null" + "_" + x._3)
+          } else {
+            jedis.hset(x._1 + "_" + "platoon", x._2 + "_" + x._3, "1" + "_" + "create-time" + "_" + x._5)
+          }
         } else {
           jedis.hset(x._1 + "_" + "platoon", x._2 + "_" + x._3, "1" + "_" + "create-time" + "_" + x._5)
         }
@@ -173,19 +182,19 @@ object SaveOnRedis {
   }
 
   //配送计划的详细的计算
-  def DistributionDetailRealTime(itr: Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String)]) = {
+  def DistributionDetailRealTime(itr: Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]) = {
     val jedis = JPools.getJedis
     itr.foreach({
       x =>
-        //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,配送时间
+        //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,验收日期
         logger.info(x._1 + "_" + x._2 + "_" + x._3 + "_" + x._4 + "_" + x._5 + "_" + x._6 + "_" + x._7 + "_" + x._8 + "_" + x._9 + "_" + x._10 + "_" + x._11)
         if (jedis.exists(x._2 + "_" + "DistributionDetail").equals(true)) {
           val strings: util.Set[String] = jedis.hkeys(x._2 + "_" + "DistributionDetail")
             if ("insert".equals(x._10) && "1".equals(x._11)) {
               if (StringUtils.isNoneEmpty(x._8) && !x._8.equals("null")) {
-                jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12)
+                jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
               } else {
-                jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + "直配", x._7 + "_deliveryDate" + "_" + x._12)
+                jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + "直配", x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
               }
 
             } else if ("update".equals(x._10)) {
@@ -196,7 +205,7 @@ object SaveOnRedis {
                   if ("0".equals(x._11)) {
                     jedis.hdel(x._2 + "_" + "DistributionDetail", i)
                   } else if ("1".equals(x._11)) {
-                    jedis.hset(x._2 + "_" + "DistributionDetail", i, x._7 + "_deliveryDate" + "_" + x._12)
+                    jedis.hset(x._2 + "_" + "DistributionDetail", i, x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
                   }
                 }
               }
@@ -214,7 +223,7 @@ object SaveOnRedis {
 
           }
         else {
-          jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12)
+          jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
         }
 
     })

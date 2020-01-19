@@ -49,8 +49,10 @@ object RetentionDish {
       x =>
         val date = format.format(format.parse(x.data.create_time))
         val now = format.format(new Date())
+        val dishes_name = x.data.dishes_name
+        val dishes_names = dishes_name.replaceAll("_","")
         if (format.parse(now).getTime == format.parse(date).getTime) {
-          (x.data.package_id, List(x.data.dishes_name, Rule.emptyToNull(x.data.dishes_number), x.data.id, Rule.emptyToNull(x.data.cater_type_name),x.data.category))
+          (x.data.package_id, List(dishes_names, Rule.emptyToNull(x.data.dishes_number), x.data.id, Rule.emptyToNull(x.data.cater_type_name),x.data.category))
         } else {
           ("null", List("null", "null", "null", "null", "null","null"))
         }
@@ -80,8 +82,10 @@ object RetentionDish {
       x =>
         val date = format.format(format.parse(x.data.create_time))
         val now = format.format(new Date())
+        val dishes_name = x.data.dishes_name
+        val dishes_names = dishes_name.replaceAll("_","")
         if (format.parse(now).getTime == format.parse(date).getTime) {
-          (x.data.package_id, List(x.data.dishes_name, x.data.dishes_number, x.data.id, x.data.cater_type_name,x.data.category),x.data.stat,x.old.stat,now)
+          (x.data.package_id, List(dishes_names, x.data.dishes_number, x.data.id, x.data.cater_type_name,x.data.category),x.data.stat,x.old.stat,now)
         } else {
           ("null", List("null", "null", "null", "null", "null","null"),"null","null","null")
         }

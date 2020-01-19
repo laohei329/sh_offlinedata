@@ -144,7 +144,7 @@ object BigScreenModel {
         //        //上海市排菜计划的详细的临时表
         PlatoonPlan.PlatoonRealTimeData(filterData, school2Area, session)
           //时间，区号，schoolid，表操作类型，创建时间
-          .map(x => (x._1, x._3, x._2, x._4, x._5))
+          .map(x => (x._1, x._3, x._2, x._4, x._5,x._6))
           .foreachPartition({
             itr =>
               SaveOnRedis.PlatoonPlanReal(itr)
@@ -169,8 +169,8 @@ object BigScreenModel {
         //
         //        //配送计划的详细信息
         Distribution.DistributionPlan(filterData).distinct().filter(x => !x._1.equals("null")).leftOuterJoin(Distribution.ProLedgerPlan(filterData).distinct())
-          //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收时间
-          .map(x => (x._1, x._2._1(0), x._2._1(1), x._2._1(2), x._2._1(3), x._2._1(4), x._2._1(5).toInt, x._2._2.getOrElse("null"), school2Area.value.getOrElse(x._2._1(2), "null"), x._2._1(7), x._2._1(8), x._2._1(10)))
+          //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,/验收日期
+          .map(x => (x._1, x._2._1(0), x._2._1(1), x._2._1(2), x._2._1(3), x._2._1(4), x._2._1(5).toInt, x._2._2.getOrElse("null"), school2Area.value.getOrElse(x._2._1(2), "null"), x._2._1(7), x._2._1(8), x._2._1(10),x._2._1(11),x._2._1(12),x._2._1(13)))
           .sortBy(x => x._7, true)
           .foreachPartition({
             itr =>

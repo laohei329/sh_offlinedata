@@ -32,6 +32,9 @@ class DataBean(
                 var image: String,
                 var haul_status: String,
                 var delivery_date: String,
+                var compliance :String,
+                var purchase_date:String,
+                var delivery_record_date:String,
 
                 //	t_pro_ledger
                 var master_id: String,
@@ -203,6 +206,8 @@ class DataBean(
                 var level2: String,
                 var students_amount: String,
                 var staff_amount: String,
+                var is_customer:String,
+                var customer_school_id:String,
 
                 var org_merchant_id:String,
                 var org_parent_merchant_id:String,

@@ -20,7 +20,7 @@ object PlatoonPlan {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
-  def PlatoonRealTimeData(plaData: (RDD[SchoolBean], Broadcast[Map[String, String]],SparkSession)): RDD[(String, String, String, String, String)] = {
+  def PlatoonRealTimeData(plaData: (RDD[SchoolBean], Broadcast[Map[String, String]],SparkSession)): RDD[(String, String, String, String, String, String)] = {
     val platoonData = plaData._1.filter(x => x != null && x.table.equals("t_saas_package")  && !x.data.stat.equals("0") && x.data.is_publish != 0 && "1".equals(x.data.industry_type))
     val platoonDataFil = platoonData.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supply_date)).filter(x => StringUtils.isNoneEmpty(x.data.school_id)).map({
       x =>
@@ -32,13 +32,14 @@ object PlatoonPlan {
       val quhao = plaData._2.value.getOrElse(school_id, "null")
         //val area = NewTools.schoolid(plaData._3, school_id)
         val create_time = x.data.create_time
+        val stat = x.data.stat
 
         //时间，学校id，区号，表操作类型，创建时间
         val now = format.format(new Date())
         if (format.parse(now).getTime <= format.parse(date).getTime) {
-          (date, school_id, quhao, x.`type`, create_time)
+          (date, school_id, quhao, x.`type`, create_time,stat)
         }else{
-          ("null","null","null","null","null")
+          ("null","null","null","null","null","null")
         }
     }).filter(x => !"null".equals(x._1))
 //      .filter(x => "1".equals(x._3)
