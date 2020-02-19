@@ -43,6 +43,16 @@ object Tools {
   conn.setProperty("password", pwd)
   conn.setProperty("driver", driver)
 
+  /**
+
+    * * 当天的学校在供餐表的数据
+
+    * * @param SparkSession
+
+    * * @param String 当天时间
+
+    */
+
   def calenda(session: (SparkSession, String)): Map[String, String]= {
 
     //查询是供餐表是否有数据，对应的学校id是否供餐
@@ -64,11 +74,31 @@ object Tools {
     }).collect().toMap
   }
 
+  /**
+
+    * * 当天的是否是假期，还是加班
+
+    * * @param SparkSession
+
+    * * @param String 当天时间
+
+    */
+
   def holiday(session: (SparkSession, String)): Map[String, Int] = {
     //查询当天是否是假期
     session._1.sql(s"select holiday_day,type from t_edu_holiday where stat=1 and holiday_day='${session._2}'")
       .rdd.map(row => (row.getAs[String]("holiday_day"), row.getAs[Int]("type"))).collect().toMap
   }
+
+  /**
+
+    * * 学校id 和 区
+
+    * * @param SparkSession
+
+    * * @param String 当天时间
+
+    */
 
   def schoolid(session: ((SparkSession,String))): RDD[(String, String)] = {
     //查询有效的schoolid
@@ -199,9 +229,20 @@ select id,area from t_edu_school
   }
 
 
+  /**
+
+    * * 查询学校的学期设置是否是有效的
+
+    * * @param SparkSession
+
+    * * @param String 当天时间
+
+    * * @param String 学期年
+
+    */
 
   def schoolTerm(session: (SparkSession,String,String)):Map[String,String] ={
-    //查询学校的学期设置是否是有效的的
+
     val schoolterm = session._1.sql(s"select school_id,first_start_date,first_end_date,second_start_date,second_end_date,term_year from t_edu_schoolterm where stat =1 and term_year='${session._3}'")
     schoolterm.rdd.map({
       row =>
@@ -314,8 +355,21 @@ select id,area from t_edu_school
   }
 
 
+
+  /**
+
+    * * 查询当天是否在系统学期设置内
+
+    * * @param SparkSession
+
+    * * @param String 当天时间
+
+    * * @param String 学期年
+
+    */
+
   def schoolTermSys(session: (SparkSession,String,String)):Map[String,String] = {
-    //查询当天是否在系统学期设置内
+
     val date = new Date()
     val schoolTermSys = session._1.sql(s"select term_year,first_start_date,first_end_date,second_start_date,second_end_date from t_edu_schoolterm_system where stat=1 and term_year='${session._3}'")
     schoolTermSys.rdd.map({
