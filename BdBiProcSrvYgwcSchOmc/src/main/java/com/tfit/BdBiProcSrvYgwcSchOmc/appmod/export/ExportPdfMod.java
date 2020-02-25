@@ -98,7 +98,7 @@ public class ExportPdfMod {
             logger.info("+++++++++++++++startDate01:"+startDate);
             logger.info("+++++++++++++++endDate01:"+endDate);
             
-            //设置默认值：默认是上周一到上周日
+            /*//设置默认值：默认是上周一到上周日
             if(startDate ==null || "".equals(startDate)) {
             	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             	startDate = ToolUtil.geLastWeekMonday(sdf.format(new Date()));
@@ -109,7 +109,7 @@ public class ExportPdfMod {
             	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             	endDate = simpleDateFormat.format(today);//获取昨天日期
             	
-            }
+            }*/
             
             logger.info("+++++++++++++++startDate:"+startDate);
             logger.info("+++++++++++++++endDate:"+endDate);
