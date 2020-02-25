@@ -1,9 +1,41 @@
 package com.tfit.BdBiProcSrvYgwcSchOmc.appmod.export;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.env.Environment;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.tfit.BdBiProcSrvYgwcSchOmc.config.ApplicationUtil;
 import com.tfit.BdBiProcSrvYgwcSchOmc.config.SpringConfig;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dao.AppCommonDao;
@@ -14,25 +46,14 @@ import com.tfit.BdBiProcSrvYgwcSchOmc.dto.IOTRspType;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dto.optanl.AppOperateRateInfo;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dto.optanl.CheckOperateRateInfo;
 import com.tfit.BdBiProcSrvYgwcSchOmc.dto.optanl.DishOperateRateInfo;
-import com.tfit.BdBiProcSrvYgwcSchOmc.service.*;
+import com.tfit.BdBiProcSrvYgwcSchOmc.service.Db1Service;
+import com.tfit.BdBiProcSrvYgwcSchOmc.service.Db2Service;
+import com.tfit.BdBiProcSrvYgwcSchOmc.service.DbHiveDishService;
+import com.tfit.BdBiProcSrvYgwcSchOmc.service.DbHiveService;
+import com.tfit.BdBiProcSrvYgwcSchOmc.service.SaasService;
 import com.tfit.BdBiProcSrvYgwcSchOmc.service.edu.EduSchoolService;
 import com.tfit.BdBiProcSrvYgwcSchOmc.util.FtpUtil;
 import com.tfit.BdBiProcSrvYgwcSchOmc.util.ToolUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-import org.springframework.core.env.Environment;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 导出pdf模板
@@ -73,6 +94,25 @@ public class ExportPdfMod {
                 endDate = date.get("endDate");
                 nowDate = date.get("nowDate");
             }
+            
+            logger.info("+++++++++++++++startDate01:"+startDate);
+            logger.info("+++++++++++++++endDate01:"+endDate);
+            
+            //设置默认值：默认是上周一到上周日
+            if(startDate ==null || "".equals(startDate)) {
+            	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            	startDate = ToolUtil.geLastWeekMonday(sdf.format(new Date()));
+            }
+            
+            if(endDate ==null || "".equals(endDate)) {
+            	Date today = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
+            	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            	endDate = simpleDateFormat.format(today);//获取昨天日期
+            	
+            }
+            
+            logger.info("+++++++++++++++startDate:"+startDate);
+            logger.info("+++++++++++++++endDate:"+endDate);
 
 //            String startDate = "2017-10-09";//测试参数
 //            String endDate = "2017-10-15";//测试参数

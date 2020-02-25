@@ -209,7 +209,7 @@ public class ToolUtil {
 	}
 
 	// 获取下周一时间
-	public String getNextWeekMonday(String task_time) throws ParseException {
+	public static String getNextWeekMonday(String task_time) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = strToDateLong(task_time);
 		Calendar cal = Calendar.getInstance();
@@ -217,8 +217,19 @@ public class ToolUtil {
 		cal.add(Calendar.DATE, 7);
 		return sdf.format(cal.getTime());
 	}
+	
+	// 获取上周一时间
+	public static String geLastWeekMonday(String task_time) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = strToDateLong(task_time);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getThisWeekMonday(date));
+		cal.add(Calendar.DATE, -7);
+		return sdf.format(cal.getTime());
+	}
+	
 
-	public Date getThisWeekMonday(Date date) {
+	public static Date getThisWeekMonday(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		// 获得当前日期是一个星期的第几天
@@ -353,7 +364,7 @@ public class ToolUtil {
 	}
 
 	// 将长时间格式字符串转换为时间 yyyy-MM-dd HH:mm:ss
-	public Date strToDateLong(String strDate) throws ParseException {
+	public static Date strToDateLong(String strDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date strtodate = new Date();
 		strtodate = formatter.parse(strDate);
@@ -835,4 +846,5 @@ public class ToolUtil {
 			}
 		}
 	}
+
 }

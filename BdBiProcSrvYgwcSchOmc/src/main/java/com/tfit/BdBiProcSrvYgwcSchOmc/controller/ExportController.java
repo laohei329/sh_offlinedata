@@ -89,8 +89,8 @@ public class ExportController {
      * @Time: 20:42  
      * 4点设置规则：此报表需要根据数据建模的数据拉去报表，和数据建模工程师讨论，此数据4点前会出完。故设置4点。     
      */
-	@RequestMapping(value = "/v1/exportPdfTask", method = RequestMethod.POST)
-    @Scheduled(cron = "0 0 4 ? * MON")
+	@RequestMapping(value = "/v1/exportPdfTask", method = RequestMethod.GET)
+    @Scheduled(cron = "0 30 11 ? * TUE")
     public void exportPdfTask(){
         logger.info("exportPdf 定时触发任务开始！"+ new ToolUtil().currentTime());
         new ExportPdfMod().appModFunc(null,db1Service, db2Service, saasService,dbHiveDishService,eduSchoolService,dbHiveService);
