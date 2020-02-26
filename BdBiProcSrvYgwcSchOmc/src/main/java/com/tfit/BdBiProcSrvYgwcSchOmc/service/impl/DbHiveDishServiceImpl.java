@@ -332,6 +332,8 @@ public class DbHiveDishServiceImpl implements DbHiveDishService {
 				appOperateRateInfo.setNeedOrderNum(rs.getInt("needOrderNum"));
 				appOperateRateInfo.setHaveOrderNum(rs.getInt("haveOrderNum"));
 				appOperateRateInfo.setNoOrderNum(rs.getInt("noOrderNum"));
+				
+				logger.info("app使用数据："+appOperateRateInfo.getArea());
 				return appOperateRateInfo;
 			}
 		});

@@ -200,18 +200,24 @@ public class ExportPdfMod {
             // -----------------app使用率率部分-------------------
             // 查询排菜使用率(同一区，同一日期，同一学制有多条记录)
             List<AppOperateRateInfo> appOperateRateList = dbHiveDishService.getAppOperateRateList(startDate, endDate);
+            logger.info("appOperateRateList:"+appOperateRateList.size());
             // 重组后的排菜使用率集合(同一区，同一日期，同一学制有一条记录)
             List<AppOperateRateInfo> resetAppOperateRateList = getResetAppOperateRateList(appOperateRateList);
+            logger.info("resetAppOperateRateList:"+resetAppOperateRateList.size());
             // 重组后的排菜使用率小计集合(用一区，同一日期只包含小计)
             List<AppOperateRateInfo> resetTotalAppOperateRateList = getResetTotalAppOperateRateList(resetAppOperateRateList);
+            logger.info("resetTotalAppOperateRateList:"+resetTotalAppOperateRateList.size());
             // 重组后的排菜使用率按学制类型的集合(同一区，同一学制，日期为空的合计)
             List<AppOperateRateInfo> schTypeAppOperateRateList = getSchTypeAppOperateRateList(resetAppOperateRateList);
+            logger.info("schTypeAppOperateRateList:"+schTypeAppOperateRateList.size());
             // 重组后的排菜使用率总的排菜率集合（其实每个区只有一条记录）
             List<AppOperateRateInfo> totalAppOperateRateList = getTotalAppOperateRateList(resetTotalAppOperateRateList);
+            logger.info("totalAppOperateRateList:"+totalAppOperateRateList.size());
             // 重组后的排菜使用率（集合+小计）
             List<AppOperateRateInfo> resetListAndTotalAppOperateRateList = new ArrayList<>();
             resetListAndTotalAppOperateRateList.addAll(resetAppOperateRateList);
             resetListAndTotalAppOperateRateList.addAll(resetTotalAppOperateRateList);
+            logger.info("resetListAndTotalAppOperateRateList:"+resetListAndTotalAppOperateRateList.size());
 
             // -----------------app使用率整合部分-------------------
             // 这里只有一个不用整合，直接接收
@@ -225,6 +231,8 @@ public class ExportPdfMod {
                     schTypeCheckOperateRateList,totalCheckOperateRateList,
                     schTypeCheckCorrectRateList,totalCheckCorrectRateList,
                     schTypeAppOperateRateList,totalAppOperateRateList);
+            
+            logger.info("totalListByArea:"+totalListByArea.size());
             for (Map<String, Object> strObjMap : totalListByArea) {
                 //进行赋值
                 Map<String, Object> o = new HashedMap();
@@ -344,6 +352,7 @@ public class ExportPdfMod {
 
                 //一个区的app数据
                 List<AppOperateRateInfo> appDetailList = (List<AppOperateRateInfo>)strObjMap.get("appDetailList");
+                logger.info("appDetailList:"+appDetailList.size());
                 //获取日期
                 List<String> dateList3 = appDetailList.stream().map(AppOperateRateInfo::getDishDate).collect(Collectors.toList());
                 //去重
