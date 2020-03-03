@@ -1427,6 +1427,7 @@ public class ExportPdfMod {
                     appDetailList.add(appOperateRateInfo);
                 }
             }
+            logger.info("");
             commitMap.put("appDetailList",appDetailList);
 
             //排菜（使用率部分）按学制汇总
@@ -1468,6 +1469,7 @@ public class ExportPdfMod {
             //app（app使用率部分）按学制汇总
             List<AppOperateRateInfo> appSchTypeOperateList = new ArrayList<>();
             for (AppOperateRateInfo dishOperateRateInfo : schTypeAppOperateRateList) {
+            	
                 if (code.equals(dishOperateRateInfo.getArea())){
                     appSchTypeOperateList.add(dishOperateRateInfo);
                 }
