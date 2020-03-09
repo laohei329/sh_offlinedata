@@ -132,10 +132,11 @@ public class FtpUtil {
 		
 		FTPClient ftp = new FTPClient();
 		try {
+			Environment env = ApplicationUtil.getBean(Environment.class);
 			// 连接ftp服务器
-			ftp.connect("172.18.14.41", 21);
+			ftp.connect(env.getProperty("ftp.ip"), Integer.parseInt(env.getProperty("ftp.port")));
 			// 登录
-			ftp.login("ftp-user1", "123456");
+			boolean isLogin = ftp.login(env.getProperty("ftp.username"), env.getProperty("ftp.password"));
 			
 			//编码
 			ftp.setControlEncoding("GBK");
@@ -212,10 +213,11 @@ public class FtpUtil {
 		
 		FTPClient ftpClient = new FTPClient();
 		try {
+			Environment env = ApplicationUtil.getBean(Environment.class);
 			// 连接ftp服务器
-			ftpClient.connect("172.18.14.41", 21);
+			ftpClient.connect(env.getProperty("ftp.ip"), Integer.parseInt(env.getProperty("ftp.port")));
 			// 登录
-			ftpClient.login("ftp-user1", "123456");
+			boolean isLogin = ftpClient.login(env.getProperty("ftp.username"), env.getProperty("ftp.password"));
 			
 			//编码
 			ftpClient.setControlEncoding("UTF-8");
@@ -287,10 +289,11 @@ public class FtpUtil {
 		InputStream ins = null;
 		FTPClient ftpClient = new FTPClient();
 		try {
+			Environment env = ApplicationUtil.getBean(Environment.class);
 			// 连接ftp服务器
-			ftpClient.connect("172.20.105.205", 21);
+			ftpClient.connect(env.getProperty("ftp.ip"), Integer.parseInt(env.getProperty("ftp.port")));
 			// 登录
-			ftpClient.login("ftp-user1", "123456");
+			ftpClient.login(env.getProperty("ftp.username"), env.getProperty("ftp.password"));
 			//编码
 			ftpClient.setControlEncoding("UTF-8");
 			int replyCode = ftpClient.getReplyCode();
