@@ -58,6 +58,18 @@ object MaterialConfirm {
     materialPlanData
   }
 
+  /**
+
+    * * 用料计划存入redis的临时表中 useMaterialPlanDetail
+
+    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+
+    * * @param  Broadcast[Map[String, String]] 团餐公司id对应的名字
+
+    * * @param SparkSession
+
+    */
+
   def useMaterialdish(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) = {
     val materialPlanMaster = filterData._1.filter(x => x != null && x.table.equals("t_pro_material_plan") && !x.data.stat.equals("0"))
     val materialPlanData = materialPlanMaster.distinct().map({

@@ -12,6 +12,16 @@ import scala.collection.JavaConverters._
 
 object PeopleLicenseDetail {
   private val logger = LoggerFactory.getLogger(this.getClass)
+  /**
+
+    * * 员工证件详情插入信息存入到redis的表中
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    * * @param Broadcast[Map[String, String]]  项目点关联id 对应的 学校id
+
+    */
+
   def licenseInsert(filterData: (RDD[SchoolBean],Broadcast[Map[String, String]])) = {
     val licenseData = filterData._1.filter(x => x != null && x.table.equals("t_pro_license") && x.`type`.equals("insert") && x.data.stat.equals("1"))
     val employee = filterData._1.filter(x => x != null && x.table.equals("t_pro_employee") && x.`type`.equals("insert") && x.data.stat.equals("1"))
@@ -57,6 +67,16 @@ object PeopleLicenseDetail {
           })
       })
   }
+
+  /**
+
+    * * 员工证件详情删除信息存入到redis的表中
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    * * @param Broadcast[Map[String, String]]  项目点关联id 对应的 学校id
+
+    */
 
 
   def licenseDelete(filterData: (RDD[SchoolBean],Broadcast[Map[String, String]])) ={
@@ -111,6 +131,16 @@ object PeopleLicenseDetail {
         })
     })
   }
+
+  /**
+
+    * * 员工证件详情更新信息存入到redis的表中
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    * * @param Broadcast[Map[String, String]]  项目点关联id 对应的 学校id
+
+    */
 
   def licenseUpdate(filterData:RDD[SchoolBean]) ={
     val license = filterData.filter(x => x !=null && x.table.equals("t_pro_license") && x.`type`.equals("update"))

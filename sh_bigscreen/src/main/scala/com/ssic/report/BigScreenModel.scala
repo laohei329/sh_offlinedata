@@ -116,6 +116,7 @@ object BigScreenModel {
                 logger.error(s"parse json error: $x", e)
               }
             }
+
             schoolBean
         })
 
@@ -141,7 +142,7 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.EduHoliday(filterData)
 
 
-        //        //上海市排菜计划的详细的临时表
+        //上海市排菜计划的详细的临时表
         PlatoonPlan.PlatoonRealTimeData(filterData, school2Area, session)
           //时间，区号，schoolid，表操作类型，创建时间
           .map(x => (x._1, x._3, x._2, x._4, x._5,x._6))

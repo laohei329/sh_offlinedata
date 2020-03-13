@@ -17,6 +17,15 @@ object Distribution {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
+
+  /**
+
+    * * 配送主表分析数据
+
+    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+
+    */
+
   def DistributionPlan(filterData: RDD[SchoolBean]): RDD[(String, List[String])] = {
     val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master") && "1".equals(x.data.industry_type))
     val ledgerMasterData: RDD[(String, List[String])] = proLedgerMaster.map({
@@ -76,6 +85,13 @@ object Distribution {
     ledger
   }
 
+  /**
+
+    * * 配送子表分析数据
+
+    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+
+    */
 
   def ProLedgerPlan(filterData: RDD[SchoolBean]): RDD[(String, String)] = {
     val proLedger = filterData.filter(x => x != null && x.table.equals("t_pro_ledger") && x.`type`.equals("insert") && !x.data.stat.equals("0"))

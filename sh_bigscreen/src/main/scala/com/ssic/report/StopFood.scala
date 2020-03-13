@@ -28,6 +28,14 @@ object StopFood {
     ("update", filterData.data.id, filterData.data.name, filterData.data.`type`.toString, filterData.data.note, filterData.data.stat, filterData.old.stat,filterData.data.create_time.split(" ")(0))
   }
 
+  /**
+
+    * * 分析，获取禁止食品数据
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    */
+
   def Stop(filterData: RDD[SchoolBean]) = {
 
     val stopFood = filterData.filter(x => x != null && x.table.equals("t_edu_taboo"))

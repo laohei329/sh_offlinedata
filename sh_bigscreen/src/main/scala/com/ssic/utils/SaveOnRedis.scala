@@ -11,9 +11,16 @@ import scala.collection.JavaConverters._
   * Created by 云 on 2018/8/21.
   */
 object SaveOnRedis {
-  //排菜计划的详细，上海市，各区的,学校性质,食堂类型计算指标
-  //时间，区号，schoolid，经营模式，学校性质，学校类型,school_nature_sub_name，ledger_type_name
+
   private val logger = LoggerFactory.getLogger(this.getClass)
+
+  /**
+
+    * * 将排菜分析数据存入到redis的临时表中platoon
+
+    * * @param Iterator[(String, String, String, String, String, String)]  Iterator[(时间，区号，schoolid，表操作类型，创建时间, 是否有效)]
+
+    */
 
   def PlatoonPlanReal(itr: Iterator[(String, String, String, String, String, String)]) = {
     val jedis = JPools.getJedis
@@ -37,7 +44,13 @@ object SaveOnRedis {
     })
   }
 
-  //学校实时使用排菜系统功能的情况展现（上海，各区）
+  /**
+
+    * * 学校实时使用排菜系统功能的情况展现
+
+    * * @param Iterator[(String, String)]  Iterator[(时间，学校id)]
+
+    */
   def DisplayRealTime(itr: Iterator[(String, String)]) = {
     val jedis = JPools.getJedis
     itr.foreach({
@@ -182,6 +195,15 @@ object SaveOnRedis {
   }
 
   //配送计划的详细的计算
+
+  /**
+
+    * * 配送数据存入redis的临时表中
+
+    * * @param Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]
+    * Iterator[(id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,验收日期)]
+
+    */
   def DistributionDetailRealTime(itr: Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]) = {
     val jedis = JPools.getJedis
     itr.foreach({

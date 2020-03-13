@@ -21,8 +21,13 @@ object RetentionDish {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
 
+  /**
 
-  //项目点排菜的菜品详情
+    * * 当天的排菜的菜品数据存入到redis的临时表中
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    */
   def dishDetail(data: (RDD[SchoolBean])) = {
     val packages = data.filter(x => x != null && x.table.equals("t_saas_package") && x.`type`.equals("insert") && "1".equals(x.data.stat) && "1".equals(x.data.industry_type))
     val dishData = data.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("insert") && "1".equals(x.data.stat))
@@ -73,6 +78,14 @@ object RetentionDish {
       })
 
   }
+
+  /**
+
+    * * 当天的排菜的菜品更新和删除数据存入到redis的临时表中
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    */
 
   def dishUpdateDelete(data: (RDD[SchoolBean])) = {
 

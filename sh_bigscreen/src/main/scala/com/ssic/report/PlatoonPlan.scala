@@ -20,6 +20,19 @@ object PlatoonPlan {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
+
+  /**
+
+    * * 分析，获取排菜数据
+
+    * * @param RDD[SchoolBean] binlog日志数据
+
+    * * @param  Broadcast[Map[String, String]] 学校对应的区数据
+
+    * * @param SparkSession
+
+    */
+
   def PlatoonRealTimeData(plaData: (RDD[SchoolBean], Broadcast[Map[String, String]],SparkSession)): RDD[(String, String, String, String, String, String)] = {
     val platoonData = plaData._1.filter(x => x != null && x.table.equals("t_saas_package")  && !x.data.stat.equals("0") && x.data.is_publish != 0 && "1".equals(x.data.industry_type))
     val platoonDataFil = platoonData.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supply_date)).filter(x => StringUtils.isNoneEmpty(x.data.school_id)).map({

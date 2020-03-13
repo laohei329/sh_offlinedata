@@ -1,11 +1,13 @@
 package com.ssic.report
 
+import java.sql.DriverManager
 import java.util
 
 import com.ssic.beans.SchoolBean
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time._
+import org.apache.kafka.common.TopicPartition
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
@@ -29,8 +31,9 @@ object Receyler {
         val source_id = x.data.source_id //团餐公司Id或者学校Id
       val district_id = x.data.district_id
         val platform_type = x.data.platform_type //'1为教委端 2为团餐端'
-      val types = x.data.`type`.toInt//'1餐厨垃圾，2废弃油脂',
-      val secont_type = x.data.secont_type //'针对大类 2(1废油，2 含油废水)  默认为0(无特别含义)'
+      val types = x.data.`type`.toInt
+        //'1餐厨垃圾，2废弃油脂',
+        val secont_type = x.data.secont_type //'针对大类 2(1废油，2 含油废水)  默认为0(无特别含义)'
       val receiver_name = x.data.recycler_name //回收单位
       var recycler_number = "0"
         if (StringUtils.isNoneEmpty(x.data.recycler_number) && !x.data.recycler_number.equals("null") && !x.data.recycler_number.equals("")) {
@@ -45,21 +48,59 @@ object Receyler {
         val contact = x.data.contact //回收人
       val stat = x.data.stat
         val recycler_documents = x.data.recycler_documents //回收单据数量
-
-        if ("insert".equals(x.`type`) && "1".equals(x.data.stat)) {
-          ("insert", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
-        } else if ("delete".equals(x.`type`)) {
-          ("delete", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
-        } else if ("update".equals(x.`type`)) {
-          ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(x.old.`type`), x.old.secont_type, x.old.stat)
+        if (platform_type == 1) {
+          if ("insert".equals(x.`type`) && "1".equals(x.data.stat)) {
+            ("insert", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
+          } else if ("delete".equals(x.`type`)) {
+            ("delete", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
+          } else if ("update".equals(x.`type`)) {
+            ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(x.old.`type`), x.old.secont_type, x.old.stat)
+          } else {
+            ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
+          }
         } else {
-          ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
+          var supplier_type = Map[String, Int]()
+          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1", "azkaban", "nn1.hadoop@ssic.cn")
+          val pstmt = conn.prepareStatement(s"select * from t_edu_school_supplier where stat=1 and supplier_id=?")
+          pstmt.setString(1, source_id)
+          val resultSet = pstmt.executeQuery()
+          while (resultSet.next()) {
+            supplier_type += resultSet.getString("supplier_id") -> resultSet.getInt("industry_type")
+          }
+          conn.close()
+          if (supplier_type.size == 0) {
+            ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
+          } else {
+            val industry_type = supplier_type.head._2
+            if (industry_type == 1) {
+              if ("insert".equals(x.`type`) && "1".equals(x.data.stat)) {
+                ("insert", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
+              } else if ("delete".equals(x.`type`)) {
+                ("delete", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
+              } else if ("update".equals(x.`type`)) {
+                ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(x.old.`type`), x.old.secont_type, x.old.stat)
+              } else {
+                ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
+              }
+            } else {
+              ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
+            }
+          }
+
         }
 
 
     })
-     data
+    data
   }
+
+  /**
+    *
+    * * 餐厨垃圾和废弃油脂数据存入到redis的表中
+    *
+    * * @param RDD[SchoolBean] binlog日志数据
+    *
+    */
 
   def wastedata(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])) = {
     val data = waste(filterData._1).distinct().filter(x => !x._1.equals("null")).map({
