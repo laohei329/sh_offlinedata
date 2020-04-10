@@ -15,6 +15,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
 import org.apache.commons.lang3._
 import org.apache.kafka.common.TopicPartition
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{SQLContext, SparkSession}
 
 
@@ -24,6 +25,7 @@ import org.apache.spark.sql.{SQLContext, SparkSession}
 object BigScreenModel {
 
   private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
 
   def main(args: Array[String]): Unit = {
@@ -35,8 +37,6 @@ object BigScreenModel {
     sparkConf.set("spark.debug.maxToStringFields", "200")
     val session: SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
     val ssc = new StreamingContext(session.sparkContext, Seconds(8))
-    ssc.sparkContext.setLogLevel("WARN")
-
 
     //    val school2CommiteeBro = ssc.sparkContext.broadcast(Tools.school2Commitee(session))
     //    val projid2CommiteeBro = ssc.sparkContext.broadcast(Tools.projid2Area(session))
@@ -229,8 +229,6 @@ object BigScreenModel {
         PeopleLicenseDetail.licenseInsert(filterData, schoolsupplierid2schoolid)
         PeopleLicenseDetail.licenseDelete(filterData, schoolsupplierid2schoolid)
         PeopleLicenseDetail.licenseUpdate(filterData)
-
-        //将中台的学校基础数据迁移到本地mysql的t_edu_school
 
 
         val conn1 = DriverManager.getConnection("jdbc:mysql://172.18.14.30:3306/kafka", "azkaban", "nn1.hadoop@ssic.cn")

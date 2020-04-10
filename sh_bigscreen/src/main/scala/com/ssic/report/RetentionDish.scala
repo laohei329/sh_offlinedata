@@ -1,8 +1,9 @@
 package com.ssic.report
 
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import com.ssic.beans.SchoolBean
+import com.ssic.report.PlatoonPlan.format
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time._
@@ -42,7 +43,11 @@ object RetentionDish {
       val menu_group_name = x.data.menu_group_name   //菜单分组名  教工餐
       val ledger_type = x.data.ledger_type      //配送类型: 1 原料 2 成品菜
       val stat = x.data.stat
-      val now = format.format(new Date())
+      val calendar = Calendar.getInstance()
+      calendar.setTime(new Date())
+      calendar.add(Calendar.DAY_OF_MONTH, -1)
+      val time = calendar.getTime
+      val now = format.format(time)
       if (format.parse(now).getTime == format.parse(date).getTime) {
         (id, List(date, supplier_id, school_id, stat, Rule.emptyToNull(menu_group_name),Rule.emptyToNull(ledger_type)))
       } else {
@@ -72,7 +77,7 @@ object RetentionDish {
 
               //dish(id),supplydate,packageid,supplierid,schoolid,groupname,dishesname,dishesnumber,catertypename(早餐),ledgertype(配送类型),category（分类）
               jedis.hset(x._1(0) + "_" + "dish-menu", x._3+"_"+x._2(2), "supplierid" + "_" + x._1(1) + "_" + "schoolid" + "_" + x._1(2) + "_" + "groupname" + "_" + x._1(4) + "_" + "dishesname" + "_" + x._2(0) + "_" + "dishesnumber" + "_" + x._2(1) + "_" + "catertypename" + "_"+x._2(3)+"_"+"ledgertype"+"_"+x._1(5)+"_"+"category"+"_"+x._2(4))
-              jedis.expire(x._1(0) + "_" + "dish-menu",172800)
+              jedis.expire(x._1(0) + "_" + "dish-menu",259200)
 
           })
       })
@@ -117,7 +122,7 @@ object RetentionDish {
                   jedis.hdel(x._5+"_"+"dish-menu",x._1+"_"+x._2(2))
                 }else{
                   jedis.hset(x._5 + "_" + "dish-menu", x._1+"_"+x._2(2), v.split("dishesname")(0)+ "dishesname" + "_" + x._2(0) + "_" + "dishesnumber" + "_" + x._2(1) + "_" + "catertypename" + "_" + x._2(3) + "_" + "ledgertype" +v.split("ledgertype")(1) )
-                  jedis.expire(x._5 + "_" + "dish-menu",172800)
+                  jedis.expire(x._5 + "_" + "dish-menu",259200)
                 }
 
               }

@@ -1,7 +1,7 @@
 package com.ssic.report
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import com.ssic.beans.SchoolBean
 import com.ssic.report.Distribution.format
@@ -62,16 +62,16 @@ object MaterialConfirm {
 
     * * 用料计划存入redis的临时表中 useMaterialPlanDetail
 
-    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+    * * @param filterData  mysql的业务binlgog日志
 
-    * * @param  Broadcast[Map[String, String]] 团餐公司id对应的名字
+    * * @param  projid2Area 项目点的id 对应的 区
 
-    * * @param SparkSession
+    * * @param supplierid2supplierName 团餐公司id对应团餐公司name
 
     */
 
-  def useMaterialdish(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) = {
-    val materialPlanMaster = filterData._1.filter(x => x != null && x.table.equals("t_pro_material_plan") && !x.data.stat.equals("0"))
+  def useMaterialdish(filterData:RDD[SchoolBean],projid2Area: Broadcast[Map[String, String]], supplierid2supplierName:Broadcast[Map[String, String]]) = {
+    val materialPlanMaster = filterData.filter(x => x != null && x.table.equals("t_pro_material_plan") && !x.data.stat.equals("0"))
     val materialPlanData = materialPlanMaster.distinct().map({
       x =>
 
@@ -86,7 +86,11 @@ object MaterialConfirm {
         val status = x.data.status
         val stat = x.data.stat
         val proj_name = x.data.proj_name
-        val now = format.format(new Date())
+        val calendar = Calendar.getInstance()
+        calendar.setTime(new Date())
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        val time = calendar.getTime
+        val now = format.format(time)
         if (format.parse(now).getTime <= format.parse(date).getTime) {
           if (x.`type`.equals("insert")) {
             (date, mold, supplier_id, proj_id, status.toInt, "null", "old", stat, "null", "insert", proj_name, supplier_name)
@@ -112,10 +116,10 @@ object MaterialConfirm {
                   if (x._4.contains(",").equals(true)) {
                     val arr_proid = x._4.split(",")
                     for (pid <- arr_proid) {
-                      jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12, x._5.toString)
+                      jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12, x._5.toString)
                     }
                   } else {
-                    jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12, x._5.toString)
+                    jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12, x._5.toString)
                   }
 
                 }
@@ -124,10 +128,10 @@ object MaterialConfirm {
                   if (x._4.contains(",").equals(true)) {
                     val arr_proid = x._4.split(",")
                     for (pid <- arr_proid) {
-                      jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12)
+                      jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12)
                     }
                   } else {
-                    jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
+                    jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
                   }
                 }
               } else if ("update".equals(x._10)) {
@@ -136,10 +140,10 @@ object MaterialConfirm {
                     if (x._4.contains(",").equals(true)) {
                       val arr_proid = x._4.split(",")
                       for (pid <- arr_proid) {
-                        jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12)
+                        jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12)
                       }
                     } else {
-                      jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
+                      jedis.hdel(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
                     }
                   }
                 } else {
@@ -148,12 +152,12 @@ object MaterialConfirm {
                     if (x._4.contains(",").equals(true)) {
                       val arr_proid = x._4.split(",")
                       for (pid <- arr_proid) {
-                        jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12, x._5.toString)
+                        jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(pid, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + pid + "_" + "suppliername" + "_" + x._12, x._5.toString)
                       }
                     } else {
-                      val status = jedis.hget(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
+                      val status = jedis.hget(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
                     if (!"2".equals(status)) {
-                        jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + filterData._2.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12, x._5.toString)
+                        jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12, x._5.toString)
                      }
 
                     }

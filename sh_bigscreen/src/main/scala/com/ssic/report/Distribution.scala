@@ -1,9 +1,10 @@
 package com.ssic.report
 
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import com.ssic.beans.SchoolBean
 import com.ssic.report.MaterialConfirm.format
+import com.ssic.report.PlatoonPlan.format
 import com.ssic.utils.Rule
 import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
@@ -22,7 +23,9 @@ object Distribution {
 
     * * 配送主表分析数据
 
-    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+    * * @param filterData  mysql的业务binlgog日志
+
+    * * @param return  RDD[(String, List[String])] 主键id list[时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，历史发货状态，表操作类型，有效状态，历史有效状态，验收上报日期，进货日期，验收规则，验收日期]
 
     */
 
@@ -45,7 +48,11 @@ object Distribution {
       val compliance = Rule.emptyToNull(x.data.compliance) //验收规则
       val delivery_record_date = Rule.emptyToNull(x.data.delivery_record_date) //验收日期
 
-        val now = format.format(new Date())
+        val calendar = Calendar.getInstance()
+        calendar.setTime(new Date())
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        val time = calendar.getTime
+        val now = format.format(time)
 
         if (format.parse(now).getTime <= format.parse(date).getTime) {
           if (x.`type`.equals("insert") && stat.equals("1")) {

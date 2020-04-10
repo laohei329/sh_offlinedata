@@ -1,6 +1,6 @@
 package com.ssic.report
 
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import com.ssic.beans.SchoolBean
 import com.ssic.report.RetentionDish.format
@@ -22,19 +22,21 @@ object PlatoonPlan {
 
 
   /**
-
+    *
     * * 分析，获取排菜数据
-
-    * * @param RDD[SchoolBean] binlog日志数据
-
-    * * @param  Broadcast[Map[String, String]] 学校对应的区数据
-
+    *
+    * * @param filterData binlog日志数据
+    *
+    * * @param  school2Area 学校对应的区数据
+    *
     * * @param SparkSession
-
+    *
+    * * @return RDD[(String, String, String, String, String, String)]  时间，学校id，区号，表操作类型，创建时间,有效状态
+    *
     */
 
-  def PlatoonRealTimeData(plaData: (RDD[SchoolBean], Broadcast[Map[String, String]],SparkSession)): RDD[(String, String, String, String, String, String)] = {
-    val platoonData = plaData._1.filter(x => x != null && x.table.equals("t_saas_package")  && !x.data.stat.equals("0") && x.data.is_publish != 0 && "1".equals(x.data.industry_type))
+  def PlatoonRealTimeData(filterData:RDD[SchoolBean], school2Area:Broadcast[Map[String, String]],session:SparkSession): RDD[(String, String, String, String, String, String)] = {
+    val platoonData = filterData.filter(x => x != null && x.table.equals("t_saas_package") && !x.data.stat.equals("0") && x.data.is_publish != 0 && "1".equals(x.data.industry_type))
     val platoonDataFil = platoonData.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supply_date)).filter(x => StringUtils.isNoneEmpty(x.data.school_id)).map({
       x =>
         val supply_date = x.data.supply_date
@@ -42,35 +44,24 @@ object PlatoonPlan {
         val date = format.format(format.parse(replaceAll))
         val school_id = x.data.school_id
         val menu_id = x.data.menu_id //'菜谱ID(一个项目点一天的排菜)'
-      val quhao = plaData._2.value.getOrElse(school_id, "null")
+      val quhao = school2Area.value.getOrElse(school_id, "null")
         //val area = NewTools.schoolid(plaData._3, school_id)
         val create_time = x.data.create_time
         val stat = x.data.stat
 
         //时间，学校id，区号，表操作类型，创建时间
-        val now = format.format(new Date())
+        val calendar = Calendar.getInstance()
+        calendar.setTime(new Date())
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        val time = calendar.getTime
+        val now = format.format(time)
         if (format.parse(now).getTime <= format.parse(date).getTime) {
-          (date, school_id, quhao, x.`type`, create_time,stat)
-        }else{
-          ("null","null","null","null","null","null")
+          (date, school_id, quhao, x.`type`, create_time, stat)
+        } else {
+          ("null", "null", "null", "null", "null", "null")
         }
     }).filter(x => !"null".equals(x._1))
-//      .filter(x => "1".equals(x._3)
-//                 ||"2".equals(x._3)
-//                 ||"3".equals(x._3)
-//                 ||"4".equals(x._3)
-//                 ||"5".equals(x._3)
-//                 ||"6".equals(x._3)
-//                 ||"7".equals(x._3)
-//                 ||"8".equals(x._3)
-//                 ||"9".equals(x._3)
-//                 ||"10".equals(x._3)
-//                 ||"11".equals(x._3)
-//                 ||"12".equals(x._3)
-//                 ||"13".equals(x._3)
-//                 ||"14".equals(x._3)
-//                 ||"15".equals(x._3)
-//                 ||"16".equals(x._3))
+
     platoonDataFil
   }
 }
