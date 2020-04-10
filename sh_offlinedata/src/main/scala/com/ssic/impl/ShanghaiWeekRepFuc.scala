@@ -13,12 +13,12 @@ trait ShanghaiWeekRepFuc {
   def arealedgerweek(data:(HSSFSheet,Array[(String, String, String, String, String, String, String, Int, Int, Int)]))
 
   //上海市统计
-  def shangtotal(data:(HSSFSheet,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],HSSFWorkbook,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],String,String,RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)],String))
+  def shangtotal(data:(HSSFSheet,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],HSSFWorkbook,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],String,String,RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)],String,String))
 
   //各区证照预警统计
   def arealicensewarnweek(data:(HSSFSheet,Array[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)]))
 
   //各区统计
-  def areatotal(data:(HSSFSheet,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],HSSFWorkbook,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],String,String,RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)],String))
+  def areatotal(data:(HSSFSheet,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],HSSFWorkbook,RDD[(String, String, String, String, String, String, String, Int, Int, Int)],String,String,RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)],String,String))
 
 }

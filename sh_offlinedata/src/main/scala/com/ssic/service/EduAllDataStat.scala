@@ -1,17 +1,39 @@
 package com.ssic.service
 
-import com.ssic.impl.EduAllDataFuc
 import com.ssic.utils.JPools
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 
-class EduAllDataStat extends EduAllDataFuc {
-  override def platoonmaterialdetailresert(data: (RDD[(String, String)], RDD[(String, String)], RDD[(String, String)], RDD[(String, String)], Broadcast[Map[String, List[String]]],RDD[(String, String)],String,Broadcast[Map[String, String]],Broadcast[Map[String, String]])): Unit = {
+class EduAllDataStat  {
+  /**
 
-    val platoon = data._1.map(x => ((x._1.split("_")(1), x._2)))
-    val useMaterialData = data._2.map(x => ((x._1.split("_")(1), x._2)))
-    val distributionData = data._3.map(x => ((x._1.split("id_")(1), x._2)))
-    val retentionData = data._4.map(x => ((x._1.split("id_")(1), x._2)))
+    * * 排菜，用料，配送，留样操作情况
+
+    * * @param plaData 排菜数据
+
+    * * @param useMaterialChildData 用料子页面数据
+
+    * * @param distributionchildData 配送子页面数据
+
+    * * @param retentionchildData   留样子页面数据
+
+    * * @param schoolData 学校基础数据
+
+    * * @param eduAllData 已存在的排菜，用料，配送，留样操作数据
+
+    * * @param date 时间
+
+    * * @param commiteeid2commiteeid 教属id信息
+
+    * * @param schoolid2suppliername 团餐公司名字
+
+    */
+  def platoonmaterialdetailresert(plaData:RDD[(String, String)], useMaterialChildData:RDD[(String, String)],distributionchildData: RDD[(String, String)], retentionchildData:RDD[(String, String)], schoolData:Broadcast[Map[String, List[String]]],eduAllData:RDD[(String, String)],date:String,commiteeid2commiteeid:Broadcast[Map[String, String]],schoolid2suppliername:Broadcast[Map[String, String]]): Unit = {
+
+    val platoon = plaData.map(x => ((x._1.split("_")(1), x._2)))
+    val useMaterialData = useMaterialChildData.map(x => ((x._1.split("_")(1), x._2)))
+    val distributionData = distributionchildData.map(x => ((x._1.split("id_")(1), x._2)))
+    val retentionData = retentionchildData.map(x => ((x._1.split("id_")(1), x._2)))
 
     platoon.leftOuterJoin(useMaterialData).leftOuterJoin(distributionData).leftOuterJoin(retentionData).map({
       x =>
@@ -57,7 +79,7 @@ class EduAllDataStat extends EduAllDataFuc {
           retentionStatus = retention.split("_")(7)
         }
 
-        val schoolDeail = data._5.value.getOrElse(id, List("null"))
+        val schoolDeail = schoolData.value.getOrElse(id, List("null"))
         var area = "null"
         var department_master_id = "null"
         var department_slave_id = "null"
@@ -72,7 +94,7 @@ class EduAllDataStat extends EduAllDataFuc {
           school_nature_name=schoolDeail(1)
           school_name =schoolDeail(8)
           if("3".equals(schoolDeail(5))){
-            department_slave_id = data._8.value.getOrElse(schoolDeail(6),"null")
+            department_slave_id = commiteeid2commiteeid.value.getOrElse(schoolDeail(6),"null")
           }else{
             department_slave_id = schoolDeail(6)
           }
@@ -88,21 +110,21 @@ class EduAllDataStat extends EduAllDataFuc {
           department_id
         }
 
-        val supplier_name = data._9.value.getOrElse(id,"null")
+        val supplier_name = schoolid2suppliername.value.getOrElse(id,"null")
 
         (id, "school_name"+":"+school_name+","+"area"+":"+area+","+"level_name"+":"+level+","+"school_nature_name"+":"+school_nature_name+","+"department_master_id"+":"+department_master_id+","+"department_slave_id_name"+":"+department_slave_id+","+"have_class"+":"+gongcanStatus+","+"have_platoon"+":"+paicaiStatus+","+"material_status"+":"+useMaterialStatus+","+"haul_status"+":"+distributionStatus+","+"have_reserve"+":"+retentionStatus+","+"supplier_name"+":"+supplier_name+","+"reason"+":"+reason+","+"department_id"+":"+department_id)
 
-    }).cogroup(data._6).foreachPartition({
+    }).cogroup(eduAllData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
           case (k, v) =>{
             //表示左边没有，右边有
             if (v._1.size == 0) {
-              jedis.hdel(data._7 + "_allUseData", k)
+              jedis.hdel(date + "_allUseData", k)
             } else {
-              jedis.hset(data._7 + "_allUseData", k, v._1.head)
-              jedis.expire(data._7 + "_allUseData",259200)
+              jedis.hset(date + "_allUseData", k, v._1.head)
+              jedis.expire(date + "_allUseData",259200)
             }
           }
         })

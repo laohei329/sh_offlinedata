@@ -10,6 +10,7 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
 import com.ssic.utils.Tools._
+import org.apache.log4j.{Level, Logger}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -23,10 +24,11 @@ object Platoon {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
   private val format1 = FastDateFormat.getInstance("yyyy")
   private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
   def main(args: Array[String]): Unit = {
 
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("今天至未来一周的排菜详情数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

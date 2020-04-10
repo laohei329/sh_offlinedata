@@ -3,13 +3,15 @@ package com.ssic.report
 import java.util
 import java.util.Date
 
-import com.ssic.service.{RetentionTotalStat, _}
+import com.ssic.service.{_}
 import com.ssic.utils.Tools._
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
@@ -20,9 +22,11 @@ object TargetTotal {
     */
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
+  private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("今日用料，验收，留样统计数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 
@@ -43,16 +47,6 @@ object TargetTotal {
     committee.createTempView("t_edu_committee")
     supplier.createTempView("t_pro_supplier")
     bd_department.createTempView("t_edu_bd_department")
-
-    val departmentid = Tools.departmentid(session)
-    for (i <- 0 until departmentid.size){
-      val id = departmentid(i)
-      val jedis = JPools.getJedis
-      jedis.del(date+"_useMaterialPlanTotal"+"_"+"department"+"_"+id)
-      jedis.del(date+"_DistributionTotal"+"_"+"department"+"_"+id)
-      jedis.del(date+"_gc-retentiondishtotal"+"_"+"department"+"_"+id)
-    }
-
 
     val projid2schoolid: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolid(session)) //项目点id获取学校id
     val projid2schoolname: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolname(session)) //项目点id获取学校名字
@@ -94,471 +88,524 @@ object TargetTotal {
     val retentionchildData = sc.parallelize(retentionchild.asScala.toList) //已存在的留样计划子页面数据
 
 
-
+    //用料计划
     //处理好的用料计划数据
     val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area)
-    //处理好的用料计划统计数据
-    val usematerialdealtotaldata = new DealDataStat().usematerialdealtotaldata(useMaterialTotalData)
 
     //各区用料计划总数据统计
-    new UsematerialTotalStat().areausematerialtotal(usematerialDealData, date)
-
-    //按照权限管理部门各区用料计划总数据统计
-    new UsematerialTotalStat().departmentareausematerialtotal(usematerialDealData,date,schoolData)
-
+    val areausematerialtotal = new UsematerialTotalStat().areatotal(usematerialDealData, date)
     //市教委各区用料计划各状态数据统计
-    val useStatusData = usematerialdealtotaldata.filter(x => !x._1._1.equals("null")).map(_._1)
-    new UsematerialTotalStat().areausmaterialstatustotal(usematerialDealData, date, useStatusData)
-
-    //按照权限管理部门各区用料计划各状态数据统计
-    new UsematerialTotalStat().departmentareausmaterialstatustotal(usematerialDealData,date,schoolData)
+    val areausematerialstatustotal = new UsematerialTotalStat().areastatustotal(usematerialDealData, date)
+    //按所属教育部用料计划各状态数据统计
+    val masteridusematerialtotal = new UsematerialTotalStat().masteridtotal(usematerialDealData, date, schoolData, commiteeid2commiteename)
+    //按上海市办学性质来用料计划各状态数据统计（nature）
+    val natureusematerialstatus = new UsematerialTotalStat().naturestatus(usematerialDealData, date, schoolData)
+    //各区办学性质来用料计划各状态数据统计（nature）
+    val areanatureusematerialstatus = new UsematerialTotalStat().areanaturestatus(usematerialDealData, date, schoolData)
+    //按上海市各类型学校来用料计划各状态数据统计（level）
+    val levelusematerialstatus = new UsematerialTotalStat().levelstatus(usematerialDealData, date, schoolData)
+    //按各区各类型学校来用料计划各状态数据统计（level）
+    val arealevelusematerialstatus = new UsematerialTotalStat().arealevelstatus(usematerialDealData, date, schoolData)
+    //按照各管理部门各状态用料计划数量
+    val departmentusematerialstatus = new UsematerialTotalStat().departmentstatus(usematerialDealData,date,schoolData)
 
     //各区用料计划各状态按照学校数据统计(对学校进行去重处理)
-    val useSchoolStatusData = usematerialdealtotaldata.filter(x => !x._3._1.equals("null")).map(_._3)
-    new UsematerialTotalStat().areausmaterialschoolstatus(useMaterialChildData, date, useSchoolStatusData)
+    val areausematerialschooltotal = new UsematerialSchoolTotalStat().areatotal(useMaterialChildData, date)
+    //按所属教育局料计划各状态按照学校数据统计(对学校进行去重处理)
+    val masteridusematerialschooltotal = new UsematerialSchoolTotalStat().masteridtotal(useMaterialChildData, date, schoolData, commiteeid2commiteename)
+    //按上海市办学性质来用料计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val natureusematerialschooltotal = new UsematerialSchoolTotalStat().naturetotal(useMaterialChildData, date, schoolData)
+    //按各区办学性质来用料计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val areanatureusematerialschooltotal = new UsematerialSchoolTotalStat().areanaturetotal(useMaterialChildData, date, schoolData)
+    //按上海市各类型学校来用料计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val levelusematerialschooltotal = new UsematerialSchoolTotalStat().leveltotal(useMaterialChildData, date, schoolData)
+    //按各区各类型学校来用料计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val arealevelusematerialschooltotal = new UsematerialSchoolTotalStat().arealeveltotal(useMaterialChildData, date, schoolData)
+    //按照各管理部门各状态用料计划数量(对学校去重了)
+    val shanghaidepartmentusematerialschooltotal = new UsematerialSchoolTotalStat().shanghaidepartmenttotal(useMaterialChildData, date, schoolData)
+
+    //按照权限管理部门各区用料计划总数据统计
+    val dpareatotal = new UsematerialTotalStat().departmentareatotal(usematerialDealData, date,schoolData)
+    //按照权限管理部门各区用料计划各状态数据统计
+    val dpareastatustotal = new UsematerialTotalStat().departmentareastatustotal(usematerialDealData, date,schoolData)
+    //按照权限管理部门所属教育部用料计划各状态数据统计
+    val dpmasteridtotal = new UsematerialTotalStat().departmentmasteridtotal(usematerialDealData, date, schoolData, commiteeid2commiteename)
+    //按照权限管理部门办学性质来用料计划各状态数据统计（nature）
+    val dpnaturestatus = new UsematerialTotalStat().departmentnaturestatus(usematerialDealData, date, schoolData)
+    //按照权限管理部门各区办学性质来用料计划各状态数据统计（nature）
+    val dpareanatureusematerialstatus = new UsematerialTotalStat().departmentareanaturestatus(usematerialDealData, date, schoolData)
+    //按照权限管理部门各类型学校来用料计划各状态数据统计（level）
+    val dplevelstatus = new UsematerialTotalStat().departmentlevelstatus(usematerialDealData, date, schoolData)
+    //按照权限管理部门各区各类型学校来用料计划各状态数据统计（level）
+    val dparealevelstatus = new UsematerialTotalStat().departmentarealevelstatus(usematerialDealData, date, schoolData)
+    //按照权限各管理部门各状态用料计划数量
+    val dpdepartmentstatus = new UsematerialTotalStat().departmentdepartmentstatus(usematerialDealData,date,schoolData)
 
     //按照权限管理部门各区用料计划各状态按照学校数据统计(对学校进行去重处理)
-    new UsematerialTotalStat().departmentareausmaterialschoolstatus(useMaterialChildData,date,schoolData)
-
-    //按所属教育部用料计划各状态数据统计
-    val useMasteridStatusData = usematerialdealtotaldata.filter(x => !x._2._1.equals("null")).map(_._2)
-    new UsematerialTotalStat().masteridusematerialtotal(usematerialDealData, date, useMasteridStatusData, schoolData, commiteeid2commiteename)
-
-    //按照权限管理部门所属教育部用料计划各状态数据统计
-    new UsematerialTotalStat().departmentmasteridusematerialtotal(usematerialDealData,date,schoolData,commiteeid2commiteename)
-
-    //按所属教育局料计划各状态按照学校数据统计(对学校进行去重处理)
-    val useMasteridSchoolStatusData = usematerialdealtotaldata.filter(x => !x._4._1.equals("null")).map(_._4)
-    new UsematerialTotalStat().masteridusmaterialschoolstatus(useMaterialChildData, date, useMasteridSchoolStatusData, schoolData, commiteeid2commiteename)
-
+    val dpareausematerialschooltotal = new UsematerialSchoolTotalStat().departmentareatotal(useMaterialChildData, date,schoolData)
     //按照权限管理部门所属教育局料计划各状态按照学校数据统计(对学校进行去重处理)
-    new UsematerialTotalStat().departmentmasteridusmaterialschoolstatus(useMaterialChildData,date,schoolData,commiteeid2commiteename)
-
-    //按上海市办学性质来用料计划各状态数据统计（nature）
-    val useNatureStatusData = usematerialdealtotaldata.filter(x => !x._5._1.equals("null")).map(_._5)
-    new UsematerialTotalStat().natureusmaterialstatus(usematerialDealData, date, useNatureStatusData, schoolData)
-
-    //按照权限管理部门办学性质来用料计划各状态数据统计（nature）
-    new UsematerialTotalStat().departmentnatureusmaterialstatus(usematerialDealData,date,schoolData)
-
-    //各区办学性质来用料计划各状态数据统计（nature）
-    val areauseNatureStatusData = usematerialdealtotaldata.filter(x => !x._9._1.equals("null")).map(_._9)
-    new UsematerialTotalStat().areanatureusmaterialstatus(usematerialDealData, date, areauseNatureStatusData, schoolData)
-
-    //按照权限管理部门各区办学性质来用料计划各状态数据统计（nature）
-    new UsematerialTotalStat().departmentareanatureusmaterialstatus(usematerialDealData,date,schoolData)
-
-    //按上海市办学性质来用料计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    val useNatureSchoolStatusData = usematerialdealtotaldata.filter(x => !x._6._1.equals("null")).map(_._6)
-    new UsematerialTotalStat().natureusmaterialschoolstatus(useMaterialChildData, date, useNatureSchoolStatusData, schoolData)
-
-
+    val dpmasteridusematerialschooltotal = new UsematerialSchoolTotalStat().departmentmasteridtotal(useMaterialChildData, date, schoolData, commiteeid2commiteename)
     //按照权限管理部门办学性质来用料计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    new UsematerialTotalStat().departmentnatureusmaterialschoolstatus(useMaterialChildData,date,schoolData)
-
-    //按各区办学性质来用料计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    val areauseNatureSchoolStatusData = usematerialdealtotaldata.filter(x => !x._10._1.equals("null")).map(_._10)
-    new UsematerialTotalStat().areanatureusmaterialschoolstatus(useMaterialChildData, date, areauseNatureSchoolStatusData, schoolData)
-
+    val dpnatureusematerialschooltotal = new UsematerialSchoolTotalStat().departmentnaturetotal(useMaterialChildData, date, schoolData)
     //按照权限管理部门各区办学性质来用料计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    new UsematerialTotalStat().departmentareanatureusmaterialschoolstatus(useMaterialChildData,date,schoolData)
-
-    //按上海市各类型学校来用料计划各状态数据统计（level）
-    val useLevelStatusData = usematerialdealtotaldata.filter(x => !x._7._1.equals("null")).map(_._7)
-    new UsematerialTotalStat().levelusmaterialstatus(usematerialDealData, date, useLevelStatusData, schoolData)
-
-    //按照权限管理部门各类型学校来用料计划各状态数据统计（level）
-    new UsematerialTotalStat().departmentlevelusmaterialstatus(usematerialDealData,date,schoolData)
-
-    //按各区各类型学校来用料计划各状态数据统计（level）
-    val areauseLevelStatusData = usematerialdealtotaldata.filter(x => !x._11._1.equals("null")).map(_._11)
-    new UsematerialTotalStat().arealevelusmaterialstatus(usematerialDealData, date, areauseLevelStatusData, schoolData)
-
-    //按照权限管理部门各区各类型学校来用料计划各状态数据统计（level）
-    new UsematerialTotalStat().departmentarealevelusmaterialstatus(usematerialDealData,date,schoolData)
-
-    //按上海市各类型学校来用料计划各状态按照学校数据统计（level,对学校进行去重处理）
-    val useLevelSchoolStatusData = usematerialdealtotaldata.filter(x => !x._8._1.equals("null")).map(_._8)
-    new UsematerialTotalStat().levelusmaterialschoolstatus(useMaterialChildData, date, useLevelSchoolStatusData, schoolData)
-
+    val dpareanatureusematerialschooltotal = new UsematerialSchoolTotalStat().departmentareanaturetotal(useMaterialChildData, date, schoolData)
     //按照权限管理部门各类型学校来用料计划各状态按照学校数据统计（level,对学校进行去重处理）
-    new UsematerialTotalStat().departmentlevelusmaterialschoolstatus(useMaterialChildData,date,schoolData)
-
-    //按各区各类型学校来用料计划各状态按照学校数据统计（level,对学校进行去重处理）
-    val areauseLevelSchoolStatusData = usematerialdealtotaldata.filter(x => !x._12._1.equals("null")).map(_._12)
-    new UsematerialTotalStat().arealevelusmaterialschoolstatus(useMaterialChildData, date, areauseLevelSchoolStatusData, schoolData)
-
+    val dplevelusematerialschooltotal = new UsematerialSchoolTotalStat().departmentleveltotal(useMaterialChildData, date, schoolData)
     //按照权限管理部门各区各类型学校来用料计划各状态按照学校数据统计（level,对学校进行去重处理）
-    new UsematerialTotalStat().departmentarealevelusmaterialschoolstatus(useMaterialChildData,date,schoolData)
-
-    //按照各管理部门各状态用料计划数量
-    val departmentUseStatusTotal = usematerialdealtotaldata.filter(x => !x._13.equals("null")).map(_._13)
-    new UsematerialTotalStat().departmentusmaterialstatus(usematerialDealData,date,departmentUseStatusTotal,schoolData)
-
-    //按照权限各管理部门各状态用料计划数量
-    new UsematerialTotalStat().departmentdepartmentusmaterialstatus(usematerialDealData,date,schoolData)
-
-    //按照各管理部门各状态用料计划数量(对学校去重了)
-    val departmentUseSchoolStatusTotal = usematerialdealtotaldata.filter(x => !x._14.equals("null")).map(_._14)
-    new UsematerialTotalStat().departmentusmaterialschoolstatus(useMaterialChildData,date,departmentUseSchoolStatusTotal,schoolData)
-
+    val dparealevelusematerialschooltotal = new UsematerialSchoolTotalStat().departmentarealeveltotal(useMaterialChildData, date, schoolData)
     //按照权限各管理部门各状态用料计划数量(对学校去重了)
-    new UsematerialTotalStat().departmentdepartmentusmaterialschoolstatus(useMaterialChildData,date,schoolData)
+    val dpshanghaidepartmentusematerialschooltotal = new UsematerialSchoolTotalStat().departmentdepartmenttotal(useMaterialChildData, date, schoolData)
 
+
+    //验收计划
     //处理好的配送计划数据
-   val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool,school2Area,date)
-    //处理好的配送计划统计数据
-    val distributionDealTotalData = new DealDataStat().distributiondealtotaldata(distributionTotalData)
+    val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool,school2Area,date)
 
     //各区配送计划总数据统计
-    new DistributionTotalStat().areadistributionltotal(distributionDealData,date)
-
-    //按照权限的各区配送计划总数据统计
-    new DistributionTotalStat().departmentareadistributionltotal(distributionDealData,date,schoolData)
-
+    val areadistributiontotal = new DistributionTotalStat().areatotal(distributionDealData,date)
     //各区配送计划各状态数据统计
-    val disStatusData = distributionDealTotalData.filter(x => x._1.equals("area")).map(_._2)
-    new DistributionTotalStat().areadistributionstatustotal(distributionDealData,date,disStatusData)
-
-    //按照权限的各区配送计划各状态数据统计
-    new DistributionTotalStat().departmentareadistributionstatustotal(distributionDealData,date,schoolData)
+    val areadistributionstatustotal = new DistributionTotalStat().areastatustotal(distributionDealData,date)
+    //按所属教育部配送计划各状态数据统计
+    val masteriddistributiontotal = new DistributionTotalStat().masteridtotal(distributionDealData,date, schoolData, commiteeid2commiteename)
+    //按上海市办学性质来配送计划各状态数据统计（nature）
+    val naturedistributionstatus = new DistributionTotalStat().naturestatus(distributionDealData,date,schoolData)
+    //各区办学性质来配送计划各状态数据统计（nature）
+    val areanaturedistributionstatus = new DistributionTotalStat().areanaturestatus(distributionDealData,date,schoolData)
+    //按上海市各类型学校来配送计划各状态数据统计（level）
+    val leveldistributionstatus = new DistributionTotalStat().levelstatus(distributionDealData,date,schoolData)
+    //按各区各类型学校来配送计划各状态数据统计（level）
+    val arealeveldistributionstatus = new DistributionTotalStat().arealevelstatus(distributionDealData,date,schoolData)
+    //按照上海市管理部门的配送各状态数量
+    val departmentdistributionstatus = new DistributionTotalStat().departmentstatus(distributionDealData,date,schoolData)
 
     //各区配送计划各状态按照学校数据统计(对学校进行去重处理)
-    val disSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-area")).map(_._2)
-    new DistributionTotalStat().areadistributionschoolstatus(distributionchildData,date,disSchoolStatusData)
-
-    //按照权限的各区配送计划各状态按照学校数据统计(对学校进行去重处理)
-    new DistributionTotalStat().departmentareadistributionschoolstatus(distributionchildData,date,schoolData)
-
-    //按所属教育部配送计划各状态数据统计
-    val disMasteridStatusData = distributionDealTotalData.filter(x => x._1.equals("masterid")).map(_._2)
-    new DistributionTotalStat().masteriddistributiontotal(distributionDealData,date,disMasteridStatusData, schoolData, commiteeid2commiteename)
-
-    //按照权限的所属教育部配送计划各状态数据统计
-    new DistributionTotalStat().departmentmasteriddistributiontotal(distributionDealData,date,schoolData,commiteeid2commiteename)
-
+    val areaschooldistributiontotal = new DistributionSchoolTotalStat().areatotal(distributionchildData,date)
     //按所属教育局配送计划各状态按照学校数据统计(对学校进行去重处理)
-    val disMasteridSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-masterid")).map(_._2)
-    new DistributionTotalStat().masteriddistributionschoolstatus(distributionchildData,date,disMasteridSchoolStatusData,schoolData,commiteeid2commiteename)
-
-    //按照权限的所属教育局配送计划各状态按照学校数据统计(对学校进行去重处理)
-    new DistributionTotalStat().departmentmasteriddistributionschoolstatusdata(distributionchildData,date,schoolData,commiteeid2commiteename)
-
-    //按上海市办学性质来配送计划各状态数据统计（nature）
-    val disNatureStatusData = distributionDealTotalData.filter(x => x._1.equals("nature")).map(_._2)
-    new DistributionTotalStat().naturedistributionstatus(distributionDealData,date,disNatureStatusData,schoolData)
-
-    //按照权限的上海市办学性质来配送计划各状态数据统计（nature）
-    new DistributionTotalStat().departmentnaturedistributionstatus(distributionDealData,date,schoolData)
-
-    //各区办学性质来配送计划各状态数据统计（nature）
-    val areadisNatureStatusData = distributionDealTotalData.filter(x => x._1.equals("nat-area")).map(_._2)
-    new DistributionTotalStat().areanaturedistributionstatus(distributionDealData,date,areadisNatureStatusData,schoolData)
-
+    val masteridschooldistributiontotal = new DistributionSchoolTotalStat().masteridtotal(distributionchildData,date,schoolData,commiteeid2commiteename)
     //按上海市办学性质来配送计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    val disNatureSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-nature")).map(_._2)
-    new DistributionTotalStat().naturedistributionschoolstatus(distributionchildData,date,disNatureSchoolStatusData,schoolData)
-
-    //按照权限的上海市办学性质来配送计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    new DistributionTotalStat().departmentnaturedistributionschoolstatus(distributionchildData,date,schoolData)
-
+    val natureschooldistributiontotal = new DistributionSchoolTotalStat().naturetotal(distributionchildData,date,schoolData)
     //按各区办学性质来配送计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    val areadisNatureSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-nat-area")).map(_._2)
-    new DistributionTotalStat().areanaturedistributionschoolstatus(distributionchildData,date,areadisNatureSchoolStatusData,schoolData)
-
+    val areanatureschooldistributiontotal = new DistributionSchoolTotalStat().areanaturetotal(distributionchildData,date,schoolData)
     //按上海市经营模式来配送计划各状态按照学校数据统计（canteenmode,对学校进行去重处理）
-    val canteenmodeSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-canteenmode")).map(_._2)
-    new DistributionTotalStat().canteenmodedistributionschoolstatus(distributionchildData,date,canteenmodeSchoolStatusData,schoolData)
-
-    //按权限的上海市经营模式来配送计划各状态按照学校数据统计（canteenmode,对学校进行去重处理）
-    new DistributionTotalStat().departmentcanteenmodedistributionschoolstatus(distributionchildData,date,schoolData)
-
-    //按上海市各类型学校来配送计划各状态数据统计（level）
-    val disLevelStatusData = distributionDealTotalData.filter(x => x._1.equals("level")).map(_._2)
-    new DistributionTotalStat().leveldistributionstatus(distributionDealData,date,disLevelStatusData,schoolData)
-
-    //按照权限的上海市各类型学校来配送计划各状态数据统计（level）
-    new DistributionTotalStat().departmentleveldistributionstatus(distributionDealData,date,schoolData)
-
-    //按各区各类型学校来配送计划各状态数据统计（level）
-    val areadisLevelStatusData = distributionDealTotalData.filter(x => x._1.equals("lev-area")).map(_._2)
-    new DistributionTotalStat().arealeveldistributionstatus(distributionDealData,date,areadisLevelStatusData,schoolData)
-
+    val canteenschooldistributiontotal = new DistributionSchoolTotalStat().canteentotal(distributionchildData,date,schoolData)
     //按上海市各类型学校来配送计划各状态按照学校数据统计（level,对学校进行去重处理）
-    val disLevelSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-level")).map(_._2)
-    new DistributionTotalStat().leveldistributionschoolstatus(distributionchildData,date,disLevelSchoolStatusData,schoolData)
-
-    //按照权限的上海市各类型学校来配送计划各状态按照学校数据统计（level,对学校进行去重处理）
-    new DistributionTotalStat().departmentleveldistributionschoolstatus(distributionchildData,date,schoolData)
-
+    val levelschooldistributiontotal = new DistributionSchoolTotalStat().leveltotal(distributionchildData,date,schoolData)
     //按各区各类型学校来配送计划各状态按照学校数据统计（level,对学校进行去重处理）
-    val areadisLevelSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-lev-area")).map(_._2)
-    new DistributionTotalStat().arealeveldistributionschoolstatus(distributionchildData,date,areadisLevelSchoolStatusData,schoolData)
+    val arealevelschooldistributiontotal = new DistributionSchoolTotalStat().arealeveltotal(distributionchildData,date,schoolData)
+    //按照上海市管理部门的配送各状态数量(对学校去重)
+    val shdepartmentdistributiontotal = new DistributionSchoolTotalStat().shanghaidepartmenttotal(distributionchildData,date,schoolData)
 
     //按照各区的验收操作规范的统计
-    val areaDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-area")).map(_._2)
-    new DistributionTotalStat().areadisstatus(distributionDealData,date,areaDisStatusData)
-
-    //按照权限的各区的验收操作规范的统计
-    new DistributionTotalStat().departmentareadisstatus(distributionDealData,date,schoolData)
+    val areadistributionruletotal = new DistributionRuleTotalStat().areatotal(distributionDealData,date)
+    //按照上海市办学性质的验收操作规范的统计
+    val naturedistributionrulestatus = new DistributionRuleTotalStat().naturestatus(distributionDealData,date,schoolData)
+    //按照上海市办学学制的验收操作规范的统计
+    val leveldistributionrulestatus = new DistributionRuleTotalStat().levelstatus(distributionDealData,date,schoolData)
+    //按照上海市教属的验收操作规范的统计
+    val masteriddistributionruletotal = new DistributionRuleTotalStat().masteridtotal(distributionDealData,date,schoolData,commiteeid2commiteename)
+    //按照上海市管理部门的验收操作规范数量
+    val departmentdistributionrulestatus = new DistributionRuleTotalStat().departmentstatus(distributionDealData,date,schoolData)
 
     //按照各区的验收操作规范的统计(对学校去重)
-    val areaSchoolDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-school-area")).map(_._2)
-    new DistributionTotalStat().areaschooldisstatus(distributionchildData,date,areaSchoolDisStatusData)
+    val areadistributionschoolruletotal = new DistributionRuleSchoolTotalStat().areatotal(distributionchildData,date)
+    //按照上海市办学性质的验收操作规范的统计(对学校去重)
+    val naturedistributionschoolruletotal = new DistributionRuleSchoolTotalStat().naturetotal(distributionchildData,date,schoolData)
+    //按照上海市办学学制的验收操作规范的统计(对学校去重)
+    val leveldistributionschoolruletotal = new DistributionRuleSchoolTotalStat().leveltotal(distributionchildData,date,schoolData)
+    //按照上海市教属的验收操作规范的统计(对学校去重)
+    val masteriddistributionschoolruletotal = new DistributionRuleSchoolTotalStat().masteridtotal(distributionchildData,date,schoolData,commiteeid2commiteename)
+    //按照上海市管理部门的验收操作规范数量(对学校去重)
+    val shdepartmentdistributionschoolruletotal = new DistributionRuleSchoolTotalStat().shanghaidepartmenttotal(distributionchildData,date,schoolData)
+
+    //按照权限的各区配送计划总数据统计
+    val dpareadistributiontotal = new DistributionTotalStat().departmentareatotal(distributionDealData,date,schoolData)
+    //按照权限的各区配送计划各状态数据统计
+    val dpareadistributionstatustotal = new DistributionTotalStat().departmentareastatustotal(distributionDealData,date,schoolData)
+    //按照权限的所属教育部配送计划各状态数据统计
+    val dpmasteriddistributiontotal = new DistributionTotalStat().departmentmasteridtotal(distributionDealData,date,schoolData,commiteeid2commiteename)
+    //按照权限的上海市办学性质来配送计划各状态数据统计（nature）
+    val dpnaturedistributionstatus = new DistributionTotalStat().departmentnaturestatus(distributionDealData,date,schoolData)
+    //按照权限的上海市各类型学校来配送计划各状态数据统计（level）
+    val dpleveldistributionstatus = new DistributionTotalStat().departmentlevelstatus(distributionDealData,date,schoolData)
+    //按照权限的上海市管理部门的配送各状态数量
+    val dpdepartmentdistributionstatus = new DistributionTotalStat().departmentdepartmentstatus(distributionDealData,date,schoolData)
+
+    //按照权限的各区配送计划各状态按照学校数据统计(对学校进行去重处理)
+    val dpareadistributionschooltotal = new DistributionSchoolTotalStat().departmentareatotal(distributionchildData,date,schoolData)
+    //按照权限的所属教育局配送计划各状态按照学校数据统计(对学校进行去重处理)
+    val dpmasteriddistributionschooltotal = new DistributionSchoolTotalStat().departmentmasteridtotal(distributionchildData,date,schoolData,commiteeid2commiteename)
+    //按照权限的上海市办学性质来配送计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val dpnaturedistributionschooltotal = new DistributionSchoolTotalStat().departmentnaturetotal(distributionchildData,date,schoolData)
+    //按权限的上海市经营模式来配送计划各状态按照学校数据统计（canteenmode,对学校进行去重处理）
+    val dpcanteendistributionschooltotal = new DistributionSchoolTotalStat().departmentcanteentotal(distributionchildData,date,schoolData)
+    //按照权限的上海市各类型学校来配送计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val dpleveldistributionschooltotal = new DistributionSchoolTotalStat().departmentleveltotal(distributionchildData,date,schoolData)
+    //按照权限的上海市管理部门的配送各状态数量(对学校去重)
+    val dpdepartmentdistributionschooltotal = new DistributionSchoolTotalStat().departmentdepartmenttotal(distributionchildData,date,schoolData)
+
+    //按照权限的各区的验收操作规范的统计
+    val dpareadistributionruletotal = new DistributionRuleTotalStat().departmentareatotal(distributionDealData,date,schoolData)
+    //按照权限的上海市办学性质的验收操作规范的统计
+    val dpnaturedistributionrulestatus = new DistributionRuleTotalStat().departmentnaturestatus(distributionDealData,date,schoolData)
+    //按照权限的上海市办学学制的验收操作规范的统计
+    val dpleveldistributionrulestatus = new DistributionRuleTotalStat().departmentlevelstatus(distributionDealData,date,schoolData)
+    //按照权限的上海市教属的验收操作规范的统计
+    val dpmasteriddistributionruletotal = new DistributionRuleTotalStat().departmentmasteridtotal(distributionDealData,date,schoolData,commiteeid2commiteename)
+    //按照权限的上海市管理部门的验收操作规范数量
+    val dpdepartmentdistributionrulestatus = new DistributionRuleTotalStat().departmentdepartmentstatus(distributionDealData,date,schoolData)
 
     //按照权限的各区的验收操作规范的统计(对学校去重)
-    new DistributionTotalStat().departmentareaschooldisstatus(distributionchildData,date,schoolData)
-
-    //按照上海市办学性质的验收操作规范的统计
-    val natureDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-nature")).map(_._2)
-    new DistributionTotalStat().naturedisstatus(distributionDealData,date,natureDisStatusData,schoolData)
-
-    //按照权限的上海市办学性质的验收操作规范的统计
-    new DistributionTotalStat().departmentnaturedisstatus(distributionDealData,date,schoolData)
-
-    //按照上海市办学性质的验收操作规范的统计(对学校去重)
-    val natureSchoolDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-school-nature")).map(_._2)
-    new DistributionTotalStat().natureschooldisstatus(distributionchildData,date,natureSchoolDisStatusData,schoolData)
-
+    val dpareadistributionschoolruletotal = new DistributionRuleSchoolTotalStat().departmentareatotal(distributionchildData,date,schoolData)
     //按照权限的上海市办学性质的验收操作规范的统计(对学校去重)
-    new DistributionTotalStat().departmentnatureschooldisstatus(distributionchildData,date,schoolData)
-
-    //按照上海市办学学制的验收操作规范的统计
-    val levelDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-level")).map(_._2)
-    new DistributionTotalStat().leveldisstatus(distributionDealData,date,levelDisStatusData,schoolData)
-
-    //按照权限的上海市办学学制的验收操作规范的统计
-    new DistributionTotalStat().departmentleveldisstatus(distributionDealData,date,schoolData)
-
-    //按照上海市办学学制的验收操作规范的统计(对学校去重)
-    val levelSchoolDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-school-level")).map(_._2)
-    new DistributionTotalStat().levelschooldisstatus(distributionchildData,date,levelSchoolDisStatusData,schoolData)
-
+    val dpnaturedistributionschoolruletotal = new DistributionRuleSchoolTotalStat().departmentnaturetotal(distributionchildData,date,schoolData)
     //按照权限的上海市办学学制的验收操作规范的统计(对学校去重)
-    new DistributionTotalStat().departmentlevelschooldisstatus(distributionchildData,date,schoolData)
-
-    //按照上海市教属的验收操作规范的统计
-    val masteridDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-masterid")).map(_._2)
-    new DistributionTotalStat().masteriddisstatus(distributionDealData,date,masteridDisStatusData,schoolData,commiteeid2commiteename)
-
-    //按照权限的上海市教属的验收操作规范的统计
-    new DistributionTotalStat().departmentmasteriddisstatus(distributionDealData,date,schoolData,commiteeid2commiteename)
-
-    //按照上海市教属的验收操作规范的统计(对学校去重)
-    val masteridSchoolDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-school-masterid")).map(_._2)
-    new DistributionTotalStat().masteridschooldisstatus(distributionchildData,date,masteridSchoolDisStatusData,schoolData,commiteeid2commiteename)
-
+    val dpleveldistributionschoolruletotal = new DistributionRuleSchoolTotalStat().departmentleveltotal(distributionchildData,date,schoolData)
     //按照权限的上海市教属的验收操作规范的统计(对学校去重)
-    new DistributionTotalStat().departmentmasteridschooldisstatus(distributionchildData,date,schoolData,commiteeid2commiteename)
-
-    //按照上海市管理部门的配送各状态数量
-    val departStatusData = distributionDealTotalData.filter(x => x._1.equals("department")).map(_._2)
-    new DistributionTotalStat().dedistributionstatustotal(distributionDealData,date,departStatusData,schoolData)
-
-    //按照权限的上海市管理部门的配送各状态数量
-    new DistributionTotalStat().dedepartmentdistributionstatustotal(distributionDealData,date,schoolData)
-
-    //按照上海市管理部门的配送各状态数量(对学校去重)
-    val departSchoolStatusData = distributionDealTotalData.filter(x => x._1.equals("school-department")).map(_._2)
-    new DistributionTotalStat().dedistributionschoolstatustotal(distributionchildData,date,departSchoolStatusData,schoolData)
-
-    //按照权限的上海市管理部门的配送各状态数量(对学校去重)
-    new DistributionTotalStat().dedepartmentdistributionschoolstatustotal(distributionchildData,date,schoolData)
-
-    //按照上海市管理部门的验收操作规范数量
-    val departDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-department")).map(_._2)
-    new DistributionTotalStat().dedisstatustotal(distributionDealData,date,departDisStatusData,schoolData)
-
-    //按照权限的上海市管理部门的验收操作规范数量
-    new DistributionTotalStat().dedepartmentdisstatustotal(distributionDealData,date,schoolData)
-
-    //按照上海市管理部门的验收操作规范数量(对学校去重)
-    val departSchoolDisStatusData = distributionDealTotalData.filter(x => x._1.equals("dis-school-department")).map(_._2)
-    new DistributionTotalStat().deschooldisstatustotal(distributionchildData,date,departSchoolDisStatusData,schoolData)
-
+    val dpmasteriddistributionschoolruletotal = new DistributionRuleSchoolTotalStat().departmentmasteridtotal(distributionchildData,date,schoolData,commiteeid2commiteename)
     //按照权限的上海市管理部门的验收操作规范数量(对学校去重)
-    new DistributionTotalStat().dedepartmentschooldisstatustotal(distributionchildData,date,schoolData)
+    val dpdepartmentdistributionschoolruletotal = new DistributionRuleSchoolTotalStat().departmentdepartmenttotal(distributionchildData,date,schoolData)
 
+
+    //留样
     //处理好的留样计划数据
     val retentionDealData = new DealDataStat().retentiondealdata(retentionData)
-    //处理好的留样计划统计数据
-    val retentiondealtotaldata = new DealDataStat().retentiondealtotaldata(retentionTotalData)
 
     //各区留样计划总数据统计
-    new RetentionTotalStat().arearetentiontotal(retentionDealData,date)
-
-    //按照管理权限各区留样计划统计数据
-    new RetentionTotalStat().departmentarearetentiontotal(retentionDealData,date,schoolData)
-
+    val arearetentiontotal = new RetentionTotalStat().areatotal(retentionDealData,date)
     //各区留样计划各状态数据统计
-    val reStatusData = retentiondealtotaldata.filter(x => x._1.equals("area")).map(_._2)
-    new RetentionTotalStat().arearetentionstatustotal(retentionDealData,date,reStatusData)
-
-    //按照权限各区留样计划各状态数据统计
-    new RetentionTotalStat().departmentarearetentionstatustotal(retentionDealData,date,schoolData)
-
-    //各区留样操作规则数据统计
-    val reRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-area")).map(_._2)
-    new RetentionTotalStat().arearetentionrulestatustotal(retentionDealData,date,reRuleStatusData)
-
-    //按照权限的各区留样操作规则数据统计
-    new RetentionTotalStat().departmentarearetentionrulestatustotal(retentionDealData,date,schoolData)
+    val arearetentionstatustotal = new RetentionTotalStat().areastatustotal(retentionDealData,date)
+    //按所属教育部留样计划各状态数据统计
+    val masteridretentiontotal = new RetentionTotalStat().masteridtotal(retentionDealData,date,schoolData,commiteeid2commiteename)
+    //按上海市办学性质来留样计划各状态数据统计（nature）
+    val natureretentionstatus = new RetentionTotalStat().naturestatus(retentionDealData,date,schoolData)
+    //各区办学性质来留样计划各状态数据统计（nature）
+    val areanatureretentionstatus = new RetentionTotalStat().areanaturestatus(retentionDealData,date,schoolData)
+    //按上海市各类型学校来留样计划各状态数据统计（level）
+    val levelretentionstatus = new RetentionTotalStat().levelstatus(retentionDealData,date,schoolData)
+    //按各区各类型学校来留样计划各状态数据统计（level）
+    val arealevelretentionstatus = new RetentionTotalStat().arealevelstatus(retentionDealData,date,schoolData)
+    //按管理部门留样计划各状态数据统计
+    val departmentretentionstatus = new RetentionTotalStat().departmentstatus(retentionDealData,date,schoolData)
 
     //各区留样计划各状态按照学校数据统计(对学校进行去重处理)
-    val reSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-area")).map(_._2)
-    new RetentionTotalStat().arearetentionschoolstatus(retentionchildData,date,reSchoolStatusData)
+    val arearetentionschooltotal = new RetentionSchoolTotalStat().areatotal(retentionchildData,date)
+    //按所属教育局留样计划各状态按照学校数据统计(对学校进行去重处理)
+    val masteridretentionschooltotal = new RetentionSchoolTotalStat().masteridtotal(retentionchildData,date,schoolData,commiteeid2commiteename)
+    //按上海市办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val natureretentionschooltotal = new RetentionSchoolTotalStat().naturetotal(retentionchildData,date,schoolData)
+    //按各区办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val areanatureretentionschooltotal = new RetentionSchoolTotalStat().areanaturetotal(retentionchildData,date,schoolData)
+    //按上海市各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val levelretentionschooltotal = new RetentionSchoolTotalStat().leveltotal(retentionchildData,date,schoolData)
+    //按各区各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val arealevelretentionschooltotal = new RetentionSchoolTotalStat().arealeveltotal(retentionchildData,date,schoolData)
+    //按管理部门留样计划各状态数据统计 (对学校进行去重处理）
+    val shdepartmentretentionschooltotal = new RetentionSchoolTotalStat().shanghaidepartmenttotal(retentionchildData,date,schoolData)
 
-    //按照权限各区留样计划各状态按照学校数据统计(对学校进行去重处理)
-    new RetentionTotalStat().departmentarearetentionschoolstatus(retentionchildData,date,schoolData)
+    //各区留样操作规则数据统计
+    val arearetentionruletotal = new RetentionRuleTotalStat().areatotal(retentionDealData,date)
+    //按所属教育部留样操作规则数据统计
+    val masteridretentionruletotal = new RetentionRuleTotalStat().masteridtotal(retentionDealData,date,schoolData,commiteeid2commiteename)
+    //按上海市办学性质来留样操作规则各状态数据统计（nature）
+    val natureretentionrulestatus = new RetentionRuleTotalStat().naturestatus(retentionDealData,date,schoolData)
+    //按上海市各类型学校来留样操作规则数据统计（level）
+    val levelretentionrulestatus = new RetentionRuleTotalStat().levelstatus(retentionDealData,date,schoolData)
+    //按管理部门留样计划操作规则统计
+    val departmentretentionrulestatus = new RetentionRuleTotalStat().departmentstatus(retentionDealData,date,schoolData)
 
     //各区留样规则各状态按照学校数据统计(对学校进行去重处理)
-    val reSchoolRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-school-area")).map(_._2)
-    new RetentionTotalStat().arearetentionschoolrulestatus(retentionchildData,date,reSchoolRuleStatusData)
+    val arearetentionschoolruletotal = new RetentionRuleSchoolTotalStat().areatotal(retentionchildData,date)
+    //按所属教育局留样计划各操作规则按照学校数据统计(对学校进行去重处理)
+    val masteridretentionschoolruletotal = new RetentionRuleSchoolTotalStat().masteridtotal(retentionchildData,date,schoolData,commiteeid2commiteename)
+    //按上海市办学性质来留样操作规则按照学校数据统计（nature,对学校进行去重处理）
+    val natureretentionschoolruletotal = new RetentionRuleSchoolTotalStat().naturetotal(retentionchildData,date,schoolData)
+    //按上海市各类型学校来留样操作规则按照学校数据统计（level,对学校进行去重处理）
+    val levelretentionschoolruletotal = new RetentionRuleSchoolTotalStat().leveltotal(retentionchildData,date,schoolData)
+    //按管理部门留样操作规则统计数据统计 (对学校进行去重处理）
+    val shdepartmentretentionschoolruletotal = new RetentionRuleSchoolTotalStat().shanghaidepartmenttotal(retentionchildData,date,schoolData)
+
+
+    //按照管理权限各区留样计划统计数据
+    val dparearetentiontotal = new RetentionTotalStat().departmentareatotal(retentionDealData,date,schoolData)
+    //按照权限各区留样计划各状态数据统计
+    val dparearetentionstatustotal = new RetentionTotalStat().departmentareastatustotal(retentionDealData,date,schoolData)
+    //按照权限的所属留样计划各状态数据统计
+    val dpmasteridretentiontotal = new RetentionTotalStat().departmentmasteridtotal(retentionDealData,date,schoolData,commiteeid2commiteename)
+    //按权限上海市办学性质来留样计划各状态数据统计（nature）
+    val dpnatureretentionstatus = new RetentionTotalStat().departmentnaturestatus(retentionDealData,date,schoolData)
+    //权限各区办学性质来留样计划各状态数据统计（nature）
+    val dpareanatureretentionstatus = new RetentionTotalStat().departmentareanaturestatus(retentionDealData,date,schoolData)
+    //按权限上海市各类型学校来留样计划各状态数据统计（level）
+    val dplevelretentionstatus = new RetentionTotalStat().departmentlevelstatus(retentionDealData,date,schoolData)
+    //按权限各区各类型学校来留样计划各状态数据统计（level）
+    val dparealevelretentionstatus = new RetentionTotalStat().departmentarealevelstatus(retentionDealData,date,schoolData)
+    //按权限管理部门留样计划各状态数据统计
+    val dpdepartmentretentionstatus = new RetentionTotalStat().departmentdepartmentstatus(retentionDealData,date,schoolData)
+
+    //按照权限各区留样计划各状态按照学校数据统计(对学校进行去重处理)
+    val dparearetentionschooltotal = new RetentionSchoolTotalStat().departmentareatotal(retentionchildData,date,schoolData)
+    //按权限所属教育局留样计划各状态按照学校数据统计(对学校进行去重处理)
+    val dpmasteridretentionschooltotal = new RetentionSchoolTotalStat().departmentmasteridtotal(retentionchildData,date,schoolData,commiteeid2commiteename)
+    //按权限上海市办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val dpnatureretentionschooltotal = new RetentionSchoolTotalStat().departmentnaturetotal(retentionchildData,date,schoolData)
+    //按权限各区办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
+    val dpareanatureretentionschooltotal = new RetentionSchoolTotalStat().departmentareanaturetotal(retentionchildData,date,schoolData)
+    //按权限上海市各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val dplevelretentionschooltotal = new RetentionSchoolTotalStat().departmentleveltotal(retentionchildData,date,schoolData)
+    //按权限各区各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
+    val dparealevelretentionschooltotal = new RetentionSchoolTotalStat().departmentarealeveltotal(retentionchildData,date,schoolData)
+    //按权限管理部门留样计划各状态数据统计 (对学校进行去重处理）
+    val dpdepartmentretentionschooltotal = new RetentionSchoolTotalStat().departmentdepartmenttotal(retentionchildData,date,schoolData)
+
+    //按照权限的各区留样操作规则数据统计
+    val dparearetentionruletotal = new RetentionRuleTotalStat().departmentareatotal(retentionDealData,date,schoolData)
+    //按权限所属教育部留样操作规则数据统计
+    val dpmasteridretentionruletotal = new RetentionRuleTotalStat().departmentmasteridtotal(retentionDealData,date,schoolData,commiteeid2commiteename)
+    //按权限上海市办学性质来留样操作规则各状态数据统计（nature）
+    val dpnatureretentionrulestatus = new RetentionRuleTotalStat().departmentnaturestatus(retentionDealData,date,schoolData)
+    //按权限上海市各类型学校来留样操作规则数据统计（level）
+    val dplevelretentionrulestatus = new RetentionRuleTotalStat().departmentlevelstatus(retentionDealData,date,schoolData)
+    //按权限管理部门留样计划操作规则统计
+    val dpdepartmentretentionrulestatus = new RetentionRuleTotalStat().departmentdepartmentstatus(retentionDealData,date,schoolData)
 
     //按照权限各区留样规则各状态按照学校数据统计(对学校进行去重处理)
-    new RetentionTotalStat().departmentarearetentionschoolrulestatus(retentionchildData,date,schoolData)
-
-    //按所属教育部留样计划各状态数据统计
-    val reMasteridStatusData = retentiondealtotaldata.filter(x => x._1.equals("masterid")).map(_._2)
-    new RetentionTotalStat().masteridretentiontotal(retentionDealData,date,reMasteridStatusData,schoolData,commiteeid2commiteename)
-
-    //按照权限的所属留样计划各状态数据统计
-    new RetentionTotalStat().departmentmasteridretentiontotal(retentionDealData,date,schoolData,commiteeid2commiteename)
-
-    //按所属教育部留样操作规则数据统计
-    val reMasteridRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-masterid")).map(_._2)
-    new RetentionTotalStat().masteridretentionruletotal(retentionDealData,date,reMasteridRuleStatusData,schoolData,commiteeid2commiteename)
-
-    //按权限所属教育部留样操作规则数据统计
-    new RetentionTotalStat().departmentmasteridretentionruletotal(retentionDealData,date,schoolData,commiteeid2commiteename)
-
-    //按所属教育局留样计划各状态按照学校数据统计(对学校进行去重处理)
-    val reMasteridSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-masterid")).map(_._2)
-    new RetentionTotalStat().masteridretentionschoolstatus(retentionchildData,date,reMasteridSchoolStatusData,schoolData,commiteeid2commiteename)
-
-    //按权限所属教育局留样计划各状态按照学校数据统计(对学校进行去重处理)
-    new RetentionTotalStat().departmentmasteridretentionschoolstatus(retentionchildData,date,schoolData,commiteeid2commiteename)
-
-    //按所属教育局留样计划各操作规则按照学校数据统计(对学校进行去重处理)
-    val reMasteridSchoolRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-school-masterid")).map(_._2)
-    new RetentionTotalStat().masteridretentionschoolrulestatus(retentionchildData,date,reMasteridSchoolRuleStatusData,schoolData,commiteeid2commiteename)
-
+    val dparearetentionschoolruletotal = new RetentionRuleSchoolTotalStat().departmentareatotal(retentionchildData,date,schoolData)
     //按权限所属教育局留样计划各操作规则按照学校数据统计(对学校进行去重处理)
-    new RetentionTotalStat().departmentmasteridretentionschoolrulestatus(retentionchildData,date,schoolData,commiteeid2commiteename)
-
-    //按上海市办学性质来留样计划各状态数据统计（nature）
-    val reNatureStatusData = retentiondealtotaldata.filter(x => x._1.equals("nature")).map(_._2)
-    new RetentionTotalStat().natureretentionstatus(retentionDealData,date,reNatureStatusData,schoolData)
-
-    //按权限上海市办学性质来留样计划各状态数据统计（nature）
-    new RetentionTotalStat().departmentnatureretentionstatus(retentionDealData,date,schoolData)
-
-    //按上海市办学性质来留样操作规则各状态数据统计（nature）
-    val reNatureRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-nature")).map(_._2)
-    new RetentionTotalStat().natureretentionrulestatus(retentionDealData,date,reNatureRuleStatusData,schoolData)
-
-    //按权限上海市办学性质来留样操作规则各状态数据统计（nature）
-    new RetentionTotalStat().departmentnatureretentionrulestatus(retentionDealData,date,schoolData)
-
-    //各区办学性质来留样计划各状态数据统计（nature）
-    val areareNatureStatusData = retentiondealtotaldata.filter(x => x._1.equals("nat-area")).map(_._2)
-    new RetentionTotalStat().areanatureretentionstatus(retentionDealData,date,areareNatureStatusData,schoolData)
-
-    //权限各区办学性质来留样计划各状态数据统计（nature）
-    new RetentionTotalStat().departmentareanatureretentionstatus(retentionDealData,date,schoolData)
-
-    //按上海市办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    val reNatureSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-nature")).map(_._2)
-    new RetentionTotalStat().natureretentionschoolstatus(retentionchildData,date,reNatureSchoolStatusData,schoolData)
-
-    //按权限上海市办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    new RetentionTotalStat().departmentnatureretentionschoolstatus(retentionchildData,date,schoolData)
-
-    //按上海市办学性质来留样操作规则按照学校数据统计（nature,对学校进行去重处理）
-    val reNatureSchoolRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-school-nature")).map(_._2)
-    new RetentionTotalStat().natureretentionschoolrulestatus(retentionchildData,date,reNatureSchoolRuleStatusData,schoolData)
-
+    val dpmasteridretentionschoolruletotal = new RetentionRuleSchoolTotalStat().departmentmasteridtotal(retentionchildData,date,schoolData,commiteeid2commiteename)
     //按权限上海市办学性质来留样操作规则按照学校数据统计（nature,对学校进行去重处理）
-    new RetentionTotalStat().departmentnatureretentionschoolrulestatus(retentionchildData,date,schoolData)
-
-    //按各区办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    val areareNatureSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-nat-area")).map(_._2)
-    new RetentionTotalStat().areanatureretentionschoolstatus(retentionchildData,date,areareNatureSchoolStatusData,schoolData)
-
-    //按权限各区办学性质来留样计划各状态按照学校数据统计（nature,对学校进行去重处理）
-    new RetentionTotalStat().departmentreanatureretentionschoolstatus(retentionchildData,date,schoolData)
-
-
-    //按上海市各类型学校来留样计划各状态数据统计（level）
-    val reLevelStatusData = retentiondealtotaldata.filter(x => x._1.equals("level")).map(_._2)
-    new RetentionTotalStat().levelreretentionstatus(retentionDealData,date,reLevelStatusData,schoolData)
-
-    //按权限上海市各类型学校来留样计划各状态数据统计（level）
-    new RetentionTotalStat().departmentlevelreretentionstatus(retentionDealData,date,schoolData)
-
-    //按上海市各类型学校来留样操作规则数据统计（level）
-    val reLevelRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-level")).map(_._2)
-    new RetentionTotalStat().levelreretentionrulestatus(retentionDealData,date,reLevelRuleStatusData,schoolData)
-
-    //按权限上海市各类型学校来留样操作规则数据统计（level）
-    new RetentionTotalStat().departmentlevelreretentionrulestatus(retentionDealData,date,schoolData)
-
-    //按各区各类型学校来留样计划各状态数据统计（level）
-    val areareLevelStatusData = retentiondealtotaldata.filter(x => x._1.equals("lev-area")).map(_._2)
-    new RetentionTotalStat().arealevelreretentionstatus(retentionDealData,date,areareLevelStatusData,schoolData)
-
-    //按权限各区各类型学校来留样计划各状态数据统计（level）
-    new RetentionTotalStat().departmentarealevelreretentionstatus(retentionDealData,date,schoolData)
-
-    //按上海市各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
-    val reLevelSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-level")).map(_._2)
-    new RetentionTotalStat().levelreretentionschoolstatus(retentionchildData,date,reLevelSchoolStatusData,schoolData)
-
-    //按权限上海市各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
-    new RetentionTotalStat().departmentlevelreretentionschoolstatus(retentionchildData,date,schoolData)
-
-    //按上海市各类型学校来留样操作规则按照学校数据统计（level,对学校进行去重处理）
-    val reLevelSchoolRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-school-level")).map(_._2)
-    new RetentionTotalStat().levelreretentionschoolrulestatus(retentionchildData,date,reLevelSchoolRuleStatusData,schoolData)
-
+    val dpnatureretentionschoolruletotal = new RetentionRuleSchoolTotalStat().departmentnaturetotal(retentionchildData,date,schoolData)
     //按权限上海市各类型学校来留样操作规则按照学校数据统计（level,对学校进行去重处理）
-    new RetentionTotalStat().departmentlevelreretentionschoolrulestatus(retentionchildData,date,schoolData)
-
-    //按各区各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
-    val areareLevelSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-lev-area")).map(_._2)
-    new RetentionTotalStat().arealevelreretentionschoolstatus(retentionchildData,date,areareLevelSchoolStatusData,schoolData)
-
-    //按权限各区各类型学校来留样计划各状态按照学校数据统计（level,对学校进行去重处理）
-    new RetentionTotalStat().departmentareanatureretentionschoolstatus(retentionchildData,date,schoolData)
-
-
-    //按管理部门留样计划各状态数据统计
-    val departmentStatusData = retentiondealtotaldata.filter(x => x._1.equals("department")).map(_._2)
-    new RetentionTotalStat().departmentstatus(retentionDealData,date,departmentStatusData,schoolData)
-
-    //按权限管理部门留样计划各状态数据统计
-    new RetentionTotalStat().departmentdepartmentstatus(retentionDealData,date,schoolData)
-
-    //按管理部门留样计划操作规则统计
-    val departmentRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-department")).map(_._2)
-    new RetentionTotalStat().departmentrulestatus(retentionDealData,date,departmentRuleStatusData,schoolData)
-
-    //按权限管理部门留样计划操作规则统计
-    new RetentionTotalStat().departmentdepartmentrulestatus(retentionDealData,date,schoolData)
-
-    //按管理部门留样计划各状态数据统计 (对学校进行去重处理）
-    val departmentSchoolStatusData = retentiondealtotaldata.filter(x => x._1.equals("school-department")).map(_._2)
-    new RetentionTotalStat().departmentschoolstatus(retentionchildData,date,departmentSchoolStatusData,schoolData)
-
-    //按权限管理部门留样计划各状态数据统计 (对学校进行去重处理）
-    new RetentionTotalStat().departmentdepartmentschoolstatus(retentionchildData,date,schoolData)
-
-    //按管理部门留样操作规则统计数据统计 (对学校进行去重处理）
-    val departmentSchoolRuleStatusData = retentiondealtotaldata.filter(x => x._1.equals("re-school-department")).map(_._2)
-    new RetentionTotalStat().departmentschoolrulestatus(retentionchildData,date,departmentSchoolRuleStatusData,schoolData)
-
+    val dplevelretentionschoolruletotal = new RetentionRuleSchoolTotalStat().departmentleveltotal(retentionchildData,date,schoolData)
     //按权限管理部门留样操作规则统计数据统计 (对学校进行去重处理）
-    new RetentionTotalStat().departmentdepartmentschoolrulestatus(retentionchildData,date,schoolData)
+    val dpdepartmentretentionschoolruletotal = new RetentionRuleSchoolTotalStat().departmentdepartmenttotal(retentionchildData,date,schoolData)
+
+    areausematerialtotal
+      .union(areausematerialstatustotal)
+      .union(masteridusematerialtotal)
+      .union(natureusematerialstatus)
+      .union(areanatureusematerialstatus)
+      .union(levelusematerialstatus)
+      .union(arealevelusematerialstatus)
+      .union(departmentusematerialstatus)
+      .union(areausematerialschooltotal)
+      .union(masteridusematerialschooltotal)
+      .union(natureusematerialschooltotal)
+      .union(areanatureusematerialschooltotal)
+      .union(levelusematerialschooltotal)
+      .union(arealevelusematerialschooltotal)
+      .union(shanghaidepartmentusematerialschooltotal).cogroup(useMaterialTotalData).foreachPartition({
+      itr =>
+        val jedis = JPools.getJedis
+        itr.foreach({
+          case (k, v) =>
+            //表示左边没有，右边有
+            if (v._1.size == 0) {
+              jedis.hset(date + "_useMaterialPlanTotal", k, "0")
+            } else {
+              jedis.hset(date + "_useMaterialPlanTotal", k, v._1.head.toString)
+            }
+
+        })
+    })
+
+    areadistributiontotal
+      .union(areadistributionstatustotal)
+      .union(masteriddistributiontotal)
+      .union(naturedistributionstatus)
+      .union(areanaturedistributionstatus)
+      .union(leveldistributionstatus)
+      .union(arealeveldistributionstatus)
+      .union(departmentdistributionstatus)
+      .union(areaschooldistributiontotal)
+      .union(masteridschooldistributiontotal)
+      .union(natureschooldistributiontotal)
+      .union(areanatureschooldistributiontotal)
+      .union(canteenschooldistributiontotal)
+      .union(levelschooldistributiontotal)
+      .union(arealevelschooldistributiontotal)
+      .union(shdepartmentdistributiontotal)
+      .union(areadistributionruletotal)
+      .union(naturedistributionrulestatus)
+      .union(leveldistributionrulestatus)
+      .union(masteriddistributionruletotal)
+      .union(departmentdistributionrulestatus)
+      .union(areadistributionschoolruletotal)
+      .union(naturedistributionschoolruletotal)
+      .union(leveldistributionschoolruletotal)
+      .union(masteriddistributionschoolruletotal)
+      .union(shdepartmentdistributionschoolruletotal).cogroup(distributionTotalData).foreachPartition({
+      itr =>
+        val jedis = JPools.getJedis
+        itr.foreach({
+          case (k, v) =>
+            //表示左边没有，右边有
+            if (v._1.size == 0) {
+              jedis.hset(date + "_DistributionTotal", k, "0")
+            } else {
+              jedis.hset(date + "_DistributionTotal", k, v._1.head.toString)
+            }
+
+        })
+    })
+
+    arearetentiontotal
+      .union(arearetentionstatustotal)
+      .union(masteridretentiontotal)
+      .union(natureretentionstatus)
+      .union(areanatureretentionstatus)
+      .union(levelretentionstatus)
+      .union(arealevelretentionstatus)
+      .union(departmentretentionstatus)
+      .union(arearetentionschooltotal)
+      .union(masteridretentionschooltotal)
+      .union(natureretentionschooltotal)
+      .union(areanatureretentionschooltotal)
+      .union(levelretentionschooltotal)
+      .union(arealevelretentionschooltotal)
+      .union(shdepartmentretentionschooltotal)
+      .union(arearetentionruletotal)
+      .union(masteridretentionruletotal)
+      .union(natureretentionrulestatus)
+      .union(levelretentionrulestatus)
+      .union(departmentretentionrulestatus)
+      .union(arearetentionschoolruletotal)
+      .union(masteridretentionschoolruletotal)
+      .union(natureretentionschoolruletotal)
+      .union(levelretentionschoolruletotal)
+      .union(shdepartmentretentionschoolruletotal).cogroup(retentionTotalData).foreachPartition({
+      itr =>
+        val jedis = JPools.getJedis
+        itr.foreach({
+          case (k, v) =>
+            //表示左边没有，右边有
+            if (v._1.size == 0) {
+              jedis.hset(date + "_gc-retentiondishtotal", k, "0")
+            } else {
+              jedis.hset(date + "_gc-retentiondishtotal", k, v._1.head.toString)
+            }
+
+        })
+    })
+
+    val departmentid = Tools.departmentid(session)
+    for (i <- 0 until departmentid.size) {
+      val id = departmentid(i)
+      val jedis = JPools.getJedis
+      val departmentUseMaterialPlanTotal = sc.parallelize(jedis.hgetAll(date + "_useMaterialPlanTotal" + "_" + "department" + "_" + id).asScala.toList)
+      val departmentDistributionPlanTotal = sc.parallelize(jedis.hgetAll(date + "_DistributionTotal" + "_" + "department" + "_" + id).asScala.toList)
+      val departmentRetentionPlanTotal = sc.parallelize(jedis.hgetAll(date + "_gc-retentiondishtotal" + "_" + "department" + "_" + id).asScala.toList)
+
+      dpareatotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3))
+        .union(dpareastatustotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteridtotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnaturestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareanatureusematerialstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dplevelstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparealevelstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareausematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteridusematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnatureusematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareanatureusematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dplevelusematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparealevelusematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpshanghaidepartmentusematerialschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .cogroup(departmentUseMaterialPlanTotal).foreachPartition({
+        itr =>
+          val jedis = JPools.getJedis
+          itr.foreach({
+            case (k, v) =>
+              //表示左边没有，右边有
+              if (v._1.size == 0) {
+                jedis.hset(date + "_useMaterialPlanTotal"+ "_" + "department" + "_" + id, k, "0")
+              } else {
+                jedis.hset(date + "_useMaterialPlanTotal"+ "_" + "department" + "_" + id, k, v._1.head.toString)
+              }
+
+          })
+      })
+
+
+      dpareadistributiontotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3))
+        .union(dpareadistributionstatustotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteriddistributiontotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnaturedistributionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpleveldistributionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentdistributionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareadistributionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteriddistributionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnaturedistributionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpcanteendistributionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpleveldistributionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentdistributionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareadistributionruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnaturedistributionrulestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpleveldistributionrulestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteriddistributionruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentdistributionrulestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareadistributionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnaturedistributionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpleveldistributionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteriddistributionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentdistributionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .cogroup(departmentDistributionPlanTotal).foreachPartition({
+        itr =>
+          val jedis = JPools.getJedis
+          itr.foreach({
+            case (k, v) =>
+              //表示左边没有，右边有
+              if (v._1.size == 0) {
+                jedis.hset(date + "_DistributionTotal"+ "_" + "department" + "_" + id, k, "0")
+              } else {
+                jedis.hset(date + "_DistributionTotal"+ "_" + "department" + "_" + id, k, v._1.head.toString)
+              }
+
+          })
+      })
+
+
+      dparearetentiontotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3))
+        .union(dparearetentionstatustotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteridretentiontotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnatureretentionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareanatureretentionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dplevelretentionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparealevelretentionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentretentionstatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparearetentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteridretentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnatureretentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpareanatureretentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dplevelretentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparealevelretentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentretentionschooltotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparearetentionruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteridretentionruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnatureretentionrulestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dplevelretentionrulestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentretentionrulestatus.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dparearetentionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpmasteridretentionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpnatureretentionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dplevelretentionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .union(dpdepartmentretentionschoolruletotal.filter(x => x._1.equals(id)).map(x => (x._2,x._3)))
+        .cogroup(departmentRetentionPlanTotal).foreachPartition({
+        itr =>
+          val jedis = JPools.getJedis
+          itr.foreach({
+            case (k, v) =>
+              //表示左边没有，右边有
+              if (v._1.size == 0) {
+                jedis.hset(date + "_gc-retentiondishtotal"+ "_" + "department" + "_" + id, k, "0")
+              } else {
+                jedis.hset(date + "_gc-retentiondishtotal"+ "_" + "department" + "_" + id, k, v._1.head.toString)
+              }
+
+          })
+      })
+
+    }
+
 
     val platoon_feed = jedis.hgetAll(date + "_platoon-feed")
     val plaData = sc.parallelize(platoon_feed.asScala.toList) //redis中存
@@ -569,7 +616,6 @@ object TargetTotal {
     val eduAllData = sc.parallelize(edu_all.asScala.toList) //redis中存的所有维度的数据
 
     new EduAllDataStat().platoonmaterialdetailresert(plaData,useMaterialChildData,distributionchildData,retentionchildData,schoolData,eduAllData,date,commiteeid2commiteeid,schoolid2suppliername)
-
 
 
     sc.stop()

@@ -26,10 +26,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 object WeekToExcelDepartment {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
-  private val format1 = FastDateFormat.getInstance("yyyy")
-  private val format2 = FastDateFormat.getInstance("yyyyMMddHHmmss")
-  private val format3 = FastDateFormat.getInstance("M")
-  private val format4 = FastDateFormat.getInstance("yyyyMMdd")
 
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
@@ -48,28 +44,28 @@ object WeekToExcelDepartment {
 
     val departmentidToName: Broadcast[Map[String, String]] = sc.broadcast(Tools.departmentidToName(sparkSession))
 
-    val calendar = Calendar.getInstance()
-    calendar.setTime(new Date())
-    calendar.add(Calendar.DAY_OF_MONTH, -7)
-    val time = calendar.getTime
-    val date = format.format(time)
-    val year = format1.format(time)
-    val month = format3.format(time)
-    val datetime = format4.format(time)
+    //"yyyy-MM-dd"格式的周一的时间
+    val date = Rule.timeToStamp("yyyy-MM-dd",-7) //format.format(time)
+    //"yyyy"格式的周一的时间的年
+    val year = Rule.timeToStamp("yyyy",-7) //format1.format(time)
+    //"M"格式的周一的时间的月
+    val month = Rule.timeToStamp("M",-7) //format3.format(time)
+    //"yyyyMMdd"格式的周一的时间
+    val datetime = Rule.timeToStamp("yyyyMMdd",-7) //format4.format(time)
 
-    val calendar1 = Calendar.getInstance()
-    calendar1.setTime(new Date())
-    calendar1.add(Calendar.DAY_OF_MONTH, -1)
-    val time1 = calendar1.getTime
-    val datetime1 = format4.format(time1)
-    val datetime2 = format.format(time1)
+     //"yyyyMMdd"格式的周日的时间
+    val datetime1 = Rule.timeToStamp("yyyyMMdd",-1) //format4.format(time1)
+    //"yyyy-MM-dd"格式的周日的时间
+    val datetime2 = Rule.timeToStamp("yyyy-MM-dd",-1) //format.format(time1)
 
-    val calendar2 = Calendar.getInstance()
-    calendar2.setTime(new Date())
-    calendar2.add(Calendar.DAY_OF_MONTH, 0)
-    val time2 = calendar2.getTime
-    val date2 = format.format(time2)
-    val date3 = format4.format(time2)
+//    val calendar2 = Calendar.getInstance()
+//    calendar2.setTime(new Date())
+//    calendar2.add(Calendar.DAY_OF_MONTH, 0)
+//    val time2 = calendar2.getTime
+    //"yyyy-MM-dd"格式的今天的时间
+    val date2 = Rule.timeToStamp("yyyy-MM-dd",0) //format.format(time2)
+    //"yyyyMMdd"格式的今天的时间
+    val date3 = Rule.timeToStamp("yyyyMMdd",0) //format4.format(time2)
 
     val departmentid = Tools.departmentid(sparkSession)
     for (i <- 0 until departmentid.size) {
@@ -162,7 +158,7 @@ object WeekToExcelDepartment {
       val workbook = new HSSFWorkbook()
 
       val sheet = workbook.createSheet("全区汇总情况")
-      new ShanghaiWeekReport().areatotal(sheet, edu_platoon_detail, workbook, ledgerData, date, datetime2, licenseWarnData, date2)
+      new ShanghaiWeekReport().areatotal(sheet, edu_platoon_detail, workbook, ledgerData, date, datetime2, licenseWarnData, date2,year)
 
       //全区排菜统计
       val sheet1 = workbook.createSheet("全区排菜统计")

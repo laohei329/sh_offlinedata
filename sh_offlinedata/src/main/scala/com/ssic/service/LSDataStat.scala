@@ -6,15 +6,31 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 
 class LSDataStat extends LSDataFunc {
-  override def materialtotaltoredis(data: (HiveContext, String, String, String, RDD[(String, String)])): Unit = {
-    data._1.sql(s"select area,name,sum(actual_quantity) as actual_quantity,wares_type_name from app_saas_v1.app_t_edu_ledege_total where year='${data._3}' and month='${data._4}' and use_date='${data._2}' group by area,name,wares_type_name").rdd.map({
+
+  /**
+
+    * * 将原料排名数据放入到redis中
+
+    * * @param hiveContext HiveContext
+
+    * * @param date 时间
+
+    * * @param year 年
+
+    * * @param month 月
+
+    * * @param materialData 已存在的原料排名表数据
+
+    */
+  override def materialtotaltoredis(hiveContext:HiveContext,date:String,year:String,month:String,materialData:RDD[(String, String)]): Unit = {
+    hiveContext.sql(s"select area,name,sum(actual_quantity) as actual_quantity,wares_type_name from app_saas_v1.app_t_edu_ledege_total where year='${year}' and month='${month}' and use_date='${date}' group by area,name,wares_type_name").rdd.map({
       row =>
         val area = row.getAs[String]("area")
         val name = row.getAs[String]("name")
         val actual_quantity = row.getAs[java.math.BigDecimal]("actual_quantity")
         val wares_type_name = row.getAs[String]("wares_type_name")
         ("area" + "_" + area + "_" + "name" + "_" + name + "_" + "warestype" + "_" + wares_type_name, actual_quantity)
-    }).cogroup(data._5)
+    }).cogroup(materialData)
       .foreachPartition({
         itr =>
           val jedis = JPools.getJedis
@@ -22,20 +38,35 @@ class LSDataStat extends LSDataFunc {
             case (k, v) =>
               //表示左边没有，右边有
               if (v._1.size == 0) {
-                jedis.hset(data._2.split(" ")(0) + "_material_new", k, "0")
-                jedis.expire(data._2.split(" ")(0) + "_material_new",345600)
+                jedis.hset(date.split(" ")(0) + "_material_new", k, "0")
+                jedis.expire(date.split(" ")(0) + "_material_new",345600)
               } else {
-                jedis.hset(data._2.split(" ")(0) + "_material_new", k, v._1.head.toString)
-                jedis.expire(data._2.split(" ")(0) + "_material_new",345600)
+                jedis.hset(date.split(" ")(0) + "_material_new", k, v._1.head.toString)
+                jedis.expire(date.split(" ")(0) + "_material_new",345600)
               }
 
           })
       })
   }
 
-  override def dishtotaltoredis(data: (HiveContext, String, String, String, RDD[(String, String)])): Unit = {
+  /**
 
-    data._1.sql(s"select area,dishes_name,category,sum(dishes_number) as number from app_saas_v1.app_t_edu_dish_total where year='${data._3}' and month='${data._4}' and supply_date='${data._2}' group by area,dishes_name,category").rdd.map({
+    * * 将菜品排名数据放入到redis中
+
+    * * @param hiveContext HiveContext
+
+    * * @param date 时间
+
+    * * @param year 年
+
+    * * @param month 月
+
+    * * @param dishData 已存在的菜品排名数据
+
+    */
+  override def dishtotaltoredis(hiveContext:HiveContext,date:String,year:String,month:String,dishData:RDD[(String, String)]): Unit = {
+
+    hiveContext.sql(s"select area,dishes_name,category,sum(dishes_number) as number from app_saas_v1.app_t_edu_dish_total where year='${year}' and month='${month}' and supply_date='${date}' group by area,dishes_name,category").rdd.map({
       row =>
         val area = row.getAs[String]("area")
         val name = row.getAs[String]("dishes_name")
@@ -43,7 +74,7 @@ class LSDataStat extends LSDataFunc {
         val number = row.getAs[Long]("number")
 
         ("area" + "_" + area + "_" + "name" + "_" + name + "_" + "category" + "_" + category, number)
-    }).cogroup(data._5)
+    }).cogroup(dishData)
       .foreachPartition({
         itr =>
           val jedis = JPools.getJedis
@@ -51,20 +82,34 @@ class LSDataStat extends LSDataFunc {
             case (k, v) =>
               //表示左边没有，右边有
               if (v._1.size == 0) {
-                jedis.hset(data._2.split(" ")(0) + "_dish_new", k, "0")
-                jedis.expire(data._2.split(" ")(0) + "_dish_new",345600)
+                jedis.hset(date.split(" ")(0) + "_dish_new", k, "0")
+                jedis.expire(date.split(" ")(0) + "_dish_new",345600)
               } else {
-                jedis.hset(data._2.split(" ")(0) + "_dish_new", k, v._1.head.toString)
-                jedis.expire(data._2.split(" ")(0) + "_dish_new",345600)
+                jedis.hset(date.split(" ")(0) + "_dish_new", k, v._1.head.toString)
+                jedis.expire(date.split(" ")(0) + "_dish_new",345600)
               }
 
           })
       })
   }
+  /**
 
-  override def supplynametotaltoredis(data: (HiveContext, String, String, String, RDD[(String, String)])): Unit = {
+    * * 将供应商供应学校排名的统计数据放入到redis中
 
-    data._1.sql(s"select count(*) as total,a.supply_name,a.area from (select distinct(school_id),school_name,supply_name,area from app_saas_v1.app_t_edu_ledege_detail where year ='${data._3}' and month ='${data._4}' and use_date='${data._2}' and school_name is not null and school_id is not null)as a group by a.supply_name,a.area").rdd.map({
+    * * @param hiveContext HiveContext
+
+    * * @param date 时间
+
+    * * @param year 年
+
+    * * @param month 月
+
+    * * @param supplierToSchoolData 已存在的供应商供应学校排名的统计数据
+
+    */
+  override def supplynametotaltoredis(hiveContext:HiveContext,date:String,year:String,month:String,supplierToSchoolData:RDD[(String, String)]): Unit = {
+
+    hiveContext.sql(s"select count(*) as total,a.supply_name,a.area from (select distinct(school_id),school_name,supply_name,area from app_saas_v1.app_t_edu_ledege_detail where year ='${year}' and month ='${month}' and use_date='${date}' and school_name is not null and school_id is not null)as a group by a.supply_name,a.area").rdd.map({
       row =>
         val area = row.getAs[String]("area")
         val name = row.getAs[String]("supply_name")
@@ -72,7 +117,7 @@ class LSDataStat extends LSDataFunc {
 
         ("area" + "_" + area + "_" + name, total)
 
-    }).cogroup(data._5)
+    }).cogroup(supplierToSchoolData)
       .foreachPartition({
         itr =>
           val jedis = JPools.getJedis
@@ -80,11 +125,11 @@ class LSDataStat extends LSDataFunc {
             case (k, v) =>
               //表示左边没有，右边有
               if (v._1.size == 0) {
-                jedis.hset(data._2.split(" ")(0) + "_supplierToSchool_new", k, "0")
-                jedis.expire(data._2.split(" ")(0) + "_supplierToSchool_new",345600)
+                jedis.hset(date.split(" ")(0) + "_supplierToSchool_new", k, "0")
+                jedis.expire(date.split(" ")(0) + "_supplierToSchool_new",345600)
               } else {
-                jedis.hset(data._2.split(" ")(0) + "_supplierToSchool_new", k, v._1.head.toString)
-                jedis.expire(data._2.split(" ")(0) + "_supplierToSchool_new",345600)
+                jedis.hset(date.split(" ")(0) + "_supplierToSchool_new", k, v._1.head.toString)
+                jedis.expire(date.split(" ")(0) + "_supplierToSchool_new",345600)
               }
 
           })

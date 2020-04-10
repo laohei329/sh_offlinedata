@@ -6,6 +6,7 @@ import java.util.Date
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.slf4j.LoggerFactory
@@ -17,9 +18,10 @@ object NoDistribution {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
   private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("今日验收对学校去重子页面验收状态数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

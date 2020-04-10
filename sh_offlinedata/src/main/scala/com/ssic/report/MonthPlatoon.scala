@@ -27,7 +27,7 @@ object MonthPlatoon {
 
   def main(args: Array[String]): Unit = {
 
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("前一个月的排菜详情数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

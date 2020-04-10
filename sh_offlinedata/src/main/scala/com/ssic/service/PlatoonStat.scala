@@ -1,8 +1,6 @@
 package com.ssic.service
 
 import java.util.Calendar
-
-import com.ssic.impl.PlatoonFunc
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
@@ -11,28 +9,40 @@ import org.apache.spark.sql.SparkSession
 
 import scala.collection.mutable
 
-class PlatoonStat extends PlatoonFunc{
+class PlatoonStat {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
+  /**
 
-  override def platoredis(data: (SparkSession, RDD[(String, String)],String, Broadcast[Map[String, Int]], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, String]],String,mutable.Set[String])): Unit = {
+    * * 排菜，供餐数据到redis
 
-    val session = data._1
-    val plaData = data._2
-    val date = data._3
-    val holiday = data._4
-    val calen = data._5
-    val schoolTerm = data._6
-    val schoolTermSys = data._7
-    val year = data._8
-    val platoondata = data._9
+    * * @param SparkSession
+
+    * * @param plaData redis已存在的排菜数据
+
+    * * @param date 时间
+
+    * * @param holiday 当天是否是假期
+
+    * * @param calen 供餐表是否有数据，对应的学校id是否供餐
+
+    * * @param schoolTerm 查询学校的学期设置是否是有效的
+
+    * * @param schoolTermSys 查询当天是否在系统学期设置内
+
+    * * @param term_year 学年
+
+    * * @param platoondata 排菜表的key
+
+    */
+  def platoredis(sparkSession:SparkSession, plaData:RDD[(String, String)],date:String, holiday:Broadcast[Map[String, Int]], calen:Broadcast[Map[String, String]], schoolTerm:Broadcast[Map[String, String]], schoolTermSys:Broadcast[Map[String, String]],term_year:String,platoondata:mutable.Set[String]): Unit = {
 
     val week = format.parse(date)
     val calendar = Calendar.getInstance()
     calendar.setTime(week)
     val d = calendar.get(Calendar.DAY_OF_WEEK) - 1
 
-    Tools.schoolid((session,date)).cogroup(plaData).foreachPartition({
+    Tools.schoolid((sparkSession,date)).cogroup(plaData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
@@ -57,7 +67,7 @@ class PlatoonStat extends PlatoonFunc{
               //val haveClass = calen.value.getOrElse(v._1.head, -1)
 
               val schoolTermData = schoolTerm.value.getOrElse(v._1.head, "null")   //学期设置信息表
-              val schoolTermSysData = schoolTermSys.value.getOrElse(year, "null") //系统学期信息表
+              val schoolTermSysData = schoolTermSys.value.getOrElse(term_year, "null") //系统学期信息表
 
               if(haveClass == 0){
                 //供餐表有数据，就参考供餐表数据，不供餐

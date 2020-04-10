@@ -23,7 +23,7 @@ object LSData {
   private val format2 = FastDateFormat.getInstance("M")
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("排名数据从hive移到redis中")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

@@ -1,10 +1,21 @@
 package com.ssic.utils
 
+import java.util.Calendar
+
+import com.ssic.report.DayToExcelDepartment.format
 import org.apache.commons.lang3._
+import org.apache.commons.lang3.time.FastDateFormat
 
 
 object Rule {
 
+  /**
+
+    * * string转换为int
+
+    * * @param  String 数据
+
+    */
   def emptyToInt(x: String): Int = {
     var lastData = 0
     if (StringUtils.isNoneEmpty(x) && !x.equals("null")) {
@@ -14,6 +25,13 @@ object Rule {
     }
   }
 
+  /**
+
+    * * null数据转换为""
+
+    * * @param x: String 数据
+
+    */
   def nullToEmpty(x: String): String = {
     var lastData = ""
     if (StringUtils.isNoneEmpty(x) && !x.equals("null")) {
@@ -22,6 +40,13 @@ object Rule {
       lastData
     }
   }
+  /**
+
+    * * 空数据转换为null
+
+    * * @param String 数据
+
+    */
 
   def emptyToNull(x: String): String = {
     var lastData = "null"
@@ -32,6 +57,13 @@ object Rule {
     }
   }
 
+  /**
+
+    * * 学制映射
+
+    * * @param String 数据
+
+    */
   def levelToName(x: String): String = {
     var level_name = "null_null"
     if ("0".equals(x)) {
@@ -73,6 +105,26 @@ object Rule {
     }  else {
       level_name
     }
+  }
+
+  /**
+
+    * * 日期格式化
+
+    * * @param timeStampType 日期格式
+
+    * * @param day 与当前日期相差天数
+
+    */
+
+  def timeToStamp(timeStampType:String,day:Int):String={
+
+    val format = FastDateFormat.getInstance(timeStampType)
+    val calendar = Calendar.getInstance()
+    calendar.add(Calendar.DAY_OF_MONTH, day)
+    val time = calendar.getTime
+    val date = format.format(time)
+    return date
   }
 
 }

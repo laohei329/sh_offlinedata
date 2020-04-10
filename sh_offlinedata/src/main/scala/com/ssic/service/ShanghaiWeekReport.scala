@@ -120,7 +120,7 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
   }
 
 
-  override def shangtotal(data: (HSSFSheet, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], HSSFWorkbook, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], String, String, RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)],String)): Unit = {
+  override def shangtotal(data: (HSSFSheet, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], HSSFWorkbook, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], String, String, RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)],String,String)): Unit = {
 
     data._1.setColumnWidth(0, 2500)
     data._1.setColumnWidth(1, 5000)
@@ -198,7 +198,7 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
     val cellRangeAddress = new CellRangeAddress(0, 0, 0, 11)
     data._1.addMergedRegion(cellRangeAddress)
     val cell = row.createCell(0)
-    cell.setCellValue("2019年食安管理平台使用、验收及证照逾期处理情况")
+    cell.setCellValue(data._9+"年食安管理平台使用、验收及证照逾期处理情况")
     cell.setCellStyle(style1)
 
     val row1 = data._1.createRow(1)
@@ -1123,7 +1123,7 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
     }
   }
 
-  override def areatotal(data: (HSSFSheet, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], HSSFWorkbook, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], String, String, RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)], String)): Unit = {
+  override def areatotal(data: (HSSFSheet, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], HSSFWorkbook, RDD[(String, String, String, String, String, String, String, Int, Int, Int)], String, String, RDD[(String, String, String, String, String, String, String, Integer, String, String, Int, String, Integer, String, String, String)], String,String)): Unit = {
     data._1.setColumnWidth(0, 2500)
     data._1.setColumnWidth(1, 5000)
     data._1.setColumnWidth(2, 3500)
@@ -1196,7 +1196,7 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
     val cellRangeAddress = new CellRangeAddress(0, 0, 0, 11)
     data._1.addMergedRegion(cellRangeAddress)
     val cell = row.createCell(0)
-    cell.setCellValue("2019年食安管理平台使用、验收及证照逾期处理情况")
+    cell.setCellValue(data._9+"年食安管理平台使用、验收及证照逾期处理情况")
     cell.setCellStyle(style1)
 
     val row1 = data._1.createRow(1)

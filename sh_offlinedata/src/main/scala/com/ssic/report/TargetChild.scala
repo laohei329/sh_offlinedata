@@ -9,9 +9,11 @@ import com.ssic.utils.Tools.{conn, edu_school, edu_school_supplier, url}
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
@@ -21,9 +23,11 @@ object TargetChild {
     * 用料，配送，留样的子页面
     */
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
+  private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("今日用料，验收，留样对学校去重子页面数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

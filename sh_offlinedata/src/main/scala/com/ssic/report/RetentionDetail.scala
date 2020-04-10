@@ -2,13 +2,14 @@ package com.ssic.report
 
 import java.util.Date
 
-import com.ssic.report.TargetDetail.format
 import com.ssic.utils.JPools
 import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
@@ -19,6 +20,8 @@ import scala.collection.JavaConverters._
 
 object RetentionDetail {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
+  private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
@@ -52,7 +55,7 @@ object RetentionDetail {
       .map({
         x =>
           //69fea856-532c-4c03-b57b-100ad4193367_a36490e5-765f-4500-8983-1ac375f385cd
-        // packageid_614c4a87-b675-4ba8-829b-933e88b6f791_createtime_2019-11-22 08:08:12_creator_admin_quantity_250_remark_null_groupname_中大班_catertypename_午点_dishesname_清肺罗汉果茶_reservedata_2019-11-22 00:00:00 14:00:00_reservestatus_1_consistent_1_cremark_null
+          // packageid_614c4a87-b675-4ba8-829b-933e88b6f791_createtime_2019-11-22 08:08:12_creator_admin_quantity_250_remark_null_groupname_中大班_catertypename_午点_dishesname_清肺罗汉果茶_reservedata_2019-11-22 00:00:00 14:00:00_reservestatus_1_consistent_1_cremark_null
 
           val sampleid = x._1
           val dishid = x._3.split("_")(1)

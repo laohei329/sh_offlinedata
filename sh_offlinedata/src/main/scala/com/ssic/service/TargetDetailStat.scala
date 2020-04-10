@@ -6,42 +6,64 @@ import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 
 class TargetDetailStat extends TargetDetailFunc {
+  /**
 
-  override def usematerial(data: (RDD[(String, String, String, String, String, String)], RDD[(String, String)], String)): Unit = {
+    * * 用料计划的详情数据
 
-    data._1.map(x => (x._4, x._3)).cogroup(data._2).foreachPartition({
+    * * @param usematerialDealData 处理好的用料计划数据
+
+    * * @param useMaterialData 用料计划已经存在的数据
+
+    * * @param date 时间
+
+
+    */
+  override def usematerial(usematerialDealData:RDD[(String, String, String, String, String, String, String)],useMaterialData: RDD[(String, String)], date:String): Unit = {
+
+    usematerialDealData.map(x => (x._4, x._3)).cogroup(useMaterialData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
           case (k, v) =>
             //表示左边没有，右边有
             if (v._1.size == 0) {
-              jedis.hdel(data._3 + "_useMaterialPlan-Detail", k)
+              jedis.hdel(date + "_useMaterialPlan-Detail", k)
             } else {
-              jedis.hset(data._3 + "_useMaterialPlan-Detail", k, v._1.head)
+              jedis.hset(date + "_useMaterialPlan-Detail", k, v._1.head)
             }
         })
     })
   }
+  /**
 
-  override def distribution(data: (RDD[(String, String, String, String, String, String, String)], RDD[(String, String)], String)): Unit = {
+    * * 配送计划的详情数据
 
-    data._1.map(x => (((x._5.split("_")(11),x._5.split("_")(5)),(x._3.split("_")(0),x._5,x._3)))).groupByKey().mapValues(x => x.toList.sortBy(x => x._1 ).reverse(0)).map({
+    * * @param distributiondealdata 处理好的配送计划数据
+
+    * * @param distributionData 配送计划已经存在的数据
+
+    * * @param date 时间
+
+
+    */
+  override def distribution(distributiondealdata:RDD[(String, String,String,String,String,String,String)], distributionData:RDD[(String, String)], date:String): Unit = {
+
+    distributiondealdata.map(x => (((x._5.split("_")(11),x._5.split("_")(5)),(x._3.split("_")(0),x._5,x._3)))).groupByKey().mapValues(x => x.toList.sortBy(x => x._1 ).reverse(0)).map({
       x =>
 
         (x._2._2,x._2._3)
     })
     //data._1.map(x => (x._5, x._3))
-      .cogroup(data._2).foreachPartition({
+      .cogroup(distributionData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
           case (k, v) =>
             //表示左边没有，右边有
             if (v._1.size == 0) {
-              jedis.hdel(data._3 + "_Distribution-Detail", k)
+              jedis.hdel(date + "_Distribution-Detail", k)
             } else {
-              jedis.hset(data._3 + "_Distribution-Detail", k, v._1.head)
+              jedis.hset(date + "_Distribution-Detail", k, v._1.head)
             }
         })
     })
@@ -106,10 +128,28 @@ class TargetDetailStat extends TargetDetailFunc {
         })
     })
   }
+  /**
 
-  override def todayretentiondish(data: (RDD[(String, String, String, String, String, String, String, String)], RDD[(String, String)], String, Broadcast[Map[String, String]], RDD[(String, String)], RDD[(String, String)], Broadcast[Map[String, String]])): Unit = {
+    * * 当天的菜品留样的详情数据
+
+    * * @param dishmenu hive数据库的菜品数据
+
+    * * @param retentiondishData 留样计划临时表数据
+
+    * * @param date 时间
+
+    * * @param gongcanSchool 供餐学校数据
+
+    * * @param gcretentiondishData 留样计划已经存在的数据
+
+    * * @param todaydishmenuData 当天排菜菜品临时表数据
+
+    * * @param school2Area 学校id获取学校区号
+
+    */
+  override def todayretentiondish(dishmenu:RDD[(String, String, String, String, String, String, String, String)],retentiondishData:RDD[(String, String)],date:String,gongcanSchool:Broadcast[Map[String, String]],gcretentiondishData:RDD[(String, String)],todaydishmenuData:RDD[(String, String)],school2Area:Broadcast[Map[String, String]]): Unit = {
     //当天排菜的redis的排菜数据
-    val todaydishmenu = data._6.map({
+    val todaydishmenu = todaydishmenuData.map({
       x =>
         val package_id = x._1.split("_")(0)
         //supplierid_32ecf6e6-9177-44d7-bfa2-b8bb000797a6_schoolid_afbb82e0-a7ae-40fe-81fb-9559e61e9e5a_groupname_国内班_dishesname_达能夹心饼干_dishesnumber_396_catertypename_早点_ledgertype_1
@@ -119,15 +159,15 @@ class TargetDetailStat extends TargetDetailFunc {
         val dishesnumber = x._2.split("_")(9)
         val groupname = x._2.split("_")(5)
         val schoolid = x._2.split("_")(3)
-        val area = data._7.value.getOrElse(schoolid, "null")
+        val area = school2Area.value.getOrElse(schoolid, "null")
         (package_id + "_" + groupname + "_catertypename_" + catertypename + "_dishesname_" + dishesname, package_id + "area" + "_" + area + "_" + "supplierid" + "_" + supplierid + "_" + "schoolid" + "_" + schoolid + "_" + "groupname" + "_" + groupname + "_" + "dishesname" + "_" + dishesname + "_" + "dishesnumber" + "_" + dishesnumber + "_" + "catertypename" + "_" + catertypename)
     })
 
 
     //对数仓存在的当天的菜品数据进行处理，过滤掉不供餐的数据
-    val dishmenu = data._1.map({
+    val dishmenus = dishmenu.map({
       x =>
-        val value = data._4.value.getOrElse(x._3 + "_" + x._2, "null")
+        val value =gongcanSchool.value.getOrElse(x._3 + "_" + x._2, "null")
         val dishesname = x._5.replaceAll("_","")
         (x._1, x._2, x._3, x._4, dishesname, x._6, x._7, x._8, value)
     }).filter(x => !x._9.equals("null")).filter(x => !x._5.equals("null")).filter(x => !x._9.split("_")(0).equals("不供餐")).map({
@@ -137,7 +177,7 @@ class TargetDetailStat extends TargetDetailFunc {
     }).union(todaydishmenu)
 
     //对留样临时表的留样数据进行处理，因为留样时间是新加上的
-    val retentiondishDa = data._2.map({
+    val retentiondishDa = retentiondishData.map({
       x =>
         val id = x._2.split("_")(1)
         (id + "_" + x._2.split("groupname_")(1).split("_reservedata")(0), x._2)
@@ -148,7 +188,7 @@ class TargetDetailStat extends TargetDetailFunc {
 //        }
     })
 
-    dishmenu.leftOuterJoin(retentiondishDa).map(x => (x._1, x._2._1, x._2._2.getOrElse("null"))).map({
+    dishmenus.leftOuterJoin(retentiondishDa).map(x => (x._1, x._2._1, x._2._2.getOrElse("null"))).map({
       x =>
         if ("null".equals(x._3)) {
 
@@ -156,7 +196,7 @@ class TargetDetailStat extends TargetDetailFunc {
 
         } else {
 
-          val reserveStatus = new RuleStatusStat().reservestatus((data._3,x._3.split("createtime_")(1).split("_")(0)))
+          val reserveStatus = new RuleStatusStat().reservestatus((date,x._3.split("createtime_")(1).split("_")(0)))
 
           if (x._3.contains("reservedata").equals(true)) {
             (x._1, "area" + x._2.split("area")(1) + "_" + "已留样" + "_createtime_" + x._3.split("createtime_")(1).split("_")(0) + "_" + "creator" + "_" + x._3.split("createtime_")(1).split("_")(2) + "_" + "quantity" + "_" + x._3.split("createtime_")(1).split("_")(4) + "_" + "remark" + "_" + x._3.split("createtime_")(1).split("_")(6) + "_" + "reservedata_" + x._3.split("reservedata_")(1))
@@ -171,16 +211,16 @@ class TargetDetailStat extends TargetDetailFunc {
           }
         }
 
-    }).cogroup(data._5).foreachPartition({
+    }).cogroup(gcretentiondishData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
           case (k, v) =>
             //表示左边没有，右边有
             if (v._1.size == 0) {
-              jedis.hdel(data._3 + "_gc-retentiondish", k)
+              jedis.hdel(date + "_gc-retentiondish", k)
             } else {
-              jedis.hset(data._3 + "_gc-retentiondish", k, v._1.head)
+              jedis.hset(date + "_gc-retentiondish", k, v._1.head)
             }
         })
     })

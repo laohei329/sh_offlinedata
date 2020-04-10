@@ -7,8 +7,15 @@ import org.apache.spark.rdd.RDD
 
 class DealDataStat extends DealDataFunc {
 
-  override def platoontotal(data: RDD[(String, String)]): RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))] = {
-    val platoontotaldata: RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))] = data.map({
+  /**
+
+    * * 对排菜的统计数据进行分类处理
+
+    * * @param platoonTotal 已存在的排菜表的统计数据
+
+    */
+  override def platoontotal(platoonTotal: RDD[(String, String)]): RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))] = {
+    val platoontotaldata: RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))] = platoonTotal.map({
       x =>
         val v = x._1.split("_")
         if (v.size == 3) {
@@ -46,25 +53,49 @@ class DealDataStat extends DealDataFunc {
     platoontotaldata
 
   }
+  /**
 
-  override def usematerialdealdata(data: (RDD[(String, String)], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, String]], Broadcast[Map[String, String]])): RDD[(String, String, String, String, String, String)] = {
+    * * 对用料计划的详情数据进行数据处理
 
-    val useMaterialData = data._1.map({
+    * * @param useMaterialPlanDetailData 已存在的排菜表的统计数据
+
+    * * @param projid2schoolid 项目点id获取学校id
+
+    * * @param projid2schoolname 项目点id获取学校名字
+
+    * * @param gongcanSchool 供餐学校数据
+
+    * * @param projid2Area 项目点id获取学校区号
+
+    * * @return  RDD[(String, String, String, String, String, String, String)] (区号，供餐，状态，key，学校名字，学校id,valuedata)
+
+    */
+  override def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]]): RDD[(String, String, String, String, String, String, String)] = {
+
+    val useMaterialData = useMaterialPlanDetailData.map({
       x =>
 
         val projid = x._1.split("_projid_")(1).split("_")(0)
-        val area = data._5.value.getOrElse(projid, "null")
-        val schoolid = data._2.value.getOrElse(projid, "null")
-        val schoolname = data._3.value.getOrElse(projid, "null")
+        val area = projid2Area.value.getOrElse(projid, "null")
+        val schoolid = projid2schoolid.value.getOrElse(projid, "null")
+        val schoolname = projid2schoolname.value.getOrElse(projid, "null")
         val status = x._2
         val key = "area" + "_" + area + "_" + "type" + x._1.split("name")(0).split("type")(1) + "name" + "_" + schoolname + "_" + "projid" + x._1.split("projid")(1)
-        val gongcan = data._4.value.getOrElse(area + "_" + schoolid, "null")
+        val gongcan=gongcanSchool.value.getOrElse(area + "_" + schoolid,"null")
+        val valuedata="null"
 
-        (area, gongcan, status, key, schoolname, schoolid)
+        (area, gongcan, status, key, schoolname, schoolid,valuedata)
     }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐")).filter(x => !x._5.equals("null")).filter(x => !x._6.equals("null"))
 
     useMaterialData
   }
+  /**
+
+    * * 对用料的统计数据进行数据处理
+
+    * * @param data 已存在的用料计划统计数据
+
+    */
 
   override def usematerialdealtotaldata(data: RDD[(String, String)]) = {
     val useNaterialDa = data.filter(x => x._1.size > 7).map({
@@ -106,14 +137,30 @@ class DealDataStat extends DealDataFunc {
     useNaterialDa
   }
 
-  override def distributiondealdata(data: (RDD[(String, String)], Broadcast[Map[String, String]], Broadcast[Map[String, String]], String)): RDD[(String, String, String, String, String, String, String)] = {
-    val distribution = data._1.map({
+  /**
+
+    * * 对配送计划的详情数据进行数据处理
+
+    * * @param distributionDetailData 配送计划临时表数据
+
+    * * @param gongcanSchool 供餐学校数据
+
+    * * @param school2Area 学校id获取学校区号
+
+    * * @param date 时间
+
+    * * @param RDD[(String, String, String, String, String, String, String)]  （区号，供餐，处理后的value，学校id，key，状态，规范状态）
+
+
+    */
+  override def distributiondealdata(distributionDetailData:RDD[(String, String)],gongcanSchool:Broadcast[Map[String, String]],school2Area:Broadcast[Map[String, String]],date:String): RDD[(String, String, String, String, String, String, String)] = {
+    val distribution = distributionDetailData.map({
       x =>
 
         val schoolid = x._1.split("_schoolid_")(1).split("_")(0)
-        val area = data._3.value.getOrElse(schoolid, "null")
+        val area = school2Area.value.getOrElse(schoolid, "null")
         //x._1.split("_area_")(1).split("_")(0)
-        val value = data._2.value.getOrElse(area + "_" + schoolid, "null")
+        val gongcan = gongcanSchool.value.getOrElse(area + "_" + schoolid, "null")
 
         var status = "null"
         var valuedata = "null"
@@ -137,7 +184,7 @@ class DealDataStat extends DealDataFunc {
               disstatus = "4"
             } else {
               val deliveryDate = x._2.split("_")(2)
-              disstatus = new RuleStatusStat().distributionstatus(data._4, deliveryDate).toString
+              disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
               valuedata = x._2.split("_disstatus_")(0) + "_disstatus_" + disstatus + "_purchaseDate" + x._2.split("_purchaseDate")(1)
               status = x._2.split("_")(0)
             }
@@ -150,7 +197,7 @@ class DealDataStat extends DealDataFunc {
           } else {
 
             val deliveryDate = x._2.split("_")(2)
-            disstatus = new RuleStatusStat().distributionstatus(data._4, deliveryDate).toString
+            disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
             valuedata = x._2 + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
             status = x._2.split("_")(0)
           }
@@ -158,13 +205,19 @@ class DealDataStat extends DealDataFunc {
 
         val key = x._1.split("area")(0) + "area" + "_" + area + "_" + "sourceid" + x._1.split("sourceid")(1)
 
-        (area, value, valuedata, schoolid, key, status, disstatus)
+        (area, gongcan, valuedata, schoolid, key, status, disstatus)
     }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐"))
 
     distribution
   }
+  /**
 
-  override def distributiondealtotaldata(data: RDD[(String, String)]) = {
+    * * 对配送的统计数据进行数据处理
+
+    * * @param data 已存在的配送计划统计数据
+
+    */
+  override def distributiondealtotaldata(data: RDD[(String, String)]):RDD[(String,(String, String))] = {
 
     val disTotal = data.filter(x => x._1.size > 7).map({
       x =>
@@ -226,8 +279,17 @@ class DealDataStat extends DealDataFunc {
     })
     disTotal
   }
+  /**
 
-  override def retentiondealdata(data: RDD[(String, String)]) = {
+    * * 留样计划处理后的数据
+
+    * * @param data 已存在的留样计划数据
+
+    * * @return RDD[(String, String,String,String,String,String,String)] (区号，留样，学校id，留样规范状态，创建时间，key,valuedata)
+
+
+    */
+  override def retentiondealdata(data: RDD[(String, String)]): RDD[(String, String,String,String,String,String,String)] = {
 
     val retentoinData = data.map({
       x =>
@@ -236,13 +298,23 @@ class DealDataStat extends DealDataFunc {
         val schoolid = x._2.split("_")(5)
         val reservestatus = x._2.split("_")(26)
         val createtime = x._2.split("_")(16)
-        (area, liuyang, schoolid,reservestatus,createtime)
+        val key="null"
+        val valuedata="null"
+        (area, liuyang, schoolid,reservestatus,createtime,key,valuedata)
     })
 
     retentoinData
   }
 
-  override def retentiondealtotaldata(data: RDD[(String, String)]) = {
+  /**
+
+    * * 处理好的留样计划统计数据
+
+    * * @param data 已存在的留样计划统计数据
+
+
+    */
+  override def retentiondealtotaldata(data: RDD[(String, String)]):RDD[(String,(String, String))] = {
 
     val redishDa = data.map({
       x =>
@@ -311,7 +383,7 @@ class DealDataStat extends DealDataFunc {
 
   }
 
-  override def shanghaitotal(data: RDD[(String, String)]) = {
+  override def shanghaitotal(data: RDD[(String, String)]):RDD[(String,(String, String))] = {
     data.map({
       x =>
         if("shanghai".equals(x._1)){
@@ -347,7 +419,7 @@ class DealDataStat extends DealDataFunc {
     })
   }
 
-  override def warntotal(data: RDD[(String, String)]) = {
+  override def warntotal(data: RDD[(String, String)]):RDD[(String,(String, String))] = {
     data.map({
       x =>
         if ("year".equals(x._1)) {

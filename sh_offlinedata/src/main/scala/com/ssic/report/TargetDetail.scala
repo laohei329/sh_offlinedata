@@ -6,11 +6,13 @@ import com.ssic.service.{DealDataStat, TargetDetailStat}
 import com.ssic.utils.{JPools, Tools}
 import com.ssic.utils.Tools._
 import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
@@ -22,8 +24,11 @@ object TargetDetail {
   private val format1 = FastDateFormat.getInstance("yyyy")
   private val format2 = FastDateFormat.getInstance("M")
 
+  private val logger = LoggerFactory.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
+
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("今日用料，验收，留样详情数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 
@@ -84,9 +89,8 @@ object TargetDetail {
 
     new TargetDetailStat().distribution(distributiondealdata,distributionData,date)
 
-    //菜品留样的详情数据
+    //当天的菜品留样的详情数据
     new TargetDetailStat().todayretentiondish(dishmenu,retentiondishData,date,gongcanSchool,gcretentiondishData,todaydishmenuData,school2Area)
-
 
     sc.stop()
   }

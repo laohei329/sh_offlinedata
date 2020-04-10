@@ -7,9 +7,23 @@ import org.apache.spark.rdd.RDD
 
 class TargetChildStat extends TargetChildFunc {
 
-  override def usematerialchild(data: (RDD[(String, String)], RDD[(String, List[String])], String, RDD[(String, String)])): Unit = {
+  /**
 
-    val allSchoolUse = data._1.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(data._2).map({
+    * * 用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
+
+    * * @param platoonData 学校的供餐数据
+
+    * * @param useValue 用料计划的子页面数据
+
+    * * @param date 时间
+
+    * * @param useMaterialChildData 已存在的用料计划子页面数据
+
+    */
+
+  override def usematerialchild(platoonData:RDD[(String, String)],useValue:RDD[(String, List[String])],date:String,useMaterialChildData:RDD[(String, String)]): Unit = {
+
+    val allSchoolUse = platoonData.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(useValue).map({
       x =>
         val usmaterialList = x._2._2.getOrElse(List("null"))
         if ("null".equals(usmaterialList(0))) {
@@ -29,7 +43,7 @@ class TargetChildStat extends TargetChildFunc {
     val allSchoolUseStatusTotal = allSchoolUse.map((_, 1)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
 
     allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).map(x => (x._1, (x._2._1, x._2._2.getOrElse("null", -1)))).filter(x => x._2._2._2 != -1)
-      .cogroup(data._4).foreachPartition({
+      .cogroup(useMaterialChildData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
@@ -37,29 +51,29 @@ class TargetChildStat extends TargetChildFunc {
             //表示左边没有，右边有
             if (v._1.size == 0) {
 
-              jedis.hdel(data._3 + "_useMaterialPlanTotal_child", k)
+              jedis.hdel(date + "_useMaterialPlanTotal_child", k)
 
             } else {
 
               if ("-1".equals(v._1.head._2._1)) {
                 //该学校没有用料计划
-                jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + "0" + "_" + "usematerial" + "_" + "0" + "_" + "nousematerial" + "_" + "0" + "_" + "status" + "_" + "1")
+                jedis.hset(date + "_useMaterialPlanTotal_child", k, "total" + "_" + "0" + "_" + "usematerial" + "_" + "0" + "_" + "nousematerial" + "_" + "0" + "_" + "status" + "_" + "1")
 
               } else {
                 //该学校有用料计划
                 if ("1".equals(v._1.head._2._1)) {
                   if (v._1.head._2._2 != 0) {
-                    jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "nousematerial" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "1")
+                    jedis.hset(date + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "nousematerial" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "1")
 
                   } else {
-                    jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "nousematerial" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "2")
+                    jedis.hset(date + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "nousematerial" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "2")
                   }
 
                 } else {
                   if ((v._1.head._1 - v._1.head._2._2) != 0) {
-                    jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + v._1.head._2._2 + "_" + "nousematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "1")
+                    jedis.hset(date + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + v._1.head._2._2 + "_" + "nousematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "1")
                   } else {
-                    jedis.hset(data._3 + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + v._1.head._2._2 + "_" + "nousematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "2")
+                    jedis.hset(date + "_useMaterialPlanTotal_child", k, "total" + "_" + v._1.head._1 + "_" + "usematerial" + "_" + v._1.head._2._2 + "_" + "nousematerial" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "2")
                   }
 
                 }
@@ -68,9 +82,21 @@ class TargetChildStat extends TargetChildFunc {
         })
     })
   }
+  /**
 
-  override def distributionchild(data: (RDD[(String, String)], RDD[(String, String)], String, RDD[(String, String)])): Unit = {
-    val allSchoolUse = data._1.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(data._2).map({
+    * * 配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
+
+    * * @param platoonData 学校的供餐数据
+
+    * * @param disValue 配送计划的子页面数据
+
+    * * @param date 时间
+
+    * * @param distributionChildData 已存在的配送计划子页面数据
+
+    */
+  override def distributionchild(platoonData:RDD[(String, String)],disValue:RDD[(String, String)],date:String,distributionChildData:RDD[(String, String)]): Unit = {
+    val allSchoolUse = platoonData.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(disValue).map({
       x =>
         val distributionList = x._2._2.getOrElse("null")
 
@@ -106,36 +132,36 @@ class TargetChildStat extends TargetChildFunc {
           val jedis = JPools.getJedis
           itr.foreach({
             case (k, v) =>
-              val value = jedis.hget(data._3 + "_DistributionTotal_child", k)
+              val value = jedis.hget(date + "_DistributionTotal_child", k)
               if (StringUtils.isNoneEmpty(value) && !value.equals("null")) {
 
                 if ("3".equals(v._2._1)) {
 
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + v._2._2 + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + v._2._2 + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
 
                 } else if ("2".equals(v._2._1)) {
                   //待验收
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("_")(0) + "_" + "assign" + "_" + (value.split("accept_")(1).split("_")(0).toInt + v._2._2) + "_" + "shipp" + "_" + (value.split("accept_")(1).split("_")(0).toInt + v._2._2) + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("_")(0) + "_" + "assign" + "_" + (value.split("accept_")(1).split("_")(0).toInt + v._2._2) + "_" + "shipp" + "_" + (value.split("accept_")(1).split("_")(0).toInt + v._2._2) + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 }
                 else if ("0".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("_")(0) + "_" + "assign" + "_" + (value.split("shipp_")(1).split("_")(0).toInt + v._2._2) + "_" + "shipp" + "_" + value.split("shipp_")(1).split("_")(0) + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("_")(0) + "_" + "assign" + "_" + (value.split("shipp_")(1).split("_")(0).toInt + v._2._2) + "_" + "shipp" + "_" + value.split("shipp_")(1).split("_")(0) + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 } else if ("-1".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("status")(0) + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("status")(0) + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 } else if ("-3".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + "0" + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + "-1" + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + "0" + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + "-1" + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 }
               } else {
                 if ("3".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + v._2._2 + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + v._2._2 + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
 
                 } else if ("2".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 } else if ("0".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 } else if ("-1".equals(v._2._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + "0" + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + "0" + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 } else if ("-3".equals(v._1)) {
-                  jedis.hset(data._3 + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + "0" + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + "-1" + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
+                  jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + "0" + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + "0" + "_" + "shipp" + "_" + "0" + "_" + "status" + "_" + "-1" + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 }
               }
           })
@@ -192,12 +218,24 @@ class TargetChildStat extends TargetChildFunc {
     //    })
 
   }
+  /**
 
-  override def retentionchild(data: (RDD[(String, String)], RDD[(String, String, String, String, String)], String, RDD[(String, String)])): Unit = {
+    * * 留样计划的子页面，没有产生留样计划的学校也要放入到子页面中
+
+    * * @param platoonData 学校的供餐数据
+
+    * * @param reValue 留样计划处理后的数据
+
+    * * @param date 时间
+
+    * * @param retentionChildData 已存在的留样计划子页面数据
+
+    */
+  override def retentionchild(platoonData:RDD[(String, String)],reValue:RDD[(String, String,String,String,String,String,String)], date:String,retentionChildData:RDD[(String, String)]): Unit = {
 
     //(area, liuyang, schoolid,reservestatus)
-    val retentionData = data._2.map(x => (x._1 + "_" + x._3, x._2 + "_" + x._4+ "_" + x._5))
-    val allSchoolUse = data._1.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(retentionData).map({
+    val retentionData = reValue.map(x => (x._1 + "_" + x._3, x._2 + "_" + x._4+ "_" + x._5))
+    val allSchoolUse = platoonData.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(retentionData).map({
       x =>
         val distributionList = x._2._2.getOrElse("null")
         if ("null".equals(distributionList)) {
@@ -222,7 +260,7 @@ class TargetChildStat extends TargetChildFunc {
     retenTotal.leftOuterJoin(retenstatdata).leftOuterJoin(retendealstatusdata).leftOuterJoin(retencreatetimedata).map(x => (x._1, (x._2._1._1._1, x._2._1._1._2.getOrElse(("null", -1)), x._2._1._2.getOrElse("null"), x._2._2.getOrElse("-1")))).filter(x => x._2._2._2 != -1).filter(x => !"null".equals(x._2._3)).filter(x => !"-1".equals(x._2._4))
       //.map(x => (x._1, (x._2._1._1, x._2._1._2.getOrElse(("null", -1)), x._2._2.getOrElse("null")))).filter(x => x._2._2._2 != -1).filter(x => !"null".equals(x._2._3))
       .map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), x._2))
-      .cogroup(data._4).foreachPartition({
+      .cogroup(retentionChildData).foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({
@@ -230,27 +268,27 @@ class TargetChildStat extends TargetChildFunc {
             //表示左边没有，右边有
             if (v._1.size == 0) {
 
-              jedis.hdel(data._3 + "_gc-retentiondishtotal_child", k)
+              jedis.hdel(date + "_gc-retentiondishtotal_child", k)
 
             } else {
 
               if ("-1".equals(v._1.head._2._1)) {
                 //该学校没有留样计划
-                jedis.hset(data._3 + "_gc-retentiondishtotal_child", k, "total" + "_" + "0" + "_" + "reserve" + "_" + "0" + "_" + "noreserve" + "_" + "0" + "_" + "status" + "_" + "0" + "_" + "reservestatus" + "_" + "4"+ "_" + "createtime" + "_" + "null")
+                jedis.hset(date + "_gc-retentiondishtotal_child", k, "total" + "_" + "0" + "_" + "reserve" + "_" + "0" + "_" + "noreserve" + "_" + "0" + "_" + "status" + "_" + "0" + "_" + "reservestatus" + "_" + "4"+ "_" + "createtime" + "_" + "null")
               } else {
                 //该学校有留样计划
                 if ("0".equals(v._1.head._2._1)) {
                   if (v._1.head._2._2 != 0) {
-                    jedis.hset(data._3 + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "noreserve" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "0" + "_" + "reservestatus" + "_" + "4"+ "_" + "createtime" + "_" + "null")
+                    jedis.hset(date + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "noreserve" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "0" + "_" + "reservestatus" + "_" + "4"+ "_" + "createtime" + "_" + "null")
                   } else {
-                    jedis.hset(data._3 + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "noreserve" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "1" + "_" + "reservestatus" + "_" +v._1.head._3+ "_" + "createtime" + "_" + v._1.head._4)
+                    jedis.hset(date + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "noreserve" + "_" + v._1.head._2._2 + "_" + "status" + "_" + "1" + "_" + "reservestatus" + "_" +v._1.head._3+ "_" + "createtime" + "_" + v._1.head._4)
                   }
 
                 } else {
                   if ((v._1.head._1 - v._1.head._2._2) != 0) {
-                    jedis.hset(data._3 + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + v._1.head._2._2 + "_" + "noreserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "0" + "_" + "reservestatus" + "_" + "4"+ "_" + "createtime" + "_" + "null")
+                    jedis.hset(date + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + v._1.head._2._2 + "_" + "noreserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "0" + "_" + "reservestatus" + "_" + "4"+ "_" + "createtime" + "_" + "null")
                   } else {
-                    jedis.hset(data._3 + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + v._1.head._2._2 + "_" + "noreserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "1" + "_" + "reservestatus" + "_" +v._1.head._3+ "_" + "createtime" + "_" + v._1.head._4)
+                    jedis.hset(date + "_gc-retentiondishtotal_child", k, "total" + "_" + v._1.head._1 + "_" + "reserve" + "_" + v._1.head._2._2 + "_" + "noreserve" + "_" + (v._1.head._1 - v._1.head._2._2) + "_" + "status" + "_" + "1" + "_" + "reservestatus" + "_" +v._1.head._3+ "_" + "createtime" + "_" + v._1.head._4)
                   }
 
                 }

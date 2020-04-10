@@ -1,134 +1,110 @@
 package com.ssic.service
 
-import com.ssic.impl.DistributionTotalFunc
-import com.ssic.utils.JPools
+import com.ssic.impl.TargetTotalFuc
 import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 
-class DistributionTotalStat extends DistributionTotalFunc {
-
-  override def areadistributionltotal(data: (RDD[(String, String, String, String, String, String,String)], String)): Unit = {
-    data._1.map(x => (x._1, 1)).reduceByKey(_ + _).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          x =>
-            jedis.hset(data._2 + "_DistributionTotal", "area_" + x._1, x._2.toString)
-        })
-    })
+class DistributionTotalStat extends TargetTotalFuc {
+  /**
+    *
+    * * 各区配送计划总数据统计
+    *
+    * * @param targetData 处理好的配送计划数据
+    *
+    * * @param date 时间
+    *
+    * * @return RDD[(String, String)]  (area_2,1)
+    *
+    */
+  override def areatotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String): RDD[(String, String)] = {
+    targetData.map(x => (x._1, 1)).reduceByKey(_ + _).map(x => ("area_" + x._1, x._2.toString))
   }
 
-  override def departmentareadistributionltotal(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
+  /**
+    *
+    * * 按照权限的各区配送计划总数据统计
+    *
+    * * @param targetData 处理好的配送计划数据
+    *
+    * * @param date 时间
+    *
+    * * @param schoolData 学校基础数据
+    *
+    * * @return RDD[(String, String, String)]  (管理部门id,area_2,1)
+    *
+    */
+  override def departmentareatotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = {
+    targetData.map({
       x =>
         val area = x._1
         val school_id = x._4
-        val department = data._3.value.getOrElse(school_id, List("null"))(9)
-        ((department,area),1)
-    }).reduceByKey(_+_).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          x =>
-            jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1._1, "area_" + x._1._2, x._2.toString)
-            jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1._1, 604800)
-        })
-    })
+        val department = schoolData.value.getOrElse(school_id, List("null"))(9)
+        ((department, area), 1)
+    }).reduceByKey(_ + _).map(x => (x._1._1, "area_" + x._1._2, x._2.toString))
   }
 
-  override def areadistributionstatustotal(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)])): Unit = {
-    data._1.map(x => ((x._1, x._6), 1)).reduceByKey(_ + _).map(x => ("area_" + x._1._1 + "_status_" + x._1._2, x._2)).cogroup(data._3)
-      .filter(x => x._1.size > 7).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
+  /**
+    *
+    * * 各区配送计划各状态数据统计
+    *
+    * * @param targetData 处理好的配送计划数据
+    *
+    * * @param date 时间
+    *
+    * * @return RDD[(String, String)]  (area_3_status_-1,1)
+    *
+    */
+  override def areastatustotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String): RDD[(String, String)] = {
+    targetData.map(x => ((x._1, x._6), 1)).reduceByKey(_ + _).map(x => ("area_" + x._1._1 + "_status_" + x._1._2, x._2.toString))
   }
+  /**
 
-  override def departmentareadistributionstatustotal(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
+    * * 按照权限的各区配送计划各状态数据统计
+
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础数据
+
+    * * @return RDD[(String, String, String)]  (管理部门id,area_3_status_-1,1)
+
+    */
+  override def departmentareastatustotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = {
+    targetData.map({
       x =>
         val area = x._1
         val school_id = x._4
         val status = x._6
-        val department = data._3.value.getOrElse(school_id, List("null"))(9)
+        val department = schoolData.value.getOrElse(school_id, List("null"))(9)
         ((department,area,status),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"area_" + x._1._2 + "_status_" + x._1._3, x._2)).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          x =>
-            jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-            jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-        })
-    })
+    }).reduceByKey(_+_).map(x => (x._1._1,"area_" + x._1._2 + "_status_" + x._1._3, x._2.toString))
   }
+  /**
 
-  override def areadistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val status = x._2.split("_")(9)
-        (area, status)
-      //        if("3".equals(status)){
-      //          (area,"3")
-      //        }else{
-      //          (area,"2")
-      //        }
-    }).map(x => ((x._1, x._2), 1)).reduceByKey(_ + _).map(x => ("school-area" + "_" + x._1._1 + "_" + "status" + "_" + x._1._2, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
+    * * 按所属教育部配送计划各状态数据统计
 
-  override def departmentareadistributionschoolstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val status = x._2.split("_")(9)
-        val school_id = x._1.split("_")(3)
-        val department = data._3.value.getOrElse(school_id, List("null"))(9)
-        ((department,area,status),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"school-area" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
+    * * @param targetData 处理好的配送计划数据
 
-  override def masteriddistributiontotal(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
+    * * @param date 时间
 
-    data._1.map({
+    * * @param schoolData 学校基础信息
+
+    * * @param commiteeid2commiteename 区属
+
+    * * @return RDD[(String, String)]  (masterid_3_slave_嘉定区教育局_status_1,1)
+
+    */
+  override def masteridtotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]], commiteeid2commiteename: Broadcast[Map[String, String]]): RDD[(String, String)] ={
+    targetData.map({
       x =>
 
-        val v = data._4.value.getOrElse(x._4, List("null"))
+        val v = schoolData.value.getOrElse(x._4, List("null"))
 
         if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
           if ("3".equals(v(5))) {
-            ((v(5), data._5.value.getOrElse(v(6), "null"), x._6), 1)
+            ((v(5), commiteeid2commiteename.value.getOrElse(v(6), "null"), x._6), 1)
           } else {
             ((v(5), v(6), x._6), 1)
           }
@@ -136,34 +112,35 @@ class DistributionTotalStat extends DistributionTotalFunc {
           (("null", "null", x._6), 1)
         }
     }).reduceByKey(_ + _)
-      .map(x => ("masterid" + "_" + x._1._1 + "_" + "slave" + "_" + x._1._2 + "_" + "status_" + x._1._3, x._2))
-      .cogroup(data._3)
-      .filter(x => x._1.size > 7).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
+      .map(x => ("masterid" + "_" + x._1._1 + "_" + "slave" + "_" + x._1._2 + "_" + "status_" + x._1._3, x._2.toString))
   }
 
-  override def departmentmasteriddistributiontotal(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
-    data._1.map({
+  /**
+
+    * * 按照权限的所属教育部配送计划各状态数据统计
+
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @param commiteeid2commiteename 区属
+
+    * * @return RDD[(String, String, String)]  (管理部门id,masterid_3_slave_嘉定区教育局_status_1,1)
+
+    */
+  override def departmentmasteridtotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]], commiteeid2commiteename: Broadcast[Map[String, String]]): RDD[(String, String, String)] = {
+    targetData.map({
       x =>
         val area = x._1
         val school_id = x._4
         val status = x._6
-        val v = data._3.value.getOrElse(school_id, List("null"))
+        val v = schoolData.value.getOrElse(school_id, List("null"))
         val department = v(9)
         if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
           if ("3".equals(v(5))) {
-            ((department,v(5), data._4.value.getOrElse(v(6), "null"), status), 1)
+            ((department,v(5), commiteeid2commiteename.value.getOrElse(v(6), "null"), status), 1)
           } else {
             ((department,v(5), v(6), status), 1)
           }
@@ -171,86 +148,25 @@ class DistributionTotalStat extends DistributionTotalFunc {
           ((department,"null", "null", status), 1)
         }
 
-    }).reduceByKey(_+_).map(x => (x._1._1,"masterid" + "_" + x._1._2 + "_" + "slave" + "_" + x._1._3 + "_" + "status_" + x._1._4, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
+    }).reduceByKey(_+_).map(x => (x._1._1,"masterid" + "_" + x._1._2 + "_" + "slave" + "_" + x._1._3 + "_" + "status_" + x._1._4, x._2.toString))
   }
+  /**
 
-  override def masteriddistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
+    * * 按上海市办学性质来配送计划各状态数据统计（nature）
 
-    data._1.map({
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @return RDD[(String, String)]  (nature_0_nature-sub_1_status_3,1)
+
+    */
+  override def naturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)] = {
+    targetData.map({
       x =>
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-        if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
-          if ("3".equals(v(5))) {
-            (v(5), data._5.value.getOrElse(v(6), "null"), status)
-          } else {
-            (v(5), v(6),status)
-          }
-        } else {
-          ("null", "null", status)
-        }
-
-
-    }).map(x => ((x._1, x._2, x._3), 1)).reduceByKey(_ + _).map(x => ("school-masterid" + "_" + x._1._1 + "_" + "slave" + "_" + x._1._2 + "_" + "status_" + x._1._3, x._2))
-      .cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
-
-  override def departmentmasteriddistributionschoolstatusdata (data:(RDD[(String, String)],String,Broadcast[Map[String, List[String]]],Broadcast[Map[String,String]]))= {
-
-    data._1.map({
-      x =>
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department = v(9)
-        if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
-          if ("3".equals(v(5))) {
-            ((department,v(5), data._4.value.getOrElse(v(6), "null"), status),1)
-          } else {
-            ((department,v(5), v(6),status),1)
-          }
-        } else {
-          ((department,"null", "null", status),1)
-        }
-
-    }).reduceByKey(_+_).map(x => (x._1._1,"school-masterid" + "_" + x._1._2 + "_" + "slave" + "_" + x._1._3 + "_" + "status_" + x._1._4, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-  override def naturedistributionstatus(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-
-    data._1.map({
-      x =>
-        val v = data._4.value.getOrElse(x._4, List("null"))
+        val v = schoolData.value.getOrElse(x._4, List("null"))
 
         if ("3".equals(x._6)) {
           if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
@@ -266,28 +182,28 @@ class DistributionTotalStat extends DistributionTotalFunc {
           }
         }
     })
-      .reduceByKey(_ + _).map(x => ("nature" + "_" + x._1._1 + "_" + "nature-sub" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
+      .reduceByKey(_ + _).map(x => ("nature" + "_" + x._1._1 + "_" + "nature-sub" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2.toString))
   }
+  /**
 
-  override def departmentnaturedistributionstatus(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
+    * * 按照权限的上海市办学性质来配送计划各状态数据统计（nature）
+
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @return RDD[(String, String, String)]  (管理部门id,nature_0_nature-sub_1_status_3,1)
+
+    */
+  override def departmentnaturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = {
+    targetData.map({
       x =>
         val area = x._1
         val school_id = x._4
         val status = x._6
-        val v = data._3.value.getOrElse(school_id, List("null"))
+        val v = schoolData.value.getOrElse(school_id, List("null"))
         val department = v(9)
         if ("3".equals(x._6)) {
           if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
@@ -303,23 +219,26 @@ class DistributionTotalStat extends DistributionTotalFunc {
           }
         }
 
-    }).reduceByKey(_+_).map(x => (x._1._1,"nature" + "_" + x._1._2 + "_" + "nature-sub" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
+    }).reduceByKey(_+_).map(x => (x._1._1,"nature" + "_" + x._1._2 + "_" + "nature-sub" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2.toString))
   }
+  /**
 
-  override def areanaturedistributionstatus(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+    * * 各区办学性质来配送计划各状态数据统计（nature）
 
-    data._1.map({
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @return RDD[(String, String)]  (nat-area_1_nature_0_nature-sub_1_status_3,1)
+
+    */
+  override def areanaturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)]  = {
+
+    targetData.map({
       x =>
-        val v = data._4.value.getOrElse(x._4, List("null"))
+        val v = schoolData.value.getOrElse(x._4, List("null"))
 
         if ("3".equals(x._6)) {
           if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
@@ -334,135 +253,27 @@ class DistributionTotalStat extends DistributionTotalFunc {
             ((x._1, "null", "null", "2"), 1)
           }
         }
-    }).reduceByKey(_ + _).map(x => ("nat-area" + "_" + x._1._1 + "_" + "nature" + "_" + x._1._2 + "_" + "nature-sub" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-
+    }).reduceByKey(_ + _).map(x => ("nat-area" + "_" + x._1._1 + "_" + "nature" + "_" + x._1._2 + "_" + "nature-sub" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2.toString))
   }
 
-  override def naturedistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentareanaturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]) : RDD[(String, String, String)] = ???
+  /**
 
-    data._1.map({
+    * * 按上海市各类型学校来配送计划各状态数据统计（level）
+
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @return RDD[(String, String)]  (level_1_status_3,1)
+
+    */
+  override def levelstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)] = {
+    targetData.map({
       x =>
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-
-        if ("3".equals(status)) {
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((v(1), v(2), "3"), 1)
-          } else {
-            (("null", "null", "3"), 1)
-          }
-        } else {
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((v(1), v(2), "2"), 1)
-          } else {
-            (("null", "null", "2"), 1)
-          }
-        }
-    }).map(x => ((x._1._1, x._1._2, x._1._3), x._2)).reduceByKey(_ + _).map(x => ("school-nature" + "_" + x._1._1 + "_" + "nature-sub" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
-
-  override def departmentnaturedistributionschoolstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department = v(9)
-        if ("3".equals(status)) {
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((department,v(1), v(2), "3"), 1)
-          } else {
-            ((department,"null", "null", "3"), 1)
-          }
-        } else {
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((department,v(1), v(2), "2"), 1)
-          } else {
-            ((department,"null", "null", "2"), 1)
-          }
-        }
-    }).reduceByKey(_+_).map(x => (x._1._1,"school-nature" + "_" + x._1._2 + "_" + "nature-sub" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def areanaturedistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-
-        if ("3".equals(status)) {
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((area, v(1), v(2), "3"), 1)
-          } else {
-            ((area, "null", "null", "3"), 1)
-          }
-        } else {
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((area, v(1), v(2), "2"), 1)
-          } else {
-            ((area, "null", "null", "2"), 1)
-          }
-        }
-    }).map(x => ((x._1._1, x._1._2, x._1._3, x._1._4), x._2)).reduceByKey(_ + _).map(x => ("school-nat-area" + "_" + x._1._1 + "_" + "nature" + "_" + x._1._2 + "_" + "nature-sub" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
-
-  override def leveldistributionstatus(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-
-    data._1.map({
-      x =>
-        val v = data._4.value.getOrElse(x._4, List("null"))
+        val v = schoolData.value.getOrElse(x._4, List("null"))
 
         if ("3".equals(x._6)) {
           if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
@@ -477,25 +288,25 @@ class DistributionTotalStat extends DistributionTotalFunc {
             (("null", "2"), 1)
           }
         }
-    }).reduceByKey(_ + _).map(x => ("level" + "_" + x._1._1 + "_" + "status" + "_" + x._1._2, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
+    }).reduceByKey(_ + _).map(x => ("level" + "_" + x._1._1 + "_" + "status" + "_" + x._1._2, x._2.toString))
   }
+  /**
 
-  override def departmentleveldistributionstatus(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
+    * * 按照权限的上海市各类型学校来配送计划各状态数据统计（level）
+
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @return RDD[(String, String, String)]  (管理部门id,level_1_status_3,1)
+
+    */
+  override def departmentlevelstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = {
+    targetData.map({
       x =>
-        val v = data._3.value.getOrElse(x._4, List("null"))
+        val v = schoolData.value.getOrElse(x._4, List("null"))
         val department =v(9)
 
         if ("3".equals(x._6)) {
@@ -511,23 +322,25 @@ class DistributionTotalStat extends DistributionTotalFunc {
             ((department,"null", "2"), 1)
           }
         }
-    }).reduceByKey(_+_).map(x => (x._1._1,"level" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
+    }).reduceByKey(_+_).map(x => (x._1._1,"level" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2.toString))
   }
+  /**
 
-  override def arealeveldistributionstatus(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+    * * 按各区各类型学校来配送计划各状态数据统计（level）
 
-    data._1.map({
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础信息
+
+    * * @return RDD[(String, String)]  (lev-area_1_level_1_status_3,1)
+
+    */
+  override def arealevelstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)] = {
+    targetData.map({
       x =>
-        val v = data._4.value.getOrElse(x._4, List("null"))
+        val v = schoolData.value.getOrElse(x._4, List("null"))
 
         if ("3".equals(x._6)) {
           if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
@@ -542,798 +355,55 @@ class DistributionTotalStat extends DistributionTotalFunc {
             ((x._1, "null", "2"), 1)
           }
         }
-    }).reduceByKey(_ + _).map(x => ("lev-area" + "_" + x._1._1 + "_" + "level" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
+    }).reduceByKey(_ + _).map(x => ("lev-area" + "_" + x._1._1 + "_" + "level" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2.toString))
   }
 
-  override def leveldistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
+  override def departmentarealevelstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = ???
+  /**
 
-    data._1.map({
-      x =>
+    * * 按照上海市管理部门的配送各状态数量
 
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
+    * * @param targetData 处理好的配送计划数据
 
-        val v = data._4.value.getOrElse(schoolid, List("null"))
+    * * @param date 时间
 
-        if ("3".equals(status)) {
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((v(0), "3"), 1)
-          } else {
-            (("null", "3"), 1)
-          }
-        } else {
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((v(0), "2"), 1)
-          } else {
-            (("null", "2"), 1)
-          }
-        }
-    }).map(x => ((x._1._1, x._1._2), x._2)).reduceByKey(_ + _).map(x => ("school-level" + "_" + x._1._1 + "_" + "status" + "_" + x._1._2, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
+    * * @param schoolData 学校基础数据
 
-  override def departmentleveldistributionschoolstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
+    * * @return RDD[(String, String)]  (department_1_status_1,1)
 
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department =v(9)
-
-        if ("3".equals(status)) {
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((department,v(0), "3"), 1)
-          } else {
-            ((department,"null", "3"), 1)
-          }
-        } else {
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((department,v(0), "2"), 1)
-          } else {
-            ((department,"null", "2"), 1)
-          }
-        }
-    }).reduceByKey(_+_).map(x => (x._1._1,"school-level" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def arealeveldistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-
-        if ("3".equals(status)) {
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((area, v(0), "3"), 1)
-          } else {
-            ((area, "null", "3"), 1)
-          }
-        } else {
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((area, v(0), "2"), 1)
-          } else {
-            ((area, "null", "2"), 1)
-          }
-        }
-    }).map(x => ((x._1._1, x._1._2, x._1._3), x._2)).reduceByKey(_ + _).map(x => ("school-lev-area" + "_" + x._1._1 + "_" + "level" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
-
-  override def areadisstatus(data: (RDD[(String, String, String, String, String, String,String)], String, RDD[(String, String)])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1
-        val disstatus = x._7
-        ((area,disstatus),1)
-
-    }).reduceByKey(_+_).map(x => ("dis-area"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentareadisstatus(data: (RDD[(String, String, String, String, String, String, String)], String,Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1
-        val disstatus = x._7
-        val school_id = x._4
-        val department = data._3.value.getOrElse(school_id, List("null"))(9)
-        ((department,area,disstatus),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-area"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def areaschooldisstatus(data: (RDD[(String, String)], String, RDD[(String, String)])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        ((area,disstatus),1)
-    }).reduceByKey(_+_).map(x => ("dis-school-area"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentareaschooldisstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val department = data._3.value.getOrElse(schoolid, List("null"))(9)
-        ((department,area,disstatus),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-school-area"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def naturedisstatus(data: (RDD[(String, String, String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
+    */
+  override def departmentstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)] = {
+    targetData.map({
       x =>
         val school_id = x._4
-        val v = data._4.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-
-          if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-            ((v(1), v(2), disstatus), 1)
-          } else {
-            (("null", "null", disstatus), 1)
-          }
-
-    }).reduceByKey(_+_).map(x => ("dis-nature"+"_"+x._1._1+"_"+"nature-sub"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentnaturedisstatus(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._3.value.getOrElse(school_id, List("null"))
-        val department=v(9)
-        val disstatus = x._7
-
-        if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-          ((department,v(1), v(2), disstatus), 1)
-        } else {
-          ((department,"null", "null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-nature"+"_"+x._1._2+"_"+"nature-sub"+"_"+x._1._3+"_"+"disstatus"+"_"+x._1._4,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def natureschooldisstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-        if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-          ((v(1), v(2), disstatus), 1)
-        } else {
-          (("null", "null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => ("dis-school-nature"+"_"+x._1._1+"_"+"nature-sub"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-
-
-  }
-
-  override def departmentnatureschooldisstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        if (StringUtils.isNoneEmpty(v(1)) && !v(1).equals("null")) {
-          ((department,v(1), v(2), disstatus), 1)
-        } else {
-          ((department,"null", "null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-school-nature"+"_"+x._1._2+"_"+"nature-sub"+"_"+x._1._3+"_"+"disstatus"+"_"+x._1._4,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def leveldisstatus(data: (RDD[(String, String, String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._4.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-
-          if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-            ((v(0), disstatus), 1)
-          } else {
-            (("null", disstatus), 1)
-          }
-    }).reduceByKey(_+_).map(x => ("dis-level"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentleveldisstatus(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._3.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-        val department=v(9)
-
-        if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-          ((department,v(0), disstatus), 1)
-        } else {
-          ((department,"null", disstatus), 1)
-        }
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-level"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def levelschooldisstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-
-        if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-          ((v(0), disstatus), 1)
-        } else {
-          (("null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => ("dis-school-level"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentlevelschooldisstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-
-        if (StringUtils.isNoneEmpty(v(0)) && !v(0).equals("null")) {
-          ((department,v(0), disstatus), 1)
-        } else {
-          ((department,"null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-school-level"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-
-
-  }
-
-  override def masteriddisstatus(data: (RDD[(String, String, String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
-
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._4.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-
-        if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
-          if ("3".equals(v(5))) {
-            ((v(5), data._5.value.getOrElse(v(6), "null"), disstatus), 1)
-          } else {
-            ((v(5), v(6), disstatus), 1)
-          }
-        } else {
-          (("null", "null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => ("dis-masterid"+"_"+x._1._1+"_"+"slave"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentmasteriddisstatus(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._3.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-        val department=v(9)
-
-        if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
-          if ("3".equals(v(5))) {
-            ((department,v(5), data._4.value.getOrElse(v(6), "null"), disstatus), 1)
-          } else {
-            ((department,v(5), v(6), disstatus), 1)
-          }
-        } else {
-          ((department,"null", "null", disstatus), 1)
-        }
-
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-masterid"+"_"+x._1._2+"_"+"slave"+"_"+x._1._3+"_"+"disstatus"+"_"+x._1._4,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def masteridschooldisstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
-          if ("3".equals(v(5))) {
-            ((v(5), data._5.value.getOrElse(v(6), "null"), disstatus), 1)
-          } else {
-            ((v(5), v(6), disstatus), 1)
-          }
-        } else {
-          (("null", "null", disstatus), 1)
-        }
-    }).reduceByKey(_+_).map(x => ("dis-school-masterid"+"_"+x._1._1+"_"+"slave"+"_"+x._1._2+"_"+"disstatus"+"_"+x._1._3,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def departmentmasteridschooldisstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]], Broadcast[Map[String, String]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        if (StringUtils.isNoneEmpty(v(5)) && !v(5).equals("null")) {
-          if ("3".equals(v(5))) {
-            ((department,v(5), data._4.value.getOrElse(v(6), "null"), disstatus), 1)
-          } else {
-            ((department,v(5), v(6), disstatus), 1)
-          }
-        } else {
-          ((department,"null", "null", disstatus), 1)
-        }
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-school-masterid"+"_"+x._1._2+"_"+"slave"+"_"+x._1._3+"_"+"disstatus"+"_"+x._1._4,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def dedistributionstatustotal(data: (RDD[(String, String, String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._4.value.getOrElse(school_id, List("null"))
+        val v = schoolData.value.getOrElse(school_id, List("null"))
         val status = x._6
         val department=v(9)
         ((department,status),1)
 
-    }).reduceByKey(_+_).map(x => ("department"+"_"+x._1._1+"_"+"status"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
+    }).reduceByKey(_+_).map(x => ("department"+"_"+x._1._1+"_"+"status"+"_"+x._1._2,x._2.toString))
   }
+  /**
 
-  override def dedepartmentdistributionstatustotal(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
+    * * 按照权限的上海市管理部门的配送各状态数量
+
+    * * @param targetData 处理好的配送计划数据
+
+    * * @param date 时间
+
+    * * @param schoolData 学校基础数据
+
+    * * @return RDD[(String, String, String)]  (管理部门id,department_1_status_1,1)
+
+    */
+  override def departmentdepartmentstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = {
+    targetData.map({
       x =>
         val school_id = x._4
-        val v = data._3.value.getOrElse(school_id, List("null"))
+        val v = schoolData.value.getOrElse(school_id, List("null"))
         val status = x._6
         val department=v(9)
         ((department,status),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"department"+"_"+x._1._1+"_"+"status"+"_"+x._1._2,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def dedistributionschoolstatustotal(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        ((department,status),1)
-    }).reduceByKey(_+_).map(x => ("school-department"+"_"+x._1._1+"_"+"status"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def dedepartmentdistributionschoolstatustotal(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        ((department,status),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"school-department"+"_"+x._1._1+"_"+"status"+"_"+x._1._2,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def dedisstatustotal(data: (RDD[(String, String, String, String, String, String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._4.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-        val department=v(9)
-        ((department,disstatus),1)
-    }).reduceByKey(_+_).map(x =>("dis-department"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def dedepartmentdisstatustotal(data: (RDD[(String, String, String, String, String, String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val school_id = x._4
-        val v = data._3.value.getOrElse(school_id, List("null"))
-        val disstatus = x._7
-        val department=v(9)
-        ((department,disstatus),1)
-    }).reduceByKey(_+_).map(x =>(x._1._1,"dis-department"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def deschooldisstatustotal(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        ((department,disstatus),1)
-    }).reduceByKey(_+_).map(x => ("dis-school-department"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2)).cogroup(data._3)
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            case (k, v) =>
-              //表示左边没有，右边有
-              if (v._1.size == 0) {
-                jedis.hset(data._2 + "_DistributionTotal", k, "0")
-              } else {
-                jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-              }
-          })
-      })
-  }
-
-  override def dedepartmentschooldisstatustotal(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val area = x._1.split("_")(1)
-        val schoolid = x._1.split("_")(3)
-        val disstatus = x._2.split("_")(11)
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department=v(9)
-        ((department,disstatus),1)
-    }).reduceByKey(_+_).map(x => (x._1._1,"dis-school-department"+"_"+x._1._1+"_"+"disstatus"+"_"+x._1._2,x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
-  }
-
-  override def canteenmodedistributionschoolstatus(data: (RDD[(String, String)], String, RDD[(String, String)], Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-
-        val v = data._4.value.getOrElse(schoolid, List("null"))
-
-        if ("3".equals(status)) {
-          ((v(3),v(4),"3"),1)
-        } else {
-          ((v(3),v(4),"2"),1)
-        }
-    }).map(x => ((x._1._1, x._1._2, x._1._3), x._2)).reduceByKey(_ + _).map(x => ("school-canteenmode" + "_" + x._1._1 + "_" + "ledgertype" + "_" + x._1._2 + "_" + "status" + "_" + x._1._3, x._2)).cogroup(data._3).foreachPartition({
-      itr =>
-        val jedis = JPools.getJedis
-        itr.foreach({
-          case (k, v) =>
-            //表示左边没有，右边有
-            if (v._1.size == 0) {
-              jedis.hset(data._2 + "_DistributionTotal", k, "0")
-            } else {
-              jedis.hset(data._2 + "_DistributionTotal", k, v._1.head.toString)
-            }
-        })
-    })
-  }
-
-  override def departmentcanteenmodedistributionschoolstatus(data: (RDD[(String, String)], String, Broadcast[Map[String, List[String]]])): Unit = {
-    data._1.map({
-      x =>
-        val schoolid = x._1.split("_")(3)
-        val status = x._2.split("_")(9)
-
-        val v = data._3.value.getOrElse(schoolid, List("null"))
-        val department = v(9)
-        if ("3".equals(status)) {
-          ((department,v(3),v(4),"3"),1)
-        } else {
-          ((department,v(3),v(4),"2"),1)
-        }
-    }).reduceByKey(_+_).map(x => (x._1._1,"school-canteenmode" + "_" + x._1._2 + "_" + "ledgertype" + "_" + x._1._3 + "_" + "status" + "_" + x._1._4, x._2))
-      .foreachPartition({
-        itr =>
-          val jedis = JPools.getJedis
-          itr.foreach({
-            x =>
-              jedis.hset(data._2 + "_DistributionTotal"+"_"+"department"+"_"+x._1, x._2, x._3.toString)
-              jedis.expire(data._2 + "_DistributionTotal" + "_" + "department" + "_" + x._1, 604800)
-          })
-      })
+    }).reduceByKey(_+_).map(x => (x._1._1,"department"+"_"+x._1._1+"_"+"status"+"_"+x._1._2,x._2.toString))
   }
 }
