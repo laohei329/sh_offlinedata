@@ -1,44 +1,85 @@
 package com.ssic.service
 
-import com.ssic.impl.GongcanFunc
 import redis.clients.jedis.JedisCluster
 
 import scala.collection.mutable
 
-class GongcanStat extends GongcanFunc {
+class GongcanStat {
 
-  override def gongcan(data: (mutable.Set[String], String, JedisCluster, String)): String = {
-    if (data._1.contains(data._2).equals(true)) {
+  /**
+    *
+    * 判断在排菜临时表的是否供餐
+    *
+    * * platoondata 排菜表数据
+    *
+    * * @param key redis的排菜表数据的key
+    *
+    * * @param jedis:JedisCluster
+    *
+    * * @param date 排菜时间
+    *
+    */
+
+  def gongcan(platoondata: mutable.Set[String], key: String, jedis: JedisCluster, date: String): String = {
+    if (platoondata.contains(key).equals(true)) {
       //在排菜临时表内
-      val value = data._3.hget(data._4 + "_platoon", data._2)
+      val value = jedis.hget(date + "_platoon", key)
       if (value.size > 2) {
         return "供餐_已排菜" + "_" + "create-time" + value.split("create-time")(1)
 
       } else {
-        return "供餐_已排菜" +"_"+"create-time"+"_"+"null"
+        return "供餐_已排菜" + "_" + "create-time" + "_" + "null"
 
       }
-    }else if(data._1.contains("null"+"_"+data._2.split("_")(1)).equals(true)){
+    } else if (platoondata.contains("null" + "_" + key.split("_")(1)).equals(true)) {
       //在排菜临时表内
-      val value = data._3.hget(data._4 + "_platoon", "null"+"_"+data._2.split("_")(1))
+      val value = jedis.hget(date + "_platoon", "null" + "_" + key.split("_")(1))
       if (value.size > 2) {
         return "供餐_已排菜" + "_" + "create-time" + value.split("create-time")(1)
 
       } else {
-        return "供餐_已排菜" +"_"+"create-time"+"_"+"null"
+        return "供餐_已排菜" + "_" + "create-time" + "_" + "null"
 
       }
     } else {
       //不在排采临时表内
-      return "供餐_未排菜"+"_"+"create-time"+"_"+"null"
+      return "供餐_未排菜" + "_" + "create-time" + "_" + "null"
     }
 
 
   }
 
-  override def nogongcan(): String = {
+  def booleangongcan(platoondata: mutable.Set[String], key: String, jedis: JedisCluster, date: String): Boolean = {
+    if (platoondata.contains(key).equals(true)) {
+      //在排菜临时表内
+      val value = jedis.hget(date + "_platoon", key)
+      if (value.size > 2) {
+        return true
 
-    return "不供餐_未排菜"+"_"+"create-time"+"_"+"null"
+      } else {
+        return true
+
+      }
+    } else if (platoondata.contains("null" + "_" + key.split("_")(1)).equals(true)) {
+      //在排菜临时表内
+      val value = jedis.hget(date + "_platoon", "null" + "_" + key.split("_")(1))
+      if (value.size > 2) {
+        return true
+
+      } else {
+        return true
+
+      }
+    } else {
+      //不在排采临时表内
+      return false
+    }
+  }
+
+
+  def nogongcan(): String = {
+
+    return "不供餐_未排菜" + "_" + "create-time" + "_" + "null"
 
   }
 }

@@ -99,9 +99,14 @@
                                 <arg>-dependencyfile</arg>
                                 <arg>${project.build.directory}/.scala_dependencies</arg>
                             </args>
+
                         </configuration>
+
                     </execution>
+
                 </executions>
+
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -116,7 +121,9 @@
                         <include>**/*Test.*</include>
                         <include>**/*Suite.*</include>
                     </includes>
+
                 </configuration>
+
 
             </plugin>
         </plugins>

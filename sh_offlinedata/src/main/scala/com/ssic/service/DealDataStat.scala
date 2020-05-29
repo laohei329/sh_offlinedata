@@ -169,7 +169,7 @@ class DealDataStat extends DealDataFunc {
           if (StringUtils.isNoneEmpty(x._2.split("_")(4)) && !"null".equals(x._2.split("_")(4))) {
             if ("4".equals(x._2.split("_")(0))) {
               status = "-1"
-              valuedata = "-1" + "_" + x._2.split("_")(1)
+              valuedata = "-1" + "_" +"deliveryDate"+ x._2.split("deliveryDate")(1)
               disstatus = x._2.split("_")(4)
             } else {
               val deliveryDate = x._2.split("_")(2)
