@@ -1,6 +1,9 @@
 package com.ssic.report
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{Employee, License, SchoolBean}
+import com.ssic.report.StopFood.logger
+import com.ssic.service.SupplierDetail.logger
 import com.ssic.utils.JPools
 import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
@@ -23,19 +26,23 @@ object PeopleLicenseDetail {
     */
 
   def licenseInsert(filterData: (RDD[SchoolBean],Broadcast[Map[String, String]])) = {
-    val licenseData = filterData._1.filter(x => x != null && x.table.equals("t_pro_license") && x.`type`.equals("insert") && x.data.stat.equals("1"))
-    val employee = filterData._1.filter(x => x != null && x.table.equals("t_pro_employee") && x.`type`.equals("insert") && x.data.stat.equals("1"))
+    val licenseData = filterData._1.filter(x => x != null && x.table.equals("t_pro_license") && x.`type`.equals("insert"))
+      .map(x => JSON.parseObject(x.data,classOf[License]))
+      .filter(x =>  "1".equals(x.stat))
+    val employee = filterData._1.filter(x => x != null && x.table.equals("t_pro_employee") && x.`type`.equals("insert") )
+      .map(x => JSON.parseObject(x.data,classOf[Employee]))
+      .filter(x =>  "1".equals(x.stat))
     val licenseDetailData = licenseData.distinct().map({
       x =>
-        val written_name = x.data.written_name
-        val lic_no = x.data.lic_no
-        val lic_type = x.data.lic_type
-        val give_lic_date = x.data.give_lic_date //证书发证时间
-      val lic_end_date = x.data.lic_end_date //证书有效时间
-      val supplier_id = x.data.supplier_id
-        val relation_id = x.data.relation_id
-        val lic_pic = x.data.lic_pic
-        val stat = x.data.stat
+        val written_name = x.written_name
+        val lic_no = x.lic_no
+        val lic_type = x.lic_type
+        val give_lic_date = x.give_lic_date //证书发证时间
+      val lic_end_date = x.lic_end_date //证书有效时间
+      val supplier_id = x.supplier_id
+        val relation_id = x.relation_id
+        val lic_pic = x.lic_pic
+        val stat = x.stat
 
         ( relation_id, List(written_name, lic_type, lic_no, supplier_id, give_lic_date, lic_end_date, stat,lic_pic))
 
@@ -43,10 +50,10 @@ object PeopleLicenseDetail {
 
     val employeeData = employee.distinct().map({
       x =>
-        val id = x.data.id
-        val school_supplier_id = x.data.school_supplier_id
+        val id = x.id
+        val school_supplier_id = x.school_supplier_id
         var id_code_name="null"
-        val id_code = x.data.id_code
+        val id_code = x.id_code
         if(StringUtils.isNoneEmpty(id_code) && !"null".equals(id_code)){
           id_code_name=id_code
         }else{
@@ -81,22 +88,33 @@ object PeopleLicenseDetail {
 
   def licenseDelete(filterData: (RDD[SchoolBean],Broadcast[Map[String, String]])) ={
     val employee = filterData._1.filter(x => x != null && x.table.equals("t_pro_employee") && !x.`type`.equals("insert"))
+      .map(x => (x.`type`,JSON.parseObject(x.data,classOf[Employee]),JSON.parseObject(x.old,classOf[Employee])))
     employee.distinct().map({
-      x =>
-        val id = x.data.id
-        val school_supplier_id = x.data.school_supplier_id
+      case (k,v,z) =>
+        val id = v.id
+        val school_supplier_id = v.school_supplier_id
         var id_code_name="null"
-        val id_code = x.data.id_code
+        val id_code = v.id_code
         if(StringUtils.isNoneEmpty(id_code) && !"null".equals(id_code)){
           id_code_name=id_code
         }else{
           id_code_name
         }
-        val stat = x.data.stat
-        if("delete".equals(x.`type`) && "1".equals(stat)){
+        val stat = v.stat
+
+        var oldStat ="null"
+
+        try {
+          oldStat = z.stat
+        } catch {
+          case e: Exception => {
+            logger.error(s"parse json error: $z", e)
+          }
+        }
+        if("delete".equals(k) && "1".equals(stat)){
           ("delete",id,school_supplier_id,stat,"null",id_code_name)
-        }else if("update".equals(x.`type`)){
-          ("update",id,school_supplier_id,stat,x.old.stat,id_code_name)
+        }else if("update".equals(k)){
+          ("update",id,school_supplier_id,stat,oldStat,id_code_name)
         }else{
           ("null","null","null","null","null","null")
         }
@@ -144,18 +162,28 @@ object PeopleLicenseDetail {
 
   def licenseUpdate(filterData:RDD[SchoolBean]) ={
     val license = filterData.filter(x => x !=null && x.table.equals("t_pro_license") && x.`type`.equals("update"))
+      .map(x => (JSON.parseObject(x.data,classOf[License]),JSON.parseObject(x.old,classOf[License])))
     val licenseData = license.distinct().map({
-      x =>
-        val relation_id = x.data.relation_id
-        val written_name = x.data.written_name
-        val lic_no = x.data.lic_no
-        val lic_type = x.data.lic_type
-        val supplier_id = x.data.supplier_id
-        val stat = x.data.stat
-        val lic_pic = x.data.lic_pic
-        val lic_end_date = x.data.lic_end_date
-        val give_lic_date = x.data.give_lic_date
-        (relation_id, lic_type, written_name, lic_no, supplier_id, stat,x.old.stat,lic_pic,lic_end_date,give_lic_date)
+      case (k,v) =>
+        val relation_id = k.relation_id
+        val written_name = k.written_name
+        val lic_no = k.lic_no
+        val lic_type = k.lic_type
+        val supplier_id = k.supplier_id
+        val stat = k.stat
+        val lic_pic = k.lic_pic
+        val lic_end_date = k.lic_end_date
+        val give_lic_date = k.give_lic_date
+
+        var oldStat = "null"
+        try {
+          oldStat = v.stat
+        } catch {
+          case e: Exception => {
+            logger.error(s"parse json error: $v", e)
+          }
+        }
+        (relation_id, lic_type, written_name, lic_no, supplier_id, stat,oldStat,lic_pic,lic_end_date,give_lic_date)
     }).filter(x =>  x._2.equals("20") || x._2.equals("22") || x._2.equals("23") || x._2.equals("24") || x._2.equals("25"))
 
     licenseData.foreachPartition({

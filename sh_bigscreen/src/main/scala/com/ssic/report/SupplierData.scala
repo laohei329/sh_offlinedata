@@ -2,7 +2,8 @@ package com.ssic.report
 
 import java.util
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{SaasPackage, SchoolBean, SupplierInfo}
 import com.ssic.report.DishPlan.format
 import com.ssic.utils.JPools
 import org.apache.commons.lang3.StringUtils
@@ -24,47 +25,25 @@ object SupplierData {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
-  def Supplierupdate(filterData: SchoolBean): (String, String, String, String, String) = {
-    var stat_name = "null"
-    var supplier_type_name = "null"
-    try {
-      stat_name = filterData.old.stat
-      supplier_type_name = filterData.old.supplier_type
-    } catch {
-      case e: Exception => {
-        logger.error(s"parse json error: $stat_name", e)
-        return ("null", "null", "null", "null", "null")
-      }
-    }
-    ("update", filterData.data.supplier_type, filterData.data.stat, filterData.old.supplier_type, filterData.old.stat)
-  }
 
-  def Supplier2schoolupdate(filterData: SchoolBean): (String, String, String, String, String, String) = {
-    var stat_name = "null"
-    try {
-      stat_name = filterData.old.stat
-    } catch {
-      case e: Exception => {
-        logger.error(s"parse json error: $stat_name", e)
-        return ("null", "null", "null", "null", "null", "null")
-      }
-    }
-    ("update", filterData.data.id, filterData.data.supplier_id, filterData.data.school_id, filterData.data.stat, filterData.old.stat)
-  }
 
   def SupplierBaseData(filterData: RDD[SchoolBean]) = {
     val supplietData = filterData.filter(x => x != null && x.table.equals("t_pro_supplier"))
-    val supplietDelData = filterData.filter(x => x != null && x.table.equals("t_pro_supplier") && x.`type`.equals("delete") && !x.data.stat.equals("0"))
+      .map(x => (x.`type`,JSON.parseObject(x.data,classOf[SupplierInfo]),JSON.parseObject(x.old,classOf[SupplierInfo])))
+    val supplietDelData = filterData.filter(x => x != null && x.table.equals("t_pro_supplier") && x.`type`.equals("delete"))
+      .map(x => JSON.parseObject(x.data,classOf[SupplierInfo]))
+      .filter(x => !x.stat.equals("0"))
     val supplietUpdate = filterData.filter(x => x != null && x.table.equals("t_pro_supplier") && x.`type`.equals("update"))
+      .map(x => (x.`type`,JSON.parseObject(x.data,classOf[SupplierInfo])))
 
-    val supplData: RDD[(String, String, String, String, String)] = supplietData.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supplier_type)).map({
-      x =>
-        if ("insert".equals(x.`type`) && !"0".equals(x.data.stat)) {
-          ("insert", x.data.supplier_type, x.data.stat, "null", "null")
-        } else if ("delete".equals(x.`type`) && !"0".equals(x.data.stat)) {
-          ("delete", x.data.supplier_type, x.data.stat, "null", "null")
+    val supplData: RDD[(String, String, String, String, String)] = supplietData.distinct().filter(x => StringUtils.isNoneEmpty(x._2.supplier_type)).map({
+      case (k,v,z) =>
+        if ("insert".equals(k) && !"0".equals(v.stat)) {
+          ("insert", v.supplier_type, v.stat, "null", "null")
+        } else if ("delete".equals(k) && !"0".equals(v.stat)) {
+          ("delete", v.supplier_type, v.stat, "null", "null")
         } else {
-          Supplierupdate(x)
+          ("update", v.supplier_type, v.stat, z.supplier_type, z.stat)
         }
     })
 
@@ -102,18 +81,19 @@ object SupplierData {
 
   def SupplierToScholl(suData: (RDD[SchoolBean], Broadcast[Map[String, String]])) = {
     val supplier_school = suData._1.filter(x => x != null && x.table.equals("t_saas_package") )
-    val supplier2schoolData = supplier_school.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supply_date)).map({
-      x =>
-        val supply_date = x.data.supply_date.split(" ")(0)
+      .map(x => (x.`type`,JSON.parseObject(x.data,classOf[SaasPackage]),JSON.parseObject(x.old,classOf[SaasPackage])))
+    val supplier2schoolData = supplier_school.distinct().filter(x => StringUtils.isNoneEmpty(x._2.supply_date)).map({
+      case (k,v,z) =>
+        val supply_date = v.supply_date.split(" ")(0)
         val replaceAll = supply_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
-        val supplier_id = x.data.supplier_id
-        if ("insert".equals(x.`type`) && "1".equals(x.data.stat)) {
-          ("insert", date, suData._2.value.getOrElse(supplier_id, "null"), x.data.stat, "null")
-        } else if ("delete".equals(x.`type`) && "1".equals(x.data.stat)) {
-          ("delete", date, suData._2.value.getOrElse(supplier_id, "null"), x.data.stat, "null")
-        } else if ("update".equals(x.`type`)) {
-          ("update", date, suData._2.value.getOrElse(supplier_id, "null"), x.data.stat, x.old.stat)
+        val supplier_id = v.supplier_id
+        if ("insert".equals(k) && "1".equals(v.stat)) {
+          ("insert", date, suData._2.value.getOrElse(supplier_id, "null"), v.stat, "null")
+        } else if ("delete".equals(k) && "1".equals(v.stat)) {
+          ("delete", date, suData._2.value.getOrElse(supplier_id, "null"), v.stat, "null")
+        } else if ("update".equals(k)) {
+          ("update", date, suData._2.value.getOrElse(supplier_id, "null"), v.stat, z.stat)
         } else {
           ("null", "null", "null", "null", "null")
         }
