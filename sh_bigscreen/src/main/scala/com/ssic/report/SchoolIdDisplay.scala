@@ -2,7 +2,8 @@ package com.ssic.report
 
 import java.util.Date
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{SaasPackage, SchoolBean}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.spark.broadcast.Broadcast
@@ -30,11 +31,13 @@ object SchoolIdDisplay {
     */
 
   def SchoolIdShow(filterData:RDD[SchoolBean], school2Area:Broadcast[Map[String, String]]): RDD[(String, String,String)] = {
-    val DisplayData = filterData.filter(x => x != null && x.table.equals("t_saas_package") && !x.`type`.equals("delete") && !x.data.stat.equals("0") && "1".equals(x.data.industry_type))
-    val DisFiltData = DisplayData.filter(x => StringUtils.isNoneEmpty(x.data.create_time)).filter(x => StringUtils.isNoneEmpty(x.data.school_id))
+    val DisplayData = filterData.filter(x => x != null && x.table.equals("t_saas_package") && !x.`type`.equals("delete") )
+      .map(x => (x.`type`,JSON.parseObject(x.data,classOf[SaasPackage])))
+      .filter(x => !x._2.stat.equals("0") && "1".equals(x._2.industry_type))
+    val DisFiltData = DisplayData.filter(x => StringUtils.isNoneEmpty(x._2.create_time)).filter(x => StringUtils.isNoneEmpty(x._2.school_id))
       .map({
-        x =>
-          val school_id = x.data.school_id
+        case (k,v) =>
+          val school_id = v.school_id
           val date = format.format(new Date())
           val area = school2Area.value.getOrElse(school_id, "null")
 

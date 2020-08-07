@@ -3,7 +3,9 @@ package com.ssic.report
 import java.sql.DriverManager
 import java.util
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{RecyclerWaste, SchoolBean}
+import com.ssic.report.StopFood.logger
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time._
@@ -24,37 +26,52 @@ object Receyler {
 
   def waste(filterData: RDD[SchoolBean]): RDD[(String, String, Int, String, String, Int, Int, String, String, String, String, String, String, Int, Int, String)] = {
     val recycler = filterData.filter(x => x != null && x.table.equals("t_pro_recycler_waste"))
+      .map(x => (x.`type`,JSON.parseObject(x.data,classOf[RecyclerWaste]),JSON.parseObject(x.old,classOf[RecyclerWaste])))
 
     val data = recycler.map({
-      x =>
-        val id = x.data.id
-        val source_id = x.data.source_id //团餐公司Id或者学校Id
-      val district_id = x.data.district_id
-        val platform_type = x.data.platform_type //'1为教委端 2为团餐端'
-      val types = x.data.`type`.toInt
+      case (k,v,z) =>
+        val id = v.id
+        val source_id = v.source_id //团餐公司Id或者学校Id
+      val district_id = v.district_id
+        val platform_type = v.platform_type //'1为教委端 2为团餐端'
+      val types = v.`type`.toInt
         //'1餐厨垃圾，2废弃油脂',
-        val secont_type = x.data.secont_type //'针对大类 2(1废油，2 含油废水)  默认为0(无特别含义)'
-      val receiver_name = x.data.recycler_name //回收单位
+        val secont_type = v.secont_type //'针对大类 2(1废油，2 含油废水)  默认为0(无特别含义)'
+      val receiver_name = v.recycler_name //回收单位
       var recycler_number = "0"
-        if (StringUtils.isNoneEmpty(x.data.recycler_number) && !x.data.recycler_number.equals("null") && !x.data.recycler_number.equals("")) {
-          recycler_number = x.data.recycler_number //回收单据数量
+        if (StringUtils.isNoneEmpty(v.recycler_number) && !v.recycler_number.equals("null") && !v.recycler_number.equals("")) {
+          recycler_number = v.recycler_number //回收单据数量
         } else {
           recycler_number
         }
 
-        val recycler_date = x.data.recycler_date //回收日期
+        val recycler_date = v.recycler_date //回收日期
       val replaceAll = recycler_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
-        val contact = x.data.contact //回收人
-      val stat = x.data.stat
-        val recycler_documents = x.data.recycler_documents //回收单据数量
+        val contact = v.contact //回收人
+      val stat = v.stat
+        val recycler_documents = v.recycler_documents //回收单据数量
+
+        var oldType="null"
+        var oldSecontType = 0
+        var oldStat ="null"
+
+        try {
+          oldType = z.`type`
+          oldStat = z.stat
+          oldSecontType = z.secont_type
+        } catch {
+          case e: Exception => {
+            logger.error(s"parse json error: $z", e)
+          }
+        }
         if (platform_type == 1) {
-          if ("insert".equals(x.`type`) && "1".equals(x.data.stat)) {
+          if ("insert".equals(k) && "1".equals(v.stat)) {
             ("insert", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
-          } else if ("delete".equals(x.`type`)) {
+          } else if ("delete".equals(k)) {
             ("delete", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
-          } else if ("update".equals(x.`type`)) {
-            ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(x.old.`type`), x.old.secont_type, x.old.stat)
+          } else if ("update".equals(k)) {
+            ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(oldType), oldSecontType, oldStat)
           } else {
             ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
           }
@@ -73,12 +90,12 @@ object Receyler {
           } else {
             val industry_type = supplier_type.head._2
             if (industry_type == 1) {
-              if ("insert".equals(x.`type`) && "1".equals(x.data.stat)) {
+              if ("insert".equals(k) && "1".equals(v.stat)) {
                 ("insert", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
-              } else if ("delete".equals(x.`type`)) {
+              } else if ("delete".equals(k)) {
                 ("delete", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, 0, 0, "null")
-              } else if ("update".equals(x.`type`)) {
-                ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(x.old.`type`), x.old.secont_type, x.old.stat)
+              } else if ("update".equals(k)) {
+                ("update", id, platform_type, source_id, district_id, types, secont_type, receiver_name, recycler_number, date, contact, stat, recycler_documents, Rule.nullToZero(oldType), oldSecontType, Rule.emptyToNull(oldStat))
               } else {
                 ("null", "null", 0, "null", "null", 0, 0, "null", "null", "null", "null", "null", "null", 0, 0, "null")
               }

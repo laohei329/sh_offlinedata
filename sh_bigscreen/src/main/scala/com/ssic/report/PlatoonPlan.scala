@@ -2,7 +2,8 @@ package com.ssic.report
 
 import java.util.{Calendar, Date}
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{ SaasPackage, SchoolBean}
 import com.ssic.report.RetentionDish.format
 import com.ssic.utils.NewTools
 import org.apache.commons.lang3._
@@ -36,18 +37,20 @@ object PlatoonPlan {
     */
 
   def PlatoonRealTimeData(filterData:RDD[SchoolBean], school2Area:Broadcast[Map[String, String]],session:SparkSession): RDD[(String, String, String, String, String, String)] = {
-    val platoonData = filterData.filter(x => x != null && x.table.equals("t_saas_package") && !x.data.stat.equals("0") && x.data.is_publish != 0 && "1".equals(x.data.industry_type))
-    val platoonDataFil = platoonData.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supply_date)).filter(x => StringUtils.isNoneEmpty(x.data.school_id)).map({
-      x =>
-        val supply_date = x.data.supply_date
+    val platoonData = filterData.filter(x => x != null && x.table.equals("t_saas_package") )
+      .map(x => (x.`type`,JSON.parseObject(x.data, classOf[SaasPackage])))
+      .filter(x => !"0".equals(x._2.stat) && x._2.is_publish != 0 && "1".equals(x._2.industry_type))
+    val platoonDataFil = platoonData.distinct().filter(x => StringUtils.isNoneEmpty(x._2.supply_date)).filter(x => StringUtils.isNoneEmpty(x._2.school_id)).map({
+      case (k,v) =>
+        val supply_date = v.supply_date
         val replaceAll = supply_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
-        val school_id = x.data.school_id
-        val menu_id = x.data.menu_id //'菜谱ID(一个项目点一天的排菜)'
+        val school_id = v.school_id
+        val menu_id = v.menu_id //'菜谱ID(一个项目点一天的排菜)'
       val quhao = school2Area.value.getOrElse(school_id, "null")
         //val area = NewTools.schoolid(plaData._3, school_id)
-        val create_time = x.data.create_time
-        val stat = x.data.stat
+        val create_time = v.create_time
+        val stat = v.stat
 
         //时间，学校id，区号，表操作类型，创建时间
         val calendar = Calendar.getInstance()
@@ -56,7 +59,7 @@ object PlatoonPlan {
         val time = calendar.getTime
         val now = format.format(time)
         if (format.parse(now).getTime <= format.parse(date).getTime) {
-          (date, school_id, quhao, x.`type`, create_time, stat)
+          (date, school_id, quhao, k, create_time, stat)
         } else {
           ("null", "null", "null", "null", "null", "null")
         }

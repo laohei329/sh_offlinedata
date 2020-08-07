@@ -3,7 +3,8 @@ package com.ssic.report
 import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{MaterialPlan, MaterialPlanMaster, SchoolBean}
 import com.ssic.report.Distribution.format
 import com.ssic.report.PlatoonPlan.format
 import com.ssic.utils.{JPools, NewTools}
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -19,36 +21,51 @@ import org.apache.spark.sql.SparkSession
   * 用料计划功能指标
   */
 object MaterialConfirm {
+  private val logger = LoggerFactory.getLogger(this.getClass)
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def useMaterial(filterData: RDD[SchoolBean]): RDD[(String, String, String, String, String, String, String, String, String, String, String)] = {
-    val materialPlanMaster = filterData.filter(x => x != null && x.table.equals("t_pro_material_plan_master") && !x.`type`.equals("delete") && !x.data.stat.equals("0"))
-    val materialPlanData = materialPlanMaster.distinct().map({
-      x =>
+    val materialPlanMaster = filterData.filter(x => x != null && x.table.equals("t_pro_material_plan_master") && !x.`type`.equals("delete"))
+      .map(x => (x.`type`, JSON.parseObject(x.data, classOf[MaterialPlanMaster]), JSON.parseObject(x.old, classOf[MaterialPlanMaster])))
+      .filter(x => !x._2.stat.equals("0"))
 
-        val mold = x.data.`type`.toString
+    val materialPlanData = materialPlanMaster.distinct().map({
+      case (k, v, z) =>
+
+        val mold = v.`type`.toString
         //'类型 0 原料 1 成品菜'
-        val use_date = x.data.use_date
+        val use_date = v.use_date
         val replaceAll = use_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
-        val supplier_id = x.data.supplier_id
-        val proj_id = x.data.proj_id
-        val status = x.data.status
-        val stat = x.data.stat
-        val proj_name = x.data.proj_name
+        val supplier_id = v.supplier_id
+        val proj_id = v.proj_id
+        val status = v.status
+        val stat = v.stat
+        val proj_name = v.proj_name
         val now = format.format(new Date())
 
-        if (x.`type`.equals("insert") && format.parse(date).getTime >= format.parse(now).getTime) {
+        var oldStat = "null"
+        var oldStatus = "null"
+        try {
+          oldStat = z.stat
+          oldStatus= z.status
+        } catch {
+          case e: Exception => {
+            logger.error(s"parse json error: $z", e)
+          }
+
+        }
+        if (k.equals("insert") && format.parse(date).getTime >= format.parse(now).getTime) {
           (date, mold, supplier_id, proj_id, status, "null", "old", stat, "null", "insert", proj_name)
-        } else if (x.`type`.equals("update") && format.parse(date).getTime >= format.parse(now).getTime) {
-          (date, mold, supplier_id, proj_id, status, x.old.status, "old", stat, x.old.stat, "update", proj_name)
-        } else if (x.`type`.equals("insert") && format.parse(date).getTime < format.parse(now).getTime) {
+        } else if (k.equals("update") && format.parse(date).getTime >= format.parse(now).getTime) {
+          (date, mold, supplier_id, proj_id, status, oldStatus, "old", stat, oldStat, "update", proj_name)
+        } else if (k.equals("insert") && format.parse(date).getTime < format.parse(now).getTime) {
           (date, mold, supplier_id, proj_id, status, "null", "new", stat, "null", "insert", proj_name)
-        } else if (x.`type`.equals("update") && format.parse(date).getTime < format.parse(now).getTime) {
-          (date, mold, supplier_id, proj_id, status, x.old.status, "new", stat, x.old.stat, "update", proj_name)
-        } else if (x.`type`.equals("delete") && format.parse(date).getTime >= format.parse(now).getTime) {
+        } else if (k.equals("update") && format.parse(date).getTime < format.parse(now).getTime) {
+          (date, mold, supplier_id, proj_id, status, oldStatus, "new", stat, oldStat, "update", proj_name)
+        } else if (k.equals("delete") && format.parse(date).getTime >= format.parse(now).getTime) {
           (date, mold, supplier_id, proj_id, status, "delete", "old", stat, "null", "delete", proj_name)
-        } else if (x.`type`.equals("delete") && format.parse(date).getTime < format.parse(now).getTime) {
+        } else if (k.equals("delete") && format.parse(date).getTime < format.parse(now).getTime) {
           (date, mold, supplier_id, proj_id, status, "delete", "new", stat, "null", "delete", proj_name)
         } else {
           ("无", "无", "无", "无", "无", "无", "无", "无", "无", "无", "无")
@@ -59,51 +76,53 @@ object MaterialConfirm {
   }
 
   /**
-
+    *
     * * 用料计划存入redis的临时表中 useMaterialPlanDetail
-
+    *
     * * @param filterData  mysql的业务binlgog日志
-
+    *
     * * @param  projid2Area 项目点的id 对应的 区
-
+    *
     * * @param supplierid2supplierName 团餐公司id对应团餐公司name
-
+    *
     */
 
-  def useMaterialdish(filterData:RDD[SchoolBean],projid2Area: Broadcast[Map[String, String]], supplierid2supplierName:Broadcast[Map[String, String]]) = {
-    val materialPlanMaster = filterData.filter(x => x != null && x.table.equals("t_pro_material_plan") && !x.data.stat.equals("0"))
+  def useMaterialdish(filterData: RDD[SchoolBean], projid2Area: Broadcast[Map[String, String]], supplierid2supplierName: Broadcast[Map[String, String]]) = {
+    val materialPlanMaster = filterData.filter(x => x != null && x.table.equals("t_pro_material_plan"))
+      .map(x => (x.`type`, JSON.parseObject(x.data, classOf[MaterialPlan])))
+      .filter(x => !"0".equals(x._2.stat))
     val materialPlanData = materialPlanMaster.distinct().map({
-      x =>
+      case (k, v) =>
 
-        val mold = x.data.`type`.toString
+        val mold = v.`type`.toString
         //'类型 0 原料 1 成品菜'
-        val use_date = x.data.use_date
+        val use_date = v.use_date
         val replaceAll = use_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
-        val supplier_id = x.data.supplier_id
-        val supplier_name = x.data.supplier_name
-        val proj_id = x.data.proj_id
-        val status = x.data.status
-        val stat = x.data.stat
-        val proj_name = x.data.proj_name
+        val supplier_id = v.supplier_id
+        val supplier_name = v.supplier_name
+        val proj_id = v.proj_id
+        val status = v.status
+        val stat = v.stat
+        val proj_name = v.proj_name
         val calendar = Calendar.getInstance()
         calendar.setTime(new Date())
         calendar.add(Calendar.DAY_OF_MONTH, -1)
         val time = calendar.getTime
         val now = format.format(time)
         if (format.parse(now).getTime <= format.parse(date).getTime) {
-          if (x.`type`.equals("insert")) {
+          if (k.equals("insert")) {
             (date, mold, supplier_id, proj_id, status.toInt, "null", "old", stat, "null", "insert", proj_name, supplier_name)
-          } else if (x.`type`.equals("update")) {
-            (date, mold, supplier_id, proj_id, status.toInt, x.old.status, "old", stat, x.old.stat, "update", proj_name, supplier_name)
+          } else if (k.equals("update")) {
+            (date, mold, supplier_id, proj_id, status.toInt, "null", "old", stat, "null", "update", proj_name, supplier_name)
           } else {
             (date, mold, supplier_id, proj_id, status.toInt, "delete", "old", stat, "null", "delete", proj_name, supplier_name)
           }
-        }else{
+        } else {
           ("null", "null", "null", "null", 0, "null", "null", "null", "null", "null", "null", "null")
         }
 
-    }).filter(x => !"null".equals(x._1)).distinct().sortBy(x => x._5,true)
+    }).filter(x => !"null".equals(x._1)).distinct().sortBy(x => x._5, true)
 
     materialPlanData.filter(x => x._7.equals("old")).filter(x => !x._1.equals("无"))
       .foreachPartition({
@@ -156,9 +175,9 @@ object MaterialConfirm {
                       }
                     } else {
                       val status = jedis.hget(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12)
-                    if (!"2".equals(status)) {
+                      if (!"2".equals(status)) {
                         jedis.hset(x._1 + "_" + "useMaterialPlanDetail", "area" + "_" + projid2Area.value.getOrElse(x._4, "null") + "_" + "type" + "_" + x._2 + "_" + "name" + "_" + x._11 + "_" + "projid" + "_" + x._4 + "_" + "suppliername" + "_" + x._12, x._5.toString)
-                     }
+                      }
 
                     }
 

@@ -3,7 +3,8 @@ package com.ssic.report
 import java.lang
 import java.util.Date
 
-import com.ssic.beans.SchoolBean
+import com.alibaba.fastjson.JSON
+import com.ssic.beans.{SaasPackage, SaasPackageDishes, SaasPackageDishesWare, SchoolBean}
 import com.ssic.utils.JPools
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.FastDateFormat
@@ -20,20 +21,26 @@ object Material {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def MaterialSum(filterData: RDD[SchoolBean]) = {
-    val materialData = filterData.filter(x => x != null && x.table.equals("t_saas_package_dishes_ware") && x.`type`.equals("insert") && !x.data.stat.equals("0"))
-    val packages = filterData.filter(x => x != null && x.table.equals("t_saas_package") && x.`type`.equals("insert") && !x.data.stat.equals("0") && x.data.is_publish != 0 )
-    val dishData = filterData.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("insert") && !x.data.stat.equals("0"))
+    val materialData = filterData.filter(x => x != null && x.table.equals("t_saas_package_dishes_ware") && x.`type`.equals("insert") )
+      .map(x => JSON.parseObject(x.data,classOf[SaasPackageDishesWare]))
+      .filter(x => !"0".equals(x.stat))
+    val packages = filterData.filter(x => x != null && x.table.equals("t_saas_package") && x.`type`.equals("insert"))
+      .map(x => JSON.parseObject(x.data,classOf[SaasPackage]))
+      .filter(x => !"0".equals(x.stat) && x.is_publish != 0)
+    val dishData = filterData.filter(x => x != null && x.table.equals("t_saas_package_dishes") && x.`type`.equals("insert") )
+      .map(x => JSON.parseObject(x.data,classOf[SaasPackageDishes]))
+      .filter(x => !"0".equals(x.stat) )
 
-    val package_Dish_Ware = materialData.distinct().map(x => (x.data.package_dishes_id,x.data.material_name))
-    val packageData = packages.distinct().filter(x => StringUtils.isNoneEmpty(x.data.supply_date)).map({
+    val package_Dish_Ware = materialData.distinct().map(x => (x.package_dishes_id,x.material_name))
+    val packageData = packages.distinct().filter(x => StringUtils.isNoneEmpty(x.supply_date)).map({
       x =>
-        val id = x.data.id
-        val supply_date = x.data.supply_date
+        val id = x.id
+        val supply_date = x.supply_date
         val replaceAll = supply_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
         (id, date)
     })
-    val package_Dish = dishData.distinct().map(x => (x.data.package_id,x.data.id))
+    val package_Dish = dishData.distinct().map(x => (x.package_id,x.id))
 
     packageData.leftOuterJoin(package_Dish).map(x => (x._2._2.getOrElse("null"),x._2._1)).leftOuterJoin(package_Dish_Ware).map(x => (x._2._1,x._2._2.getOrElse("null"))).foreachPartition({
       itr =>

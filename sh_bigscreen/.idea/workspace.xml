@@ -25,66 +25,10 @@
       <file leaf-file-name="BigScreenModel.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/BigScreenModel.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-555">
-              <caret line="71" column="25" lean-forward="false" selection-start-line="71" selection-start-column="25" selection-end-line="71" selection-end-column="25" />
+            <state relative-caret-position="908">
+              <caret line="133" column="35" lean-forward="false" selection-start-line="133" selection-start-column="35" selection-end-line="133" selection-end-column="35" />
               <folding>
                 <element signature="e#25#67#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SupplierDetail.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/SupplierDetail.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="627">
-              <caret line="36" column="71" lean-forward="false" selection-start-line="36" selection-start-column="55" selection-end-line="36" selection-end-column="71" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ZhongTaiDetailToLocal.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/ZhongTaiDetailToLocal.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15070">
-              <caret line="802" column="75" lean-forward="false" selection-start-line="802" selection-start-column="61" selection-end-line="802" selection-end-column="75" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="NewRetentionDish.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/NewRetentionDish.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-608">
-              <caret line="16" column="63" lean-forward="true" selection-start-line="16" selection-start-column="2" selection-end-line="16" selection-end-column="63" />
-              <folding>
-                <element signature="e#25#58#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RetentionDish.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/RetentionDish.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="784">
-              <caret line="105" column="77" lean-forward="false" selection-start-line="105" selection-start-column="73" selection-end-line="105" selection-end-column="77" />
-              <folding>
-                <element signature="e#25#58#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Distribution.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Distribution.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="874">
-              <caret line="54" column="37" lean-forward="false" selection-start-line="50" selection-start-column="8" selection-end-line="54" selection-end-column="37" />
-              <folding>
-                <element signature="e#25#58#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,8 +37,8 @@
       <file leaf-file-name="MaterialConfirm.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/MaterialConfirm.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1539">
-              <caret line="92" column="37" lean-forward="false" selection-start-line="92" selection-start-column="37" selection-end-line="92" selection-end-column="37" />
+            <state relative-caret-position="-16">
+              <caret line="114" column="125" lean-forward="true" selection-start-line="114" selection-start-column="125" selection-end-line="114" selection-end-column="125" />
               <folding>
                 <element signature="e#25#58#0" expanded="true" />
               </folding>
@@ -105,20 +49,22 @@
       <file leaf-file-name="SchoolIdDisplay.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolIdDisplay.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="475">
-              <caret line="31" column="6" lean-forward="false" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
-              <folding />
+            <state relative-caret-position="237">
+              <caret line="32" column="6" lean-forward="false" selection-start-line="32" selection-start-column="6" selection-end-line="32" selection-end-column="6" />
+              <folding>
+                <element signature="e#25#46#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlatoonPlan.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/PlatoonPlan.scala">
+      <file leaf-file-name="PeopleLicenseDetail.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/PeopleLicenseDetail.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="893">
-              <caret line="56" column="37" lean-forward="false" selection-start-line="56" selection-start-column="37" selection-end-line="56" selection-end-column="37" />
+            <state relative-caret-position="3002">
+              <caret line="185" column="75" lean-forward="false" selection-start-line="185" selection-start-column="72" selection-end-line="185" selection-end-column="75" />
               <folding>
-                <element signature="e#25#58#0" expanded="true" />
+                <element signature="e#25#57#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -126,14 +72,15 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Package Object" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>-test</find>
-      <find>&quot;area&quot;</find>
-      <find>hincrBy</find>
-      <find>school2schoolNature</find>
-      <find>school2canteenMode</find>
-      <find>school2level</find>
       <find>supplier2Area</find>
       <find>school2school_nature_sub</find>
       <find>school2Name</find>
@@ -158,6 +105,12 @@
       <find>t_edu_school</find>
       <find>school2ledger_type</find>
       <find>filterData._2</find>
+      <find>is_publish</find>
+      <find>`type`</find>
+      <find>x._3</find>
+      <find>x._6</find>
+      <find>z</find>
+      <find>old</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -171,57 +124,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/impl/SupplierFunc.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/SupplierStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/impl/StopfoodFunc.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/StopfoodStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/impl/RetntionFunc.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/impl/RetentionFunc.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/impl/PeopleLicenseFunc.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/PeopleLicenseStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/RetentionStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/UsematerialStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/DistributionStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/PlatoonStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/impl/WarnFuc.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/WarnStat.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/WarnHive.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/LsdData.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/LSData.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/Warn.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SupplierDetail.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolData.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/GroupSupplierDetail.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolDetailToLocal.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/ZhongTaiDetailToLocal.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/DishPlan.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/Material.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SupplierData.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/scriptFile.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/NewSchoolToOldSchool.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/Rule.scala" />
         <option value="$PROJECT_DIR$/src/main/resources/application.conf" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/SchoolRule.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/Tools.scala" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/JPools.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/SaveOnRedis.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/StopFood.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/GroupSupplierDetail.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/PeopleLicenseDetail.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/NewTools.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/DataBean.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/BigScreenModel.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/Area.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/SchoolSupplier.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduCompetentDepartment.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduCalendar.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduSchooltrem.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduHoliday.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/ZhongTaiDetailToLocal.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/SupplierDetail.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolIdDisplay.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/SchoolData.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/Receyler.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/PlatoonPlan.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/MaterialPlanMaster.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/MaterialPlan.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/LedgerMaster.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/Ledger.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/School.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/SaasPackage.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/SaasPackageDishes.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/ReserveSample.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/ReserveSampleDishes.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/GroupSupplier.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/License.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/Employee.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/DataBean.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/DishPlan.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/SaasPackageDishesWare.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/Material.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolIdDisplay.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/RecyclerWaste.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/SupplierInfo.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/SupplierData.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/utils/SchoolRule.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/NewRetentionDish.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/SchoolData.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/MaterialConfirm.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/Distribution.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/RetentionDish.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/NewRetentionDish.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/BigScreenModel.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/Receyler.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/GroupSupplierDetail.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/service/SupplierDetail.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/beans/StopFood.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/StopFood.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/ssic/report/PeopleLicenseDetail.scala" />
       </list>
     </option>
   </component>
@@ -260,9 +213,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
-    <option name="width" value="974" />
-    <option name="height" value="1047" />
+    <option name="x" value="1" />
+    <option name="y" value="1" />
+    <option name="width" value="1362" />
+    <option name="height" value="726" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -280,9 +234,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -366,6 +317,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -987,11 +941,29 @@
       <workItem from="1584690701489" duration="2023000" />
       <workItem from="1584945073559" duration="20987000" />
       <workItem from="1586246993861" duration="4042000" />
+      <workItem from="1587112148087" duration="1469000" />
+      <workItem from="1587956507053" duration="1879000" />
+      <workItem from="1588733055404" duration="2247000" />
+      <workItem from="1589183106568" duration="1212000" />
+      <workItem from="1590387612971" duration="637000" />
+      <workItem from="1590487969603" duration="19000" />
+      <workItem from="1590568898071" duration="32000" />
+      <workItem from="1591607137689" duration="1877000" />
+      <workItem from="1591667037845" duration="12339000" />
+      <workItem from="1592020042765" duration="2830000" />
+      <workItem from="1592207517579" duration="15255000" />
+      <workItem from="1592445625924" duration="3402000" />
+      <workItem from="1592975706490" duration="607000" />
+      <workItem from="1595473620512" duration="180000" />
+      <workItem from="1595930701366" duration="760000" />
+      <workItem from="1596086900860" duration="611000" />
+      <workItem from="1596091365570" duration="677000" />
+      <workItem from="1596418840951" duration="47374000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1306029000" />
+    <option name="totallyTimeSpent" value="1399436000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1006,39 +978,39 @@
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21413043" sideWeight="0.5021322" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2521322" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14673913" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08695652" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2521322" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16684435" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39891306" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27391306" sideWeight="0.4978678" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14673913" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3173913" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1705757" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Debug with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.09347826" sideWeight="0.4978678" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1049,7 +1021,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="11" />
+      <option name="time" value="15" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1058,93 +1030,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/UsematerialStat.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/DistributionStat.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/SupplierStat.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/StopfoodStat.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/PlatoonStat.scala" />
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-catalyst_2.11/2.2.0/spark-catalyst_2.11-2.2.0-sources.jar!/org/apache/spark/sql/internal/StaticSQLConf.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="35" column="6" lean-forward="false" selection-start-line="35" selection-start-column="6" selection-end-line="35" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-sql_2.11/2.2.0/spark-sql_2.11-2.2.0-sources.jar!/org/apache/spark/sql/SparkSession.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="842" column="28" lean-forward="true" selection-start-line="842" selection-start-column="28" selection-end-line="842" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/WarnStat.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/impl/WarnFuc.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/LSData.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/B2bMaterial.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Warn.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/WarnHive.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolDetailToLocal.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/ZhongTaiDetailToLocal.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SupplierDetail.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolData.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/GroupSupplierDetail.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/DishPlan.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="16" column="7" lean-forward="false" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Material.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="21" column="6" lean-forward="false" selection-start-line="21" selection-start-column="6" selection-end-line="21" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SupplierData.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="817">
-          <caret line="54" column="6" lean-forward="false" selection-start-line="54" selection-start-column="6" selection-end-line="54" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/scriptFile.scala" />
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5-sources.jar!/org/apache/commons/lang3/StringUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4693">
-          <caret line="276" column="37" lean-forward="false" selection-start-line="276" selection-start-column="26" selection-end-line="276" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/hive/hive-exec/1.2.1/hive-exec-1.2.1.jar!/org/apache/commons/lang3/StringUtils.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="30" column="36" lean-forward="false" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-core_2.11/2.3.0/spark-core_2.11-2.3.0.jar!/org/apache/spark/SparkContext.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="50" column="6" lean-forward="false" selection-start-line="50" selection-start-column="6" selection-end-line="50" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-core_2.11/2.3.0/spark-core_2.11-2.3.0-sources.jar!/org/apache/spark/SparkContext.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5605">
-          <caret line="350" column="79" lean-forward="false" selection-start-line="350" selection-start-column="75" selection-end-line="350" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" column="41" lean-forward="true" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/apache/kafka/kafka-clients-0.11.0-kafka-3.0.0-cdh/3.0.0/kafka-clients-0.11.0-kafka-3.0.0-cdh-3.0.0.jar!/org/apache/kafka/common/TopicPartition.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
@@ -1152,159 +1037,337 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/JPools.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="33" column="76" lean-forward="false" selection-start-line="33" selection-start-column="76" selection-end-line="33" selection-end-column="76" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/SchoolRule.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2641">
-          <caret line="143" column="6" lean-forward="false" selection-start-line="143" selection-start-column="6" selection-end-line="143" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/NewSchoolToOldSchool.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2242">
-          <caret line="118" column="20" lean-forward="false" selection-start-line="118" selection-start-column="16" selection-end-line="118" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/DataBean.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1045">
-          <caret line="55" column="18" lean-forward="false" selection-start-line="55" selection-start-column="18" selection-end-line="55" selection-end-column="18" />
+        <state relative-caret-position="-1600">
+          <caret line="2" column="7" lean-forward="false" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1064">
-          <caret line="84" column="21" lean-forward="false" selection-start-line="24" selection-start-column="7" selection-end-line="84" selection-end-column="21" />
+        <state relative-caret-position="342">
+          <caret line="18" column="29" lean-forward="false" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/JPools.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="551">
+          <caret line="33" column="76" lean-forward="false" selection-start-line="33" selection-start-column="76" selection-end-line="33" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="39" lean-forward="false" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/Tools.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1288">
+        <state relative-caret-position="-740">
           <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="105" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/Rule.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/Area.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" column="6" lean-forward="false" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+        <state relative-caret-position="266">
+          <caret line="14" column="48" lean-forward="true" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/SchoolSupplier.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="13" column="48" lean-forward="true" selection-start-line="13" selection-start-column="2" selection-end-line="13" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduCompetentDepartment.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="48" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduCalendar.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="48" lean-forward="true" selection-start-line="15" selection-start-column="2" selection-end-line="15" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduSchooltrem.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="48" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/package.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/EduHoliday.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" column="48" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/MaterialPlanMaster.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="48" lean-forward="true" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/MaterialPlan.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="13" column="48" lean-forward="true" selection-start-line="13" selection-start-column="2" selection-end-line="13" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/LedgerMaster.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="48" lean-forward="true" selection-start-line="17" selection-start-column="2" selection-end-line="17" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/Ledger.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="27" lean-forward="false" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/School.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="638">
+          <caret line="51" column="44" lean-forward="false" selection-start-line="51" selection-start-column="44" selection-end-line="51" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/SaasPackageDishes.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="48" lean-forward="true" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/ReserveSample.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="50" lean-forward="false" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/ReserveSampleDishes.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="48" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/GroupSupplier.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="44" lean-forward="false" selection-start-line="9" selection-start-column="44" selection-end-line="9" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/License.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" column="37" lean-forward="false" selection-start-line="14" selection-start-column="37" selection-end-line="14" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/Employee.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="14" lean-forward="false" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/NewTools.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="102" column="20" lean-forward="true" selection-start-line="102" selection-start-column="8" selection-end-line="102" selection-end-column="20" />
+        <state relative-caret-position="856">
+          <caret line="102" column="20" lean-forward="false" selection-start-line="102" selection-start-column="8" selection-end-line="102" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/DishPlan.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="38" column="83" lean-forward="false" selection-start-line="38" selection-start-column="83" selection-end-line="38" selection-end-column="83" />
+          <folding>
+            <element signature="e#25#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/SaasPackage.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="48" lean-forward="true" selection-start-line="15" selection-start-column="2" selection-end-line="15" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/SaasPackageDishesWare.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="52" lean-forward="false" selection-start-line="5" selection-start-column="52" selection-end-line="5" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Material.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="56">
+          <caret line="42" column="67" lean-forward="false" selection-start-line="42" selection-start-column="67" selection-end-line="42" selection-end-column="67" />
+          <folding>
+            <element signature="e#25#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/SupplierInfo.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="45" lean-forward="false" selection-start-line="7" selection-start-column="45" selection-end-line="7" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SupplierData.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="38" column="131" lean-forward="false" selection-start-line="38" selection-start-column="131" selection-end-line="38" selection-end-column="131" />
+          <folding>
+            <element signature="e#25#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/SchoolRule.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="13" column="61" lean-forward="true" selection-start-line="13" selection-start-column="61" selection-end-line="13" selection-end-column="61" />
+          <folding>
+            <element signature="e#25#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/SchoolBean.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/SaveOnRedis.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="206" column="6" lean-forward="false" selection-start-line="206" selection-start-column="6" selection-end-line="206" selection-end-column="6" />
+        <state relative-caret-position="328">
+          <caret line="210" column="59" lean-forward="false" selection-start-line="210" selection-start-column="55" selection-end-line="210" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/utils/Rule.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="24" column="6" lean-forward="false" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/RecyclerWaste.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="36" lean-forward="false" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/SchoolData.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2389">
-          <caret line="166" column="6" lean-forward="false" selection-start-line="166" selection-start-column="6" selection-end-line="166" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/StopFood.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-42">
-          <caret line="38" column="6" lean-forward="false" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Receyler.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="103" column="0" lean-forward="true" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/GroupSupplierDetail.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="18" column="6" lean-forward="false" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/PeopleLicenseDetail.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="24" column="6" lean-forward="false" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/PlatoonPlan.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="893">
-          <caret line="56" column="37" lean-forward="false" selection-start-line="56" selection-start-column="37" selection-end-line="56" selection-end-column="37" />
+        <state relative-caret-position="-508">
+          <caret line="178" column="6" lean-forward="false" selection-start-line="178" selection-start-column="6" selection-end-line="178" selection-end-column="6" />
           <folding>
-            <element signature="e#25#58#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolIdDisplay.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="31" column="6" lean-forward="false" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/MaterialConfirm.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1539">
-          <caret line="92" column="37" lean-forward="false" selection-start-line="92" selection-start-column="37" selection-end-line="92" selection-end-column="37" />
-          <folding>
-            <element signature="e#25#58#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Distribution.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="874">
-          <caret line="54" column="37" lean-forward="false" selection-start-line="50" selection-start-column="8" selection-end-line="54" selection-end-column="37" />
-          <folding>
-            <element signature="e#25#58#0" expanded="true" />
+            <element signature="e#26#58#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/RetentionDish.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="105" column="77" lean-forward="false" selection-start-line="105" selection-start-column="73" selection-end-line="105" selection-end-column="77" />
+        <state relative-caret-position="269">
+          <caret line="153" column="17" lean-forward="false" selection-start-line="153" selection-start-column="16" selection-end-line="153" selection-end-column="17" />
+          <folding>
+            <element signature="e#25#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/NewRetentionDish.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="27" column="6" lean-forward="false" selection-start-line="27" selection-start-column="6" selection-end-line="27" selection-end-column="6" />
+          <folding>
+            <element signature="e#25#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Receyler.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="24" column="2" lean-forward="true" selection-start-line="24" selection-start-column="2" selection-end-line="24" selection-end-column="61" />
+          <folding>
+            <element signature="e#25#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/Distribution.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="70" column="9" lean-forward="true" selection-start-line="63" selection-start-column="8" selection-end-line="70" selection-end-column="9" />
           <folding>
             <element signature="e#25#58#0" expanded="true" />
           </folding>
@@ -1313,34 +1376,96 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/SupplierDetail.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="36" column="71" lean-forward="false" selection-start-line="36" selection-start-column="55" selection-end-line="36" selection-end-column="71" />
-          <folding />
+        <state relative-caret-position="478">
+          <caret line="62" column="9" lean-forward="true" selection-start-line="53" selection-start-column="3" selection-end-line="62" selection-end-column="9" />
+          <folding>
+            <element signature="e#26#58#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/ZhongTaiDetailToLocal.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/SchoolIdDisplay.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15070">
-          <caret line="802" column="75" lean-forward="false" selection-start-line="802" selection-start-column="61" selection-end-line="802" selection-end-column="75" />
-          <folding />
+        <state relative-caret-position="237">
+          <caret line="32" column="6" lean-forward="false" selection-start-line="32" selection-start-column="6" selection-end-line="32" selection-end-column="6" />
+          <folding>
+            <element signature="e#25#46#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/NewRetentionDish.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/MaterialConfirm.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-608">
-          <caret line="16" column="63" lean-forward="true" selection-start-line="16" selection-start-column="2" selection-end-line="16" selection-end-column="63" />
+        <state relative-caret-position="-16">
+          <caret line="114" column="125" lean-forward="true" selection-start-line="114" selection-start-column="125" selection-end-line="114" selection-end-column="125" />
           <folding>
             <element signature="e#25#58#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/ZhongTaiDetailToLocal.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1316">
+          <caret line="311" column="30" lean-forward="false" selection-start-line="311" selection-start-column="30" selection-end-line="311" selection-end-column="30" />
+          <folding>
+            <element signature="e#26#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/PlatoonPlan.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="38" column="6" lean-forward="false" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
+          <folding>
+            <element signature="e#25#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/service/GroupSupplierDetail.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="18" column="41" lean-forward="true" selection-start-line="18" selection-start-column="41" selection-end-line="18" selection-end-column="41" />
+          <folding>
+            <element signature="e#26#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/beans/StopFood.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="18" lean-forward="false" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/StopFood.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="57" column="9" lean-forward="true" selection-start-line="48" selection-start-column="7" selection-end-line="57" selection-end-column="9" />
+          <folding>
+            <element signature="e#25#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/PeopleLicenseDetail.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3002">
+          <caret line="185" column="75" lean-forward="false" selection-start-line="185" selection-start-column="72" selection-end-line="185" selection-end-column="75" />
+          <folding>
+            <element signature="e#25#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/ssic/report/BigScreenModel.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-555">
-          <caret line="71" column="25" lean-forward="false" selection-start-line="71" selection-start-column="25" selection-end-line="71" selection-end-column="25" />
+        <state relative-caret-position="908">
+          <caret line="133" column="35" lean-forward="false" selection-start-line="133" selection-start-column="35" selection-end-line="133" selection-end-column="35" />
           <folding>
             <element signature="e#25#67#0" expanded="true" />
           </folding>
