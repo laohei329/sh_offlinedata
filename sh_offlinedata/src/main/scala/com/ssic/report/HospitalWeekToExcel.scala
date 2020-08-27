@@ -189,7 +189,7 @@ object HospitalWeekToExcel {
 
     val style = new ExceltitleStat().style(workbook, 14, false, "宋体", HorizontalAlignment.CENTER, BorderStyle.NONE)
 
-    val excelTitleValue = Array[String]("性质", "序号", "医院名称", "应排菜天数", "已排菜天数", "排菜操作率", "菜品总数", "准确菜品数", "不准确菜品数", "排菜准确率", "配送天数", "配送率", "验收天数", "验收操作率", "物料总数", "准确物料总数", "不准确物料总数", "验收准确率", "司机app使用天数", "司机app使用lv", "运行评价（以验收操作率为准，" + monday2 + "-" + sunday2 + "）")
+    val excelTitleValue = Array[String]("性质", "序号", "医院名称", "应排菜天数", "已排菜天数", "排菜操作率", "菜品总数", "准确菜品数", "不准确菜品数", "排菜准确率", "配送天数", "配送率", "验收天数", "验收操作率", "物料总数", "准确物料总数", "不准确物料总数", "验收准确率", "司机app使用天数", "司机app使用率", "运行评价（以验收操作率为准，" + monday2 + "-" + sunday2 + "）")
 
 
     val row = sheet1.createRow(0)

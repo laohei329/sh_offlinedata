@@ -1,5 +1,6 @@
 package com.ssic.service
 
+import org.apache.commons.lang3._
 import redis.clients.jedis.JedisCluster
 
 import scala.collection.mutable
@@ -18,9 +19,10 @@ class GongcanStat {
     *
     * * @param date 排菜时间
     *
+    * * @param b2bPlatoonSortData: b2b的排菜数据
     */
 
-  def gongcan(platoondata: mutable.Set[String], key: String, jedis: JedisCluster, date: String): String = {
+  def gongcan(platoondata: mutable.Set[String], key: String, jedis: JedisCluster, date: String, b2bPlatoonSortData: Map[String, String]): String = {
     if (platoondata.contains(key).equals(true)) {
       //在排菜临时表内
       val value = jedis.hget(date + "_platoon", key)
@@ -42,8 +44,16 @@ class GongcanStat {
 
       }
     } else {
-      //不在排采临时表内
-      return "供餐_未排菜" + "_" + "create-time" + "_" + "null"
+      val value: String = b2bPlatoonSortData.getOrElse(key.split("_")(1), "null")
+      if (StringUtils.isNoneEmpty(value) && !"null".equals(value)) {
+        //在b2b排菜表内
+        return "供餐_已排菜" + "_" + "create-time" + value
+      } else {
+        //不在排采临时表内
+        return "供餐_未排菜" + "_" + "create-time" + "_" + "null"
+      }
+
+
     }
 
 

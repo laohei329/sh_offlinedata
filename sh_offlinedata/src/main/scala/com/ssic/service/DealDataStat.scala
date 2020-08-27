@@ -67,10 +67,16 @@ class DealDataStat extends DealDataFunc {
 
     * * @param projid2Area 项目点id获取学校区号
 
+    * * @param b2bPlatoonSchool b2b的排菜学校id
+
+    * * @param schoolid2Projid 学校id对于项目点id
+
+    * * @param schoolid2suppliername 学校id对于团餐公司名字
+
     * * @return  RDD[(String, String, String, String, String, String, String)] (区号，供餐，状态，key，学校名字，学校id,valuedata)
 
     */
-  override def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]]): RDD[(String, String, String, String, String, String, String)] = {
+  override def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]] , b2bPlatoonSchool: RDD[(String, Int)],schoolid2Projid:Broadcast[Map[String, String]],schoolid2suppliername:Broadcast[Map[String, String]]): RDD[(String, String, String, String, String, String, String)] = {
 
     val useMaterialData = useMaterialPlanDetailData.map({
       x =>
@@ -87,7 +93,23 @@ class DealDataStat extends DealDataFunc {
         (area, gongcan, status, key, schoolname, schoolid,valuedata)
     }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐")).filter(x => !x._5.equals("null")).filter(x => !x._6.equals("null"))
 
-    useMaterialData
+    val b2bUseMaterialData = b2bPlatoonSchool.map({
+      x =>
+        val schoolid = x._1
+        val projid = schoolid2Projid.value.getOrElse(schoolid, "null")
+        val area = projid2Area.value.getOrElse(projid, "null")
+        val schoolname = projid2schoolname.value.getOrElse(projid, "null")
+        val suppliername = schoolid2suppliername.value.getOrElse(schoolid, "null")
+        val status = x._2.toString
+        val key = "area" + "_" + area + "_" + "type" + "_" + "0" + "_" + "name" + "_" + schoolname + "_" + "projid" + "_" + projid + "_" + "suppliername" + "_" + suppliername
+        val gongcan = gongcanSchool.value.getOrElse(area + "_" + schoolid, "null")
+        val valuedata = "null"
+        (area, gongcan, status, key, schoolname, schoolid, valuedata)
+    }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐")).filter(x => !x._5.equals("null")).filter(x => !x._6.equals("null"))
+
+    val useMaterialDealData = useMaterialData.union(b2bUseMaterialData)
+
+    return useMaterialDealData
   }
   /**
 

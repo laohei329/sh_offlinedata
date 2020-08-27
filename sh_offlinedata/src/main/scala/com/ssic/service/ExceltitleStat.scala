@@ -26,6 +26,26 @@ class ExceltitleStat {
       cell.setCellStyle(hSSFCellStyle)
     }
   }
+  /**
+    *
+    * * 表头格式
+    *
+    * * @param Array[String] 表头名
+    *
+    * * @param HSSFCellStyle  字体格式
+    *
+    * * @param HSSFRow 行
+    *
+    *   @param cells 列
+    *
+    */
+  def exceltitleOtherStat(array: Array[String], hSSFCellStyle: HSSFCellStyle, hSSFRow: HSSFRow,cells:Int):Unit={
+    for (i <- 0 until array.length) {
+      val cell = hSSFRow.createCell(i + cells)
+      cell.setCellValue(array(i).toString)
+      cell.setCellStyle(hSSFCellStyle)
+    }
+  }
 
   /**
     *

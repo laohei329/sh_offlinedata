@@ -5,8 +5,7 @@ import java.util.Calendar
 
 import com.ssic.report.DayToExcelDepartment.format
 import org.apache.commons.lang3._
-import org.apache.commons.lang3.time.FastDateFormat
-
+import org.apache.commons.lang3.time._
 
 
 object Rule {
@@ -202,6 +201,31 @@ object Rule {
 
   /**
     *
+    * * 民政食堂类型映射
+    *
+    * * @param String 数据
+    *
+    */
+  def licenseNew(lincenseType: String, lincenseTypeChild: String): String = {
+    var license = ""
+    if ("0".equals(lincenseType)) {
+      license = "自营"
+    } else if ("1".equals(lincenseType)) {
+      if ("0".equals(lincenseTypeChild)) {
+        license = "外包-托管"
+      } else if ("1".equals(lincenseTypeChild)) {
+        license = "外包-外送"
+      } else {
+        license = "外包"
+      }
+    } else {
+      license
+    }
+    return license
+  }
+
+  /**
+    *
     * * 日期格式化
     *
     * * @param timeStampType 日期格式
@@ -230,12 +254,16 @@ object Rule {
     *
     */
 
-  def stringToDate(date:String,timeStampType: String):String ={
-    val format = FastDateFormat.getInstance(timeStampType)
-    val time = format.format(format.parse(date))
+  def stringToDate(date: String, timeStampType: String): String = {
+    var time = ""
+    if (StringUtils.isNoneEmpty(date)) {
+      val format = FastDateFormat.getInstance(timeStampType)
+      time = format.format(format.parse(date))
+    } else {
+      time
+    }
     return time
   }
-
 
 
   /**
@@ -253,4 +281,60 @@ object Rule {
       ""
     }
   }
+
+  /**
+    *
+    * * 民政主体映射
+    *
+    * * @param String 数据
+    *
+    */
+  def mZLevelToName(x: String): String = {
+    var level_name = ""
+    if ("0".equals(x)) {
+      level_name = "未知"
+    } else if ("1".equals(x)) {
+      level_name = "敬老院"
+    } else if ("2".equals(x)) {
+      level_name = "福利院"
+    } else if ("3".equals(x)) {
+      level_name = "养老院"
+    } else if ("4".equals(x)) {
+      level_name = "老年公寓"
+    } else if ("5".equals(x)) {
+      level_name = "护老院"
+    } else if ("6".equals(x)) {
+      level_name = "护养院"
+    } else if ("7".equals(x)) {
+      level_name = "护理院"
+    } else if ("8".equals(x)) {
+      level_name = "其它"
+    } else {
+      level_name
+    }
+    return level_name
+  }
+
+  /**
+    *
+    * * 民政主体映射
+    *
+    * * @param String 数据
+    *
+    */
+  def mZSchoolNatureToName(x: String): String = {
+    var schoolNatureName = ""
+    if ("0".equals(x)) {
+      "未知"
+    } else if ("1".equals(x)) {
+      "公办"
+    } else if ("2".equals(x)) {
+      "公建民营"
+    } else if ("3".equals(x)) {
+      "民办"
+    } else {
+      schoolNatureName
+    }
+  }
+
 }

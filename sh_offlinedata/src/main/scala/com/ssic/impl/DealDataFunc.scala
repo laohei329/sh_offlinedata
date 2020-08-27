@@ -10,7 +10,7 @@ trait DealDataFunc {
   def platoontotal(platoonTotal: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]
 
   //对用料计划的详情数据进行数据处理
-  def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]]): RDD[(String, String,String,String,String,String,String)]
+  def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]],b2bPlatoonSchool: RDD[(String, Int)],schoolid2Projid:Broadcast[Map[String, String]],schoolid2suppliername:Broadcast[Map[String, String]]): RDD[(String, String,String,String,String,String,String)]
 
   //对用料的统计数据进行数据处理
   def usematerialdealtotaldata(data: RDD[(String, String)]) :RDD[((String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String), (String, String))]

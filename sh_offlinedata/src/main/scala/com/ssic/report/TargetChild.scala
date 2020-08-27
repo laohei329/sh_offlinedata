@@ -11,6 +11,7 @@ import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.slf4j.LoggerFactory
@@ -48,6 +49,8 @@ object TargetChild {
     val gongcanSchool: Broadcast[Map[String, String]] = sc.broadcast(Tools.gongcanSchool(date)) //供餐学校数据
     val projid2Area = sc.broadcast(Tools.projid2Area(session)) //项目点id获取学校区号
     val school2Area = sc.broadcast(Tools.school2Area(session)) //学校id获取学校区号
+    val schoolid2Projid = sc.broadcast(Tools.schoolid2Projid(session)) //学校id获取项目点id
+    val schoolid2suppliername = sc.broadcast(Tools.schoolid2suppliername(session)) //学校id获取团餐公司名字
 
     val jedis = JPools.getJedis
     val platoon: util.Map[String, String] = jedis.hgetAll(date + "_platoon-feed")
@@ -71,8 +74,11 @@ object TargetChild {
     val retentionChild: util.Map[String, String] = jedis.hgetAll(date + "_gc-retentiondishtotal_child")
     val retentionChildData = sc.parallelize(retentionChild.asScala.toList) //已存在的留样计划子页面数据
 
+    val b2bPlatoon =  sc.parallelize(jedis.hgetAll(date + "_b2b-platoon").asScala.toList) //redis中b2b的排菜数据
+
     //用料计划的处理后的数据
-    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool, projid2Area)
+    val b2bPlatoonSchool: RDD[(String, Int)] = b2bPlatoon.map(x => (x._1.split("_")(1),2)).distinct() //b2b排菜的学校就算做用料确认
+    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool, projid2Area,b2bPlatoonSchool,schoolid2Projid,schoolid2suppliername)
 
     //用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
     val useValue = usematerialDealData.map(x => (x._1 + "_" + x._6, List(x._4, x._3)))

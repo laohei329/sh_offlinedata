@@ -53,6 +53,8 @@ object YesTargetDetail {
     val gongcanSchool: Broadcast[Map[String, String]] = sc.broadcast(Tools.gongcanSchool(date))    //供餐学校数据
     val projid2Area = sc.broadcast(Tools.projid2Area(session)) //项目点id获取学校区号
     val school2Area = sc.broadcast(Tools.school2Area(session)) //学校id获取学校区号
+    val schoolid2Projid = sc.broadcast(Tools.schoolid2Projid(session)) //学校id获取项目点id
+    val schoolid2suppliername = sc.broadcast(Tools.schoolid2suppliername(session)) //学校id获取团餐公司名字
 
     val jedis = JPools.getJedis
 
@@ -78,9 +80,12 @@ object YesTargetDetail {
     val gcretentiondish = jedis.hgetAll(date + "_gc-retentiondish")
     val gcretentiondishData: RDD[(String, String)] = sc.parallelize(gcretentiondish.asScala.toList)  //留样计划已经存在的数据
 
+    val b2bPlatoon =  sc.parallelize(jedis.hgetAll(date + "_b2b-platoon").asScala.toList) //redis中b2b的排菜数据
+
     //用料计划的详情数据
     //处理好的用料计划数据
-    val usematerialDealData = new DealDataStat().usematerialdealdata(useMaterialPlanDetailData,projid2schoolid,projid2schoolname,gongcanSchool,projid2Area)
+    val b2bPlatoonSchool: RDD[(String, Int)] = b2bPlatoon.map(x => (x._1.split("_")(1),2)).distinct() //b2b排菜的学校就算做用料确认
+    val usematerialDealData = new DealDataStat().usematerialdealdata(useMaterialPlanDetailData,projid2schoolid,projid2schoolname,gongcanSchool,projid2Area,b2bPlatoonSchool,schoolid2Projid,schoolid2suppliername)
     new TargetDetailStat().usematerial(usematerialDealData,useMaterialData,date)
 
     //配送计划的详情数据

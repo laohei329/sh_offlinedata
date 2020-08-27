@@ -76,7 +76,10 @@ object MonthPlatoon {
       val plaData = sc.parallelize(platoon_feed.asScala.toList) //redis中存的供餐数据
       val platoondata: mutable.Set[String] = jedis.hkeys(date + "_platoon").asScala //排菜表的key
 
-      new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,term_year,platoondata)
+      val b2bPlatoon =  sc.parallelize(jedis.hgetAll(date + "_b2b-platoon").asScala.toList) //redis中b2b的排菜数据
+      val b2bPlatoonSortData = b2bPlatoon.map(x => (x._1.split("_")(1),x._2.split("create-time_")(1))).groupByKey().mapValues(x => x.toList.reverse(0)).collect().toMap //同一个学校的排菜数据，取排菜时间早的的一个
+
+      new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,term_year,platoondata,b2bPlatoonSortData)
 
     }
 

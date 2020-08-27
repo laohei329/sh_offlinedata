@@ -1,13 +1,21 @@
 package com.ssic.report
 
+import java.util
 import java.util.{Calendar, Date}
 
 import com.ssic.report.MonthPlatoon.format
-import com.ssic.utils.{JPools, Tools}
+import com.ssic.utils.{JPools, Rule, Tools}
 import com.ssic.utils.Tools.{conn, edu_bd_department, url}
-import org.apache.commons.lang3.time.FastDateFormat
+import org.apache.commons.lang3.time._
+import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
+
+import scala.collection.JavaConverters._
+
+/**
+  * 定期删除过期的redis的key
+  */
 
 object DelRedisData {
 
@@ -27,11 +35,8 @@ object DelRedisData {
     bd_department.createTempView("t_edu_bd_department")
 
 
-    val calendar = Calendar.getInstance()
-    calendar.setTime(new Date())
-    calendar.add(Calendar.DAY_OF_MONTH, -45)
-    val time = calendar.getTime
-    val date = format.format(time)
+    val date = Rule.timeToStamp("yyyy-MM-dd",-45) //format.format(time)
+    val yesterday = Rule.timeToStamp("yyyy-MM-dd",-1) //format.format(time)
 
     val departmentid = Tools.departmentid(session)
 
@@ -67,6 +72,7 @@ object DelRedisData {
     jedis.del(date+"_dish-menu")
     jedis.del(date+"_retentionsample")
     jedis.del(date+"_retentiondish")
+    jedis.del(date+"_b2b-platoon")
 
     for (i <- 0 until departmentid.size){
       val id = departmentid(i)
@@ -76,6 +82,24 @@ object DelRedisData {
       jedis.del(date+"_DistributionTotal"+"_"+"department"+"_"+id)
       jedis.del(date+"_gc-retentiondishtotal"+"_"+"department"+"_"+id)
     }
+
+    //b2bDistribution存的是b2b配送表的主键id和配送时间，定期删除过期时间
+    val b2bDistribution: RDD[(String, String)] = sc.parallelize(jedis.hgetAll("b2bDistribution").asScala.toList)
+    b2bDistribution.map({
+      x =>
+        if(format.parse(x._2).getTime < format.parse(yesterday).getTime){
+          x._1
+        }else{
+          "null"
+        }
+    }).filter(x => !"null".equals(x)).foreachPartition({
+      itr =>
+        val jedis = JPools.getJedis
+        itr.foreach({
+          x =>
+            jedis.hdel("b2bDistribution",x)
+        })
+    })
 
     sc.stop()
 

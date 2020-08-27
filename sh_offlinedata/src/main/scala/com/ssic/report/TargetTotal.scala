@@ -3,12 +3,13 @@ package com.ssic.report
 import java.util
 import java.util.Date
 
-import com.ssic.service.{_}
+import com.ssic.service._
 import com.ssic.utils.Tools._
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
@@ -57,6 +58,7 @@ object TargetTotal {
     val schoolid2suppliername = sc.broadcast(Tools.schoolid2suppliername(session))  //团餐公司名字
     val projid2Area = sc.broadcast(Tools.projid2Area(session)) //项目点id获取学校区号
     val school2Area = sc.broadcast(Tools.school2Area(session)) //学校id获取学校区号
+    val schoolid2Projid = sc.broadcast(Tools.schoolid2Projid(session)) //学校id获取项目点id
 
 
     val jedis = JPools.getJedis
@@ -87,10 +89,12 @@ object TargetTotal {
     val retentionchild: util.Map[String, String] = jedis.hgetAll(date + "_gc-retentiondishtotal_child")
     val retentionchildData = sc.parallelize(retentionchild.asScala.toList) //已存在的留样计划子页面数据
 
+    val b2bPlatoon =  sc.parallelize(jedis.hgetAll(date + "_b2b-platoon").asScala.toList) //redis中b2b的排菜数据
 
     //用料计划
     //处理好的用料计划数据
-    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area)
+    val b2bPlatoonSchool: RDD[(String, Int)] = b2bPlatoon.map(x => (x._1.split("_")(1),2)).distinct() //b2b排菜的学校就算做用料确认
+    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool,projid2Area,b2bPlatoonSchool,schoolid2Projid,schoolid2suppliername)
 
     //各区用料计划总数据统计
     val areausematerialtotal = new UsematerialTotalStat().areatotal(usematerialDealData, date)

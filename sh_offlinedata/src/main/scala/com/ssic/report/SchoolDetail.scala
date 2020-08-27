@@ -1,11 +1,7 @@
 package com.ssic.report
 
-import java.util
-import java.util.{Calendar, Date}
-
-import com.ssic.report.HiveToDwSaas.format1
 import com.ssic.utils.{JPools, Rule}
-import com.ssic.utils.Tools.{pro_reserve_sample, _}
+import com.ssic.utils.Tools.{edu_school, _}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time._
 import org.apache.log4j.{Level, Logger}
@@ -17,6 +13,10 @@ import org.slf4j.LoggerFactory
 import redis.clients.jedis.JedisCluster
 
 import scala.collection.JavaConverters._
+
+/**
+  * 将学校详情的部分字段数据更新到redis的学校详情中
+  */
 
 object SchoolDetail {
   private val format3 = FastDateFormat.getInstance("MM")
@@ -33,14 +33,6 @@ object SchoolDetail {
     val sqlContext = new SQLContext(sc)
     val session = sqlContext.sparkSession
 
-
-//    val pro_reserve_sample = session.read.jdbc(url, pro_reserve_sample, conn)
-//    pro_reserve_sample.createTempView("t_pro_reserve_sample")
-//    sqlContext.sql("select * from t_pro_reserve_sample where stat =1 and supply_date = '2020-01-16' ").rdd.map({
-//      row =>
-//        val supply_date = row.getAs[Timestamp]("supply_date")
-//
-//    })
 
     val db_edu_school = session.read.jdbc(url, edu_school, conn)
 
