@@ -33,7 +33,12 @@ object NewRetentionDish {
         val supply_date = v.supply_date
         val replaceAll = supply_date.replaceAll("\\D", "-")
         val date = format.format(format.parse(replaceAll))
-        val package_id = v.package_id
+        var package_id = "null"
+        if(v.package_id.contains("@")){
+          package_id = v.package_id.split("@")(0)
+        }else{
+          package_id = v.package_id
+        }
         var creator = "null"
         if (StringUtils.isNoneEmpty(v.creator) && !v.creator.equals("null")) {
           creator = v.creator

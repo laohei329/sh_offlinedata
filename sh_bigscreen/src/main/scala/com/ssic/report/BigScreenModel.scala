@@ -67,6 +67,7 @@ object BigScreenModel {
     val schoolsupplierid2schoolid = ssc.sparkContext.broadcast(NewTools.schoolsupplierid2schoolid(session))
 
 
+
     val groupId = "hw_edu_data_new"
     val kafkaParams = Map[String, Object](
       "bootstrap.servers" -> "172.18.14.38:9092,172.18.14.37:9092,172.18.14.39:9092",
@@ -120,7 +121,7 @@ object BigScreenModel {
             schoolBean
         })
 
-        //        //将中台的所在地表信息 迁移到 本地的area表
+        //将中台的所在地表信息 迁移到 本地的area表
         ZhongTaiDetailToLocal.Area(filterData)
         //将中台的所属表信息 迁移到 本地的t_edu_competent_department表
         ZhongTaiDetailToLocal.EduCompetentDepartment(filterData)
@@ -140,25 +141,36 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.EduSchooltermSystem(filterData)
         //将华为云上的t_edu_holiday 迁移到 本地的t_edu_holiday表
         ZhongTaiDetailToLocal.EduHoliday(filterData)
+        //将新b2b的商户merchant 迁移到 本地的merchant表
+        ZhongTaiDetailToLocal.Merchant(filterData)
+        // 新b2b2的merchant_buyer转到本地的merchant_buyer
+        ZhongTaiDetailToLocal.MerchantBuyer(filterData)
+        //将新b2b的商户merchant 迁移到 t_pro_supplier 表
+        ZhongTaiDetailToLocal.B2bSupplierInfo(filterData)
+
 
 
         //上海市排菜计划的详细的临时表
         PlatoonPlan.PlatoonRealTimeData(filterData, school2Area, session)
-          //时间，区号，schoolid，表操作类型，创建时间
+          //时间，学校id，区号，表操作类型，创建时间，数据是否有效状态
           .map(x => (x._1, x._3, x._2, x._4, x._5,x._6))
           .foreachPartition({
             itr =>
               SaveOnRedis.PlatoonPlanReal(itr)
           })
-        //
-        //        //学校排菜实时使用情况功能展现（上海）
+
+        //新的b2b排菜的临时表
+        PlatoonPlan.b2bPlatoon(filterData)
+
+
+        //学校排菜实时使用情况功能展现（上海）
         SchoolIdDisplay.SchoolIdShow(filterData, school2Area).map(x => (x._1, x._2)).filter(x => StringUtils.isNoneEmpty(x._2))
           .foreachPartition({
             itr =>
               SaveOnRedis.DisplayRealTime(itr)
           })
         //
-        //        //用料计划的详细信息
+        //用料计划的详细信息
         MaterialConfirm.useMaterialdish(filterData, projid2Area, supplierid2supplierName)
         //
         //        //配送计划的上海市，各区计算指标
@@ -168,7 +180,7 @@ object BigScreenModel {
         //        //              SaveOnRedis.DistributionRealTime(itr)
         //        //          })
         //
-        //        //配送计划的详细信息
+        //配送计划的详细信息
         Distribution.DistributionPlan(filterData).distinct().filter(x => !x._1.equals("null")).leftOuterJoin(Distribution.ProLedgerPlan(filterData).distinct())
           //id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,/验收日期
           .map(x => (x._1, x._2._1(0), x._2._1(1), x._2._1(2), x._2._1(3), x._2._1(4), x._2._1(5).toInt, x._2._2.getOrElse("null"), school2Area.value.getOrElse(x._2._1(2), "null"), x._2._1(7), x._2._1(8), x._2._1(10),x._2._1(11),x._2._1(12),x._2._1(13)))
@@ -177,8 +189,16 @@ object BigScreenModel {
             itr =>
               SaveOnRedis.DistributionDetailRealTime(itr)
           })
-        //
-        //
+
+
+        //b2b插入配送计划的详细信息
+        Distribution.B2bInsertLedege(filterData,school2Area)
+        //b2b配送t_delivery更新和删除分析数据
+        Distribution.B2bUpDeLedege(filterData,school2Area)
+        //b2b配送t_delivery_extra更新和删除分析数据
+        Distribution.B2bUpDeLedegeExtra(filterData)
+
+
         //学校详情
         SchoolData.SchoolInsert(filterData, "null", school2commitee, school2commiteename)
         SchoolData.schoolImage(filterData)
@@ -197,13 +217,12 @@ object BigScreenModel {
         StopFood.Stop(filterData)
 
 
-        //
-        //        //  当天排菜的菜品详细信息
+       //  当天排菜的菜品详细信息
         RetentionDish.dishDetail(filterData)
         RetentionDish.dishUpdateDelete(filterData)
-        //        RetentionDish.packageUpdateDelete(filterData, school2CommiteeBro)
+        //RetentionDish.packageUpdateDelete(filterData, school2CommiteeBro)
 
-        //
+
         //       //留样信息
 //        RetentionDish.retentionDishDetail(filterData)
 //        RetentionDish.retentionDishUpdateDelte(filterData)
@@ -217,12 +236,12 @@ object BigScreenModel {
         //上海市餐厨垃圾和油脂
         Receyler.wastedata(filterData, supplierid2area, school2Area, schoolid2masterid, commiteeid2commiteename)
 
-        //团餐公司信息
-        GroupSupplierDetail.groupSupplierInsert(filterData)
-        GroupSupplierDetail.groupSupplierUpDe(filterData)
-
-        //供应商信息
-        SupplierDetail.supplierDetail(filterData)
+//        //团餐公司信息
+//        GroupSupplierDetail.groupSupplierInsert(filterData)
+//        GroupSupplierDetail.groupSupplierUpDe(filterData)
+//
+//        //供应商信息
+//        SupplierDetail.supplierDetail(filterData)
 
 
         //员工证件信息

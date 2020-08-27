@@ -110,8 +110,11 @@ object MaterialConfirm {
         calendar.add(Calendar.DAY_OF_MONTH, -1)
         val time = calendar.getTime
         val now = format.format(time)
+
+        //前天之前的历史数据不记录
         if (format.parse(now).getTime <= format.parse(date).getTime) {
           if (k.equals("insert")) {
+            //时间，类型，团餐公司id，项目点id，用料计划操作状态，“null”，"old"，数据状态，"null"，表操作类型，项目点名字。团餐公司名字
             (date, mold, supplier_id, proj_id, status.toInt, "null", "old", stat, "null", "insert", proj_name, supplier_name)
           } else if (k.equals("update")) {
             (date, mold, supplier_id, proj_id, status.toInt, "null", "old", stat, "null", "update", proj_name, supplier_name)

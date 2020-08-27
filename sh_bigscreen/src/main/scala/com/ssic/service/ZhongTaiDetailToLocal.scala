@@ -1,10 +1,8 @@
 package com.ssic.service
 
-import java.sql.DriverManager
-
 import com.alibaba.fastjson.JSON
 import com.ssic.beans._
-import com.ssic.utils.{JPools, NewSchoolToOldSchool, Rule}
+import com.ssic.utils._
 import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
@@ -16,15 +14,15 @@ object ZhongTaiDetailToLocal {
   //将中台的学校基础信息表转到本地的学校基础信息表
 
   /**
-
-   * *  写数据到学校基础信息表
-
-   * * @param RDD[SchoolBean] binlog日志数据
-
-   * * @param Broadcast[Map[String, String]]  主管部门映射
-
-   * * @param Broadcast[Map[String, String]]  主管部门映射的名字
-
+    *
+    * *  写数据到学校基础信息表
+    *
+    * * @param RDD[SchoolBean] binlog日志数据
+    *
+    * * @param Broadcast[Map[String, String]]  主管部门映射
+    *
+    * * @param Broadcast[Map[String, String]]  主管部门映射的名字
+    *
     */
 
   def SchoolDetail(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) = {
@@ -89,58 +87,57 @@ object ZhongTaiDetailToLocal {
         val create_time = schoolBean.create_time
         val updater = schoolBean.updater
         val last_update_time = schoolBean.last_update_time
-        val canteen_mode="0"
-        val ledger_type="0"
+        val canteen_mode = "0"
+        val ledger_type = "0"
         val is_customer = schoolBean.is_customer
         val customer_school_id = schoolBean.customer_school_id
 
 
-        var department_id="21"
-        if("e6ee4acf-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        var department_id = "21"
+        if ("e6ee4acf-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "1"
-        }else if("e6ee4e97-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4e97-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "2"
-        }else if("e6ee4eec-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4eec-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "3"
-        }else if("e6ee4f43-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4f43-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "4"
-        }else if("e6ee4fa4-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4fa4-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "5"
-        }else if("e6ee4ffa-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4ffa-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "6"
-        }else if("e6ee5054-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee5054-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "7"
-        }else if("e6ee50ac-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee50ac-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "8"
-        }else if("e6ee5101-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee5101-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "9"
-        }else if("e6ee4bd5-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4bd5-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "10"
-        }else if("e6ee4c4f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4c4f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "11"
-        }else if("e6ee4cb2-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4cb2-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "12"
-        }else if("e6ee4d17-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4d17-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "13"
-        }else if("e6ee4d78-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4d78-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "14"
-        }else if("e6ee4dd1-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4dd1-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "15"
-        }else if("e6ee4e3f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)){
+        } else if ("e6ee4e3f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
           department_id = "16"
-        }else{
+        } else {
           department_id
         }
 
 
-
-        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation), (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code), (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone), (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name), (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time,canteen_mode,ledger_type,department_id),(is_customer,customer_school_id))
+        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation), (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code), (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone), (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name), (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time, canteen_mode, ledger_type, department_id), (is_customer, customer_school_id))
 
     }).foreach({
       x =>
         if ("insert".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_school (org_merchant_id,org_parent_merchant_id,id,school_parent_id,parent_id,school_id,committee_org_merchant_id,committee_id,school_name,corporation,corporation_way,address,level,supplier_id,reviewed,school_nature,stat,corporation_telephone,is_branch_school,social_credit_code,school_nature_sub,department_master_id,department_slave_id,school_area_id,remark,license_main_type,license_main_child,department_head,department_mobilephone,department_telephone,department_fax,department_email,food_safety_persion,food_safety_mobilephone,food_safety_telephone,level2,students_amount,staff_amount,seat_province_id,seat_province_name,seat_city_id,seat_city_name,area,seat_district_name,creator,create_time,updater,last_update_time,canteen_mode,ledger_type,department_id,is_customer,customer_school_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_school (org_merchant_id,org_parent_merchant_id,id,school_parent_id,parent_id,school_id,committee_org_merchant_id,committee_id,school_name,corporation,corporation_way,address,level,supplier_id,reviewed,school_nature,stat,corporation_telephone,is_branch_school,social_credit_code,school_nature_sub,department_master_id,department_slave_id,school_area_id,remark,license_main_type,license_main_child,department_head,department_mobilephone,department_telephone,department_fax,department_email,food_safety_persion,food_safety_mobilephone,food_safety_telephone,level2,students_amount,staff_amount,seat_province_id,seat_province_name,seat_city_id,seat_city_name,area,seat_district_name,creator,create_time,updater,last_update_time,canteen_mode,ledger_type,department_id,is_customer,customer_school_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2._1)
           statement.setString(2, x._2._2)
           statement.setString(3, x._2._3)
@@ -189,15 +186,15 @@ object ZhongTaiDetailToLocal {
           statement.setString(46, x._6._6)
           statement.setString(47, x._6._7)
           statement.setString(48, x._6._8)
-          statement.setString(49,x._6._9)
-          statement.setString(50,x._6._10)
-          statement.setString(51,x._6._11)
-          statement.setString(52,x._7._1)
-          statement.setString(53,x._7._2)
+          statement.setString(49, x._6._9)
+          statement.setString(50, x._6._10)
+          statement.setString(51, x._6._11)
+          statement.setString(52, x._7._1)
+          statement.setString(53, x._7._2)
           statement.execute()
           conn.close()
         } else if ("update".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(
             s"""
                |update t_edu_school
@@ -301,14 +298,14 @@ object ZhongTaiDetailToLocal {
           statement.setString(45, x._6._6)
           statement.setString(46, x._6._7)
           statement.setString(47, x._6._8)
-          statement.setString(48,x._6._9)
-          statement.setString(49,x._6._10)
-          statement.setString(50,x._7._1)
-          statement.setString(51,x._7._2)
+          statement.setString(48, x._6._9)
+          statement.setString(49, x._6._10)
+          statement.setString(50, x._7._1)
+          statement.setString(51, x._7._2)
           statement.execute()
           conn.close()
         } else {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_school where org_merchant_id='${x._2._1}'")
           statement.execute()
           conn.close()
@@ -319,11 +316,11 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * *  将中台的学校与团餐公司的关联表信息，转到本地
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
   def SchoolSupplier(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
@@ -335,36 +332,23 @@ object ZhongTaiDetailToLocal {
       val id = schoolSupplierBean.id
         val org_merchant_id = schoolSupplierBean.org_merchant_id
         val org_parent_merchant_id = schoolSupplierBean.org_parent_merchant_id
-        var uuid="null"
-        if(StringUtils.isNoneEmpty(schoolSupplierBean.uuid) && !"null".equals(schoolSupplierBean.uuid)){
-          uuid=schoolSupplierBean.uuid
-        }else{
+        var uuid = "null"
+        if (StringUtils.isNoneEmpty(schoolSupplierBean.uuid) && !"null".equals(schoolSupplierBean.uuid)) {
+          uuid = schoolSupplierBean.uuid
+        } else {
           uuid
         }
         val school_id = schoolSupplierBean.school_id
         val supplier_id = schoolSupplierBean.supplier_id
         val stat = schoolSupplierBean.stat
-        val company_id = schoolSupplierBean.company_id    //11 表示b2b的   12 表示阳光午餐
-        val industry_type = schoolSupplierBean.industry_type
+        val company_id = schoolSupplierBean.company_id //11 表示b2b的   12 表示阳光午餐
+      val industry_type = schoolSupplierBean.industry_type
 
-        (types, id, org_merchant_id, org_parent_merchant_id, uuid, school_id, supplier_id, stat,company_id,industry_type)
+        (types, id, org_merchant_id, org_parent_merchant_id, uuid, school_id, supplier_id, stat, company_id, industry_type)
     }).filter(x => ("12").equals(x._9)).filter(x => !"null".equals(x._5)).foreach({
       x =>
         if ("insert".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_school_supplier (groupon_customer_id,org_merchant_id,org_parent_merchant_id,id,school_id,supplier_id,stat,industry_type) values (?,?,?,?,?,?,?,?)")
-          statement.setString(1, x._2)
-          statement.setString(2, x._3)
-          statement.setString(3, x._4)
-          statement.setString(4, x._5)
-          statement.setString(5, x._6)
-          statement.setString(6, x._7)
-          statement.setString(7, x._8)
-          statement.setString(8,x._10)
-          statement.execute()
-          conn.close()
-        } else if ("update".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_edu_school_supplier (groupon_customer_id,org_merchant_id,org_parent_merchant_id,id,school_id,supplier_id,stat,industry_type) values (?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -373,11 +357,24 @@ object ZhongTaiDetailToLocal {
           statement.setString(5, x._6)
           statement.setString(6, x._7)
           statement.setString(7, x._8)
-          statement.setString(8,x._10)
+          statement.setString(8, x._10)
+          statement.execute()
+          conn.close()
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_school_supplier (groupon_customer_id,org_merchant_id,org_parent_merchant_id,id,school_id,supplier_id,stat,industry_type) values (?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._10)
           statement.executeUpdate()
           conn.close()
         } else {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_school_supplier where groupon_customer_id='${x._2}'")
           statement.execute()
           conn.close()
@@ -387,11 +384,11 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * * 将中台的团餐公司信息表转到本地的t_pro_supplier表
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
   def GroupSupplier(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
@@ -434,8 +431,8 @@ object ZhongTaiDetailToLocal {
     }).foreach({
       x =>
         if ("insert".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2._1)
           statement.setString(2, x._2._2)
           statement.setString(3, x._2._3)
@@ -466,7 +463,7 @@ object ZhongTaiDetailToLocal {
           statement.execute()
           conn.close()
         } else if ("update".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2._1)
           statement.setString(2, x._2._2)
@@ -498,7 +495,7 @@ object ZhongTaiDetailToLocal {
           statement.executeUpdate()
           conn.close()
         } else {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_pro_supplier where org_merchant_id='${x._2._1}'")
           statement.execute()
           conn.close()
@@ -508,28 +505,28 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * * 中台的供应商信息转到本地的t_pro_supplier
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
 
   def SupplierInfo(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
       && x.database.equals("opms")
-      && x.table.equals("supplier_info") ).map({
+      && x.table.equals("supplier_info")).map({
       x =>
         val supplierInfoBean = JSON.parseObject(x.data, classOf[SupplierInfo])
         val types = x.`type`
         val id = supplierInfoBean.id
         val org_parent_merchant_id = null
         val parent_id = null
-        var uuid ="-1"
-        if("12".equals(supplierInfoBean.company_id) && StringUtils.isNoneEmpty(supplierInfoBean.uuid) && !"null".equals(supplierInfoBean.uuid)){
-         uuid = supplierInfoBean.uuid
-        }else{
-         uuid =supplierInfoBean.id
+        var uuid = "-1"
+        if ("12".equals(supplierInfoBean.company_id) && StringUtils.isNoneEmpty(supplierInfoBean.uuid) && !"null".equals(supplierInfoBean.uuid)) {
+          uuid = supplierInfoBean.uuid
+        } else {
+          uuid = supplierInfoBean.id
         }
 
         val supplier_name = supplierInfoBean.supplier_name
@@ -561,8 +558,8 @@ object ZhongTaiDetailToLocal {
     }).foreach({
       x =>
         if ("insert".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2._1)
           statement.setString(2, x._2._2)
           statement.setString(3, x._2._3)
@@ -593,7 +590,7 @@ object ZhongTaiDetailToLocal {
           statement.execute()
           conn.close()
         } else if ("update".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2._1)
           statement.setString(2, x._2._2)
@@ -625,7 +622,7 @@ object ZhongTaiDetailToLocal {
           statement.executeUpdate()
           conn.close()
         } else {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_pro_supplier where org_merchant_id='${x._2._1}'")
           statement.execute()
           conn.close()
@@ -636,11 +633,11 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * * 中台的地域信息转到本地的area
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
 
   def Area(filterData: RDD[SchoolBean]) = {
@@ -664,8 +661,8 @@ object ZhongTaiDetailToLocal {
     }).foreach({
       x =>
         if (x._1.equals("insert")) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into area (ID,code,abbreviation,name,is_available,IS_DELETED,Create_UserName,create_time,Update_UserName,update_time) values (?,?,?,?,?,?,?,?,?,?)")
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into area (ID,code,abbreviation,name,is_available,IS_DELETED,Create_UserName,create_time,Update_UserName,update_time) values (?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
           statement.setString(3, x._4)
@@ -679,7 +676,7 @@ object ZhongTaiDetailToLocal {
           statement.execute()
           conn.close()
         } else if (x._1.equals("update")) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into area (ID,code,abbreviation,name,is_available,IS_DELETED,Create_UserName,create_time,Update_UserName,update_time) values (?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -694,7 +691,7 @@ object ZhongTaiDetailToLocal {
           statement.executeUpdate()
           conn.close()
         } else {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from area where ID='${x._2}'")
           statement.execute()
           conn.close()
@@ -704,11 +701,11 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * * 中台的t_edu_competent_department转到本地的t_edu_competent_department
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
 
   def EduCompetentDepartment(filterData: RDD[SchoolBean]) = {
@@ -735,8 +732,8 @@ object ZhongTaiDetailToLocal {
     }).foreach({
       x =>
         if ("insert".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_competent_department (org_merchant_id,org_parent_merchant_id,name,code,uuid,parent_id,management_area_type,create_username,create_time,update_username,update_time,is_deleted) values (?,?,?,?,?,?,?,?,?,?,?,?)")
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_competent_department (org_merchant_id,org_parent_merchant_id,name,code,uuid,parent_id,management_area_type,create_username,create_time,update_username,update_time,is_deleted) values (?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
           statement.setString(3, x._4)
@@ -752,7 +749,7 @@ object ZhongTaiDetailToLocal {
           statement.execute()
           conn.close()
         } else if ("update".equals(x._1)) {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_edu_competent_department (org_merchant_id,org_parent_merchant_id,name,code,uuid,parent_id,management_area_type,create_username,create_time,update_username,update_time,is_deleted) values (?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -769,7 +766,7 @@ object ZhongTaiDetailToLocal {
           statement.executeUpdate()
           conn.close()
         } else {
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_competent_department where org_merchant_id='${x._2}'")
           statement.execute()
           conn.close()
@@ -779,11 +776,11 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * * 阳光午餐的t_edu_calendar转到本地的t_edu_calendar
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
 
   def EduCalendar(filterData: RDD[SchoolBean]) = {
@@ -803,27 +800,11 @@ object ZhongTaiDetailToLocal {
         val stat = eduCalendarBean.stat
         val school_id = eduCalendarBean.school_id
         val reason = eduCalendarBean.reason
-        (types,id,the_day,have_class,create_id,create_name,create_time,updater,last_update_time,stat,school_id,reason)
+        (types, id, the_day, have_class, create_id, create_name, create_time, updater, last_update_time, stat, school_id, reason)
     }).foreach({
       x =>
-        if("insert".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_calendar (id,the_day,have_class,create_id,create_name,create_time,updater,last_update_time,stat,school_id,reason) values (?,?,?,?,?,?,?,?,?,?,?)")
-          statement.setString(1, x._2)
-          statement.setString(2, x._3)
-          statement.setString(3, x._4)
-          statement.setString(4, x._5)
-          statement.setString(5, x._6)
-          statement.setString(6, x._7)
-          statement.setString(7, x._8)
-          statement.setString(8, x._9)
-          statement.setString(9, x._10)
-          statement.setString(10, x._11)
-          statement.setString(11, x._12)
-          statement.execute()
-          conn.close()
-        }else if("update".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_edu_calendar (id,the_day,have_class,create_id,create_name,create_time,updater,last_update_time,stat,school_id,reason) values (?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -838,8 +819,24 @@ object ZhongTaiDetailToLocal {
           statement.setString(11, x._12)
           statement.execute()
           conn.close()
-        }else{
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_calendar (id,the_day,have_class,create_id,create_name,create_time,updater,last_update_time,stat,school_id,reason) values (?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_calendar where id='${x._2}'")
           statement.execute()
           conn.close()
@@ -849,13 +846,13 @@ object ZhongTaiDetailToLocal {
   }
 
   /**
-
+    *
     * * 阳光午餐的t_edu_schoolterm转到本地的t_edu_schoolterm
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
-  def EduSchooltrem(filterData: RDD[SchoolBean])={
+  def EduSchooltrem(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
       && x.table.equals("t_edu_schoolterm")).map({
       x =>
@@ -874,29 +871,11 @@ object ZhongTaiDetailToLocal {
         val updater = eduSchooltremBean.updater
         val last_update_time = eduSchooltremBean.last_update_time
         val stat = eduSchooltremBean.stat
-        (types,id,term_year,school_id,school_name,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat)
+        (types, id, term_year, school_id, school_name, first_start_date, first_end_date, second_start_date, second_end_date, creator, create_time, updater, last_update_time, stat)
     }).foreach({
       x =>
-        if("insert".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_schoolterm (id,term_year,school_id,school_name,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?,?,?,?)")
-          statement.setString(1, x._2)
-          statement.setString(2, x._3)
-          statement.setString(3, x._4)
-          statement.setString(4, x._5)
-          statement.setString(5, x._6)
-          statement.setString(6, x._7)
-          statement.setString(7, x._8)
-          statement.setString(8, x._9)
-          statement.setString(9, x._10)
-          statement.setString(10, x._11)
-          statement.setString(11, x._12)
-          statement.setString(12, x._13)
-          statement.setString(13, x._14)
-          statement.execute()
-          conn.close()
-        }else if("update".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_edu_schoolterm (id,term_year,school_id,school_name,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -913,8 +892,26 @@ object ZhongTaiDetailToLocal {
           statement.setString(13, x._14)
           statement.execute()
           conn.close()
-        }else{
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_schoolterm (id,term_year,school_id,school_name,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.setString(12, x._13)
+          statement.setString(13, x._14)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_schoolterm where id='${x._2}'")
           statement.execute()
           conn.close()
@@ -924,14 +921,14 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-
+    *
     * * 阳光午餐的t_edu_schoolterm_system转到本地的t_edu_schoolterm_system
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
 
-  def EduSchooltermSystem(filterData: RDD[SchoolBean])={
+  def EduSchooltermSystem(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
       && x.table.equals("t_edu_schoolterm_system")).map({
       x =>
@@ -948,27 +945,11 @@ object ZhongTaiDetailToLocal {
         val updater = eduSchooltremBean.updater
         val last_update_time = eduSchooltremBean.last_update_time
         val stat = eduSchooltremBean.stat
-        (types,id,term_year,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat)
+        (types, id, term_year, first_start_date, first_end_date, second_start_date, second_end_date, creator, create_time, updater, last_update_time, stat)
     }).foreach({
       x =>
-        if("insert".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_schoolterm_system (id,term_year,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?,?)")
-          statement.setString(1, x._2)
-          statement.setString(2, x._3)
-          statement.setString(3, x._4)
-          statement.setString(4, x._5)
-          statement.setString(5, x._6)
-          statement.setString(6, x._7)
-          statement.setString(7, x._8)
-          statement.setString(8, x._9)
-          statement.setString(9, x._10)
-          statement.setString(10, x._11)
-          statement.setString(11, x._12)
-          statement.execute()
-          conn.close()
-        }else if("update".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_edu_schoolterm_system (id,term_year,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -983,8 +964,24 @@ object ZhongTaiDetailToLocal {
           statement.setString(11, x._12)
           statement.execute()
           conn.close()
-        }else{
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_schoolterm_system (id,term_year,first_start_date,first_end_date,second_start_date,second_end_date,creator,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_schoolterm_system where id='${x._2}'")
           statement.execute()
           conn.close()
@@ -993,14 +990,14 @@ object ZhongTaiDetailToLocal {
   }
 
   /**
-
+    *
     * * 阳光午餐的t_edu_holiday转到本地的t_edu_holiday
-
+    *
     * * @param RDD[SchoolBean] binlog日志数据
-
+    *
     */
 
-  def EduHoliday(filterData: RDD[SchoolBean])={
+  def EduHoliday(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
       && x.table.equals("t_edu_holiday")).map({
       x =>
@@ -1016,26 +1013,11 @@ object ZhongTaiDetailToLocal {
         val updater = eduHolidayBean.updater
         val last_update_time = eduHolidayBean.last_update_time
         val stat = eduHolidayBean.stat
-        (types,id,name,holiday_day,edutype,create_id,create_name,create_time,updater,last_update_time,stat)
+        (types, id, name, holiday_day, edutype, create_id, create_name, create_time, updater, last_update_time, stat)
     }).foreach({
       x =>
-        if("insert".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
-          val statement = conn.prepareStatement("insert into t_edu_holiday (id,name,holiday_day,type,create_id,create_name,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?)")
-          statement.setString(1, x._2)
-          statement.setString(2, x._3)
-          statement.setString(3, x._4)
-          statement.setString(4, x._5)
-          statement.setString(5, x._6)
-          statement.setString(6, x._7)
-          statement.setString(7, x._8)
-          statement.setString(8, x._9)
-          statement.setString(9, x._10)
-          statement.setString(10, x._11)
-          statement.execute()
-          conn.close()
-        }else if("update".equals(x._1)){
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement("replace into t_edu_holiday (id,name,holiday_day,type,create_id,create_name,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?)")
           statement.setString(1, x._2)
           statement.setString(2, x._3)
@@ -1049,8 +1031,23 @@ object ZhongTaiDetailToLocal {
           statement.setString(10, x._11)
           statement.execute()
           conn.close()
-        }else{
-          val conn = DriverManager.getConnection("jdbc:mysql://172.18.14.23:3306/saas_v1?characterEncoding=utf8", "azkaban", "nn1.hadoop@ssic.cn")
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_holiday (id,name,holiday_day,type,create_id,create_name,create_time,updater,last_update_time,stat) values (?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
           val statement = conn.prepareStatement(s"delete from t_edu_holiday where id='${x._2}'")
           statement.execute()
           conn.close()
@@ -1058,4 +1055,278 @@ object ZhongTaiDetailToLocal {
     })
   }
 
+  /**
+    *
+    * * 新b2b2的merchant转到本地的merchant
+    *
+    * * @param RDD[SchoolBean] binlog日志数据
+    *
+    */
+
+  def Merchant(filterData: RDD[SchoolBean]) = {
+    filterData.filter(x => x != null
+      && x.database.equals("tf-merchant")
+      && x.table.equals("merchant"))
+      .map({
+        x =>
+          val merchantBean = JSON.parseObject(x.data, classOf[Merchant])
+          val id = merchantBean.id
+          val user_id = merchantBean.user_id
+          val code = merchantBean.code
+          val channel_source = merchantBean.channel_source
+          val auth_status = merchantBean.auth_status
+          val merchant_type = merchantBean.merchant_type
+          val merchant_business_type = merchantBean.merchant_business_type
+          val del = merchantBean.del
+          val create_id = merchantBean.create_id
+          val create_time = merchantBean.create_time
+          val last_update_id = merchantBean.last_update_id
+          val last_update_time = merchantBean.last_update_time
+          val ss_lunch_id = merchantBean.ss_lunch_id
+          (x.`type`,id, user_id, code, channel_source, auth_status, merchant_type, merchant_business_type, del, create_id, create_time, last_update_id, last_update_time,ss_lunch_id)
+      }).foreach({
+      x =>
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into merchant (id,user_id,code,channel_source,auth_status,merchant_type,merchant_business_type,del,create_id,create_time,last_update_id,last_update_time,ss_lunch_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.setString(12, x._13)
+          statement.setString(13, x._14)
+          statement.execute()
+          conn.close()
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into merchant (id,user_id,code,channel_source,auth_status,merchant_type,merchant_business_type,del,create_id,create_time,last_update_id,last_update_time,ss_lunch_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.setString(12, x._13)
+          statement.setString(13, x._14)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(s"delete from merchant where id='${x._2}'")
+          statement.execute()
+          conn.close()
+        }
+    })
+  }
+
+  /**
+    *
+    * * 新b2b2的merchant_buyer转到本地的merchant_buyer
+    *
+    * * @param RDD[SchoolBean] binlog日志数据
+    *
+    */
+  def MerchantBuyer(filterData: RDD[SchoolBean])={
+    filterData.filter(x => x != null
+      && x.database.equals("tf-merchant")
+      && x.table.equals("merchant_buyer"))
+      .map({
+        x =>
+          val merchantBuyerBean = JSON.parseObject(x.data, classOf[MerchantBuyer])
+          val id = merchantBuyerBean.id
+          val merchant_id = merchantBuyerBean.merchant_id
+          val credit_code = merchantBuyerBean.credit_code
+          val user_id = merchantBuyerBean.user_id
+          val company_name = merchantBuyerBean.company_name
+          val company_type = merchantBuyerBean.company_type
+          val del = merchantBuyerBean.del
+          val create_id = merchantBuyerBean.create_id
+          val create_time = merchantBuyerBean.create_time
+          val last_update_id = merchantBuyerBean.last_update_id
+          val last_update_time = merchantBuyerBean.last_update_time
+          (x.`type`,id, merchant_id, credit_code, user_id, company_name, company_type, del, create_id, create_time, last_update_id, last_update_time)
+      }).foreach({
+      x =>
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into merchant_buyer (id,merchant_id,credit_code,user_id,company_name,company_type,del,create_id,create_time,last_update_id,last_update_time) values (?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.execute()
+          conn.close()
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into merchant_buyer (id,merchant_id,credit_code,user_id,company_name,company_type,del,create_id,create_time,last_update_id,last_update_time) values (?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2)
+          statement.setString(2, x._3)
+          statement.setString(3, x._4)
+          statement.setString(4, x._5)
+          statement.setString(5, x._6)
+          statement.setString(6, x._7)
+          statement.setString(7, x._8)
+          statement.setString(8, x._9)
+          statement.setString(9, x._10)
+          statement.setString(10, x._11)
+          statement.setString(11, x._12)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(s"delete from merchant_buyer where id='${x._2}'")
+          statement.execute()
+          conn.close()
+        }
+    })
+  }
+
+
+  /**
+    *
+    * * 将新b2b的商户merchant 迁移到 t_pro_supplier 表
+    *
+    * * @param RDD[SchoolBean] binlog日志数据
+    *
+    */
+  def B2bSupplierInfo(filterData: RDD[SchoolBean]) = {
+    filterData.filter(x => x != null
+      && x.database.equals("tf-merchant")
+      && x.table.equals("merchant"))
+        .map(x =>(x.`type`,JSON.parseObject(x.data, classOf[Merchant])))
+        .filter(x => "2".equals(x._2.merchant_business_type))
+      .map({
+        case (k,v) =>
+        val merchantBean = v
+        val types = k //插入，删除，更新操作类型
+      val org_merchant_id = merchantBean.id
+        val org_parent_merchant_id = null
+        val parent_id = null
+        val uuid = merchantBean.id
+        val supplier_name = merchantBean.company_name
+        val company_type = null
+        val supplier_classify = null
+        val supplier_type = null //b2b的商户只有卖家，可能是团餐公司也可能是供应商
+      val provinces = merchantBean.office_province_id
+        val city = merchantBean.office_city_id
+
+        val area = NewSchoolToOldSchool.committeeToOldArea(merchantBean.office_region_id)
+        val address = merchantBean.office_address //详情地址
+      val contacts = merchantBean.contact_person //联系人
+      val contact_way = merchantBean.contact_phone //联系人联系方式
+      val qa_person = null //质量负责人
+      val qa_way = null //质量负责人联系电话
+      val reg_address = merchantBean.register_address //注册地址
+      val reg_capital = merchantBean.registered_capital //注册资金
+      val corporation = merchantBean.legal_representative //法人
+        val is_deleted = merchantBean.del
+      val reviewed = "1"
+          var stat ="0"
+        if("0".equals(is_deleted)){
+          stat ="1"
+        }else{
+          stat
+        }
+        val creator = merchantBean.create_id
+        val create_time = merchantBean.create_time
+        val updater = merchantBean.last_update_id
+        val last_update_time = merchantBean.last_update_time
+        val is_available = null
+
+        val audit_state = null
+        (types, (org_merchant_id, org_parent_merchant_id, parent_id, uuid, supplier_name, company_type, address, provinces, city, area), (supplier_classify, supplier_type, contacts, contact_way, reviewed, qa_person, qa_way, reg_capital, corporation, stat), (creator, create_time, updater, last_update_time, is_available, is_deleted, audit_state))
+
+    }).foreach({
+      x =>
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2._1)
+          statement.setString(2, x._2._2)
+          statement.setString(3, x._2._3)
+          statement.setString(4, x._2._4)
+          statement.setString(5, x._2._5)
+          statement.setString(6, x._2._6)
+          statement.setString(7, x._2._7)
+          statement.setString(8, x._2._8)
+          statement.setString(9, x._2._9)
+          statement.setString(10, x._2._10)
+          statement.setString(11, x._3._1)
+          statement.setString(12, x._3._2)
+          statement.setString(13, x._3._3)
+          statement.setString(14, x._3._4)
+          statement.setString(15, x._3._5)
+          statement.setString(16, x._3._6)
+          statement.setString(17, x._3._7)
+          statement.setString(18, x._3._8)
+          statement.setString(19, x._3._9)
+          statement.setString(20, x._3._10)
+          statement.setString(21, x._4._1)
+          statement.setString(22, x._4._2)
+          statement.setString(23, x._4._3)
+          statement.setString(24, x._4._4)
+          statement.setString(25, x._4._5)
+          statement.setString(26, x._4._6)
+          statement.setString(27, x._4._7)
+          statement.execute()
+          conn.close()
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_pro_supplier (org_merchant_id,org_parent_merchant_id,parent_id,id,supplier_name,company_type,address,provinces,city,area,supplier_classify,supplier_type,contacts,contact_way,reviewed,qa_person,qa_way,registered_capital,corporation,stat,creator,create_time,updater,last_update_time,is_available,is_deleted,audit_state) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2._1)
+          statement.setString(2, x._2._2)
+          statement.setString(3, x._2._3)
+          statement.setString(4, x._2._4)
+          statement.setString(5, x._2._5)
+          statement.setString(6, x._2._6)
+          statement.setString(7, x._2._7)
+          statement.setString(8, x._2._8)
+          statement.setString(9, x._2._9)
+          statement.setString(10, x._2._10)
+          statement.setString(11, x._3._1)
+          statement.setString(12, x._3._2)
+          statement.setString(13, x._3._3)
+          statement.setString(14, x._3._4)
+          statement.setString(15, x._3._5)
+          statement.setString(16, x._3._6)
+          statement.setString(17, x._3._7)
+          statement.setString(18, x._3._8)
+          statement.setString(19, x._3._9)
+          statement.setString(20, x._3._10)
+          statement.setString(21, x._4._1)
+          statement.setString(22, x._4._2)
+          statement.setString(23, x._4._3)
+          statement.setString(24, x._4._4)
+          statement.setString(25, x._4._5)
+          statement.setString(26, x._4._6)
+          statement.setString(27, x._4._7)
+          statement.executeUpdate()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(s"delete from t_pro_supplier where org_merchant_id='${x._2._1}'")
+          statement.execute()
+          conn.close()
+        }
+    })
+  }
 }

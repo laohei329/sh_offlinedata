@@ -203,14 +203,6 @@ SELECT id,school_id FROM t_edu_school_supplier WHERE stat =1
   }
 
 
-  def schoolid(session: (SparkSession,String)):  String = {
-    //查询有效的schoolid
 
-    session._1.sql(s"select id,area from t_edu_school where id ='${session._2}'").rdd.map(row => {
-      val area = row.getAs[String]("area")
-      val id = row.getAs[String]("id")
-      (area)
-    }).collect()(0)
-  }
 
 }

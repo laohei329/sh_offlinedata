@@ -1,7 +1,7 @@
 package com.ssic.utils
 
+import java.sql.{Connection, DriverManager}
 import java.util.Properties
-
 
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3._
@@ -54,6 +54,8 @@ object Tools {
 //  conn2.setProperty("user", user2)
 //  conn2.setProperty("password", pwd2)
 //  conn2.setProperty("driver", driver)
+
+
 
   //schoolid -> districtid
   def school2Commitee(session: SparkSession): Map[String, String] = {

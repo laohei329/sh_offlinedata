@@ -1,16 +1,18 @@
 package com.ssic.report
 
+import java.util
 import java.util.{Calendar, Date}
 
 import com.alibaba.fastjson.JSON
-import com.ssic.beans.{Ledger, LedgerMaster, MaterialPlan, SchoolBean}
-import com.ssic.report.MaterialConfirm.{format, logger}
-import com.ssic.report.PlatoonPlan.format
-import com.ssic.utils.Rule
+import com.ssic.beans.{B2bDelivery, _}
+import com.ssic.utils.{JPools, MysqlUtils, Rule}
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
 
 /**
   * Created by 云 on 2018/8/20.
@@ -22,22 +24,22 @@ object Distribution {
 
 
   /**
-
+    *
     * * 配送主表分析数据
-
+    *
     * * @param filterData  mysql的业务binlgog日志
-
+    *
     * * @param return  RDD[(String, List[String])] 主键id list[时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，历史发货状态，表操作类型，有效状态，历史有效状态，验收上报日期，进货日期，验收规则，验收日期]
-
+    *
     */
 
   def DistributionPlan(filterData: RDD[SchoolBean]): RDD[(String, List[String])] = {
-    val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master") )
-      .map(x => (x.`type`,JSON.parseObject(x.data, classOf[LedgerMaster]),JSON.parseObject(x.old, classOf[LedgerMaster])))
+    val proLedgerMaster = filterData.filter(x => x != null && x.table.equals("t_pro_ledger_master"))
+      .map(x => (x.`type`, JSON.parseObject(x.data, classOf[LedgerMaster]), JSON.parseObject(x.old, classOf[LedgerMaster])))
       .filter(x => "1".equals(x._2.industry_type))
 
     val ledgerMasterData: RDD[(String, List[String])] = proLedgerMaster.map({
-      case (k,v,z) =>
+      case (k, v, z) =>
         val id = v.id
         val action_date = v.action_date //配送时间
       val replaceAll = action_date.replaceAll("\\D", "-")
@@ -59,11 +61,11 @@ object Distribution {
         val time = calendar.getTime
         val now = format.format(time)
 
-        var oldHaulStatus ="null"
-        var oldStat ="null"
+        var oldHaulStatus = "null"
+        var oldStat = "null"
         try {
           oldHaulStatus = z.haul_status
-          oldStat =z.stat
+          oldStat = z.stat
         } catch {
           case e: Exception => {
             logger.error(s"parse json error: $z", e)
@@ -72,11 +74,11 @@ object Distribution {
 
         if (format.parse(now).getTime <= format.parse(date).getTime) {
           if (k.equals("insert") && stat.equals("1")) {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat, "null", delivery_date,purchase_date,compliance,delivery_record_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "insert", stat, "null", delivery_date, purchase_date, compliance, delivery_record_date))
           } else if (k.equals("update")) {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, oldHaulStatus, "update", stat, oldStat, delivery_date,purchase_date,compliance,delivery_record_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, oldHaulStatus, "update", stat, oldStat, delivery_date, purchase_date, compliance, delivery_record_date))
           } else {
-            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat, "null", delivery_date,purchase_date,compliance,delivery_record_date))
+            (id, List(date, ledger_type, receiver_id, source_id, ware_batch_no, haul_status, "null", "delete", stat, "null", delivery_date, purchase_date, compliance, delivery_record_date))
           }
         } else {
           ("null", List("null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null"))
@@ -109,15 +111,15 @@ object Distribution {
   }
 
   /**
-
+    *
     * * 配送子表分析数据
-
+    *
     * * @param RDD[SchoolBean]  mysql的业务binlgog日志
-
+    *
     */
 
   def ProLedgerPlan(filterData: RDD[SchoolBean]): RDD[(String, String)] = {
-    val proLedger = filterData.filter(x => x != null && x.table.equals("t_pro_ledger") && x.`type`.equals("insert") )
+    val proLedger = filterData.filter(x => x != null && x.table.equals("t_pro_ledger") && x.`type`.equals("insert"))
       .map(x => JSON.parseObject(x.data, classOf[Ledger]))
       .filter(x => !"0".equals(x.stat))
     val proLedgerData: RDD[(String, String)] = proLedger.map({
@@ -139,5 +141,195 @@ object Distribution {
     proLedgerData
   }
 
+  /**
+    *
+    * * b2b配送表插入分析数据
+    *
+    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+    *
+    * * * @param school2Area  schoolid对于的区号
+    *
+    */
+  def B2bInsertLedege(filterData: RDD[SchoolBean], school2Area: Broadcast[Map[String, String]]) = {
+    val deliveryData = filterData.filter(x => x != null && x.table.equals("t_delivery") && x.`type`.equals("insert"))
+      .map(x => JSON.parseObject(x.data, classOf[B2bDelivery]))
+      .filter(x => "0".equals(x.del))
+      .map({
+        x =>
+          val b2bDeliveryBean = x
+          val id = b2bDeliveryBean.id
+          val delivery_code = b2bDeliveryBean.delivery_code
+          val types = MysqlUtils.merchantToType(b2bDeliveryBean.buyer_merchant_id)
+          val eduId = MysqlUtils.merchantToEduid(b2bDeliveryBean.buyer_merchant_id)
+          val supplierId = b2bDeliveryBean.seller_merchant_id
+          val business_type = b2bDeliveryBean.business_type //业务类型(1:经销 2:代销)', => 对应的阳光午餐的直配，统配
+          val delivery_date = Rule.emptyToNull(b2bDeliveryBean.delivery_date)
+          val date = format.format(format.parse(delivery_date))
+          val calendar = Calendar.getInstance()
+          calendar.setTime(new Date())
+          calendar.add(Calendar.DAY_OF_MONTH, -1)
+          val time = calendar.getTime
+          val now = format.format(time)
+          if (format.parse(now).getTime <= format.parse(date).getTime) {
+            //id,表的操作类型，（配送单，学校id，团餐公司id，）
+            (id, types, (delivery_code, eduId, supplierId, business_type, date))
+          } else {
+            ("null", 0, ("null", "null", "null", "null", "null"))
+          }
 
+      }).filter(x => !"null".equals(x._1)).filter(x => x._2 == 2).map(x => (x._1, x._3))
+
+    val deliveryExtraData = filterData.filter(x => x != null && x.table.equals("t_delivery_extra") && x.`type`.equals("insert"))
+      .map(x => JSON.parseObject(x.data, classOf[B2bDelivery]))
+      .filter(x => "0".equals(x.del))
+      .map({
+        x =>
+          val b2bDeliveryExtraBean = x
+          val delivery_id = b2bDeliveryExtraBean.delivery_id
+          val types = MysqlUtils.merchantToType(b2bDeliveryExtraBean.buyer_merchant_id)
+          val delivery_date = Rule.emptyToNull(b2bDeliveryExtraBean.delivery_date)
+
+          //验收上报时间
+          val delivery_record_date = Rule.emptyToNull(b2bDeliveryExtraBean.delivery_record_date) //验收时间
+        val haul_status = b2bDeliveryExtraBean.haul_status
+          val compliance = b2bDeliveryExtraBean.compliance
+          val purchase_date = Rule.emptyToNull(b2bDeliveryExtraBean.purchase_date) //进货时间
+          (delivery_id, types, (haul_status, compliance, delivery_date, delivery_record_date, purchase_date))
+      }).filter(x => x._2 == 2).map(x => (x._1, x._3))
+
+    deliveryData.leftOuterJoin(deliveryExtraData)
+      .map({
+        x =>
+          // (id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号,验收上报日期,进货日期,验收规则,验收日期,表状态)
+          val detail = ("null", "null", "null", "null", "null")
+          var businessType = "null"
+          if ("1".equals(x._2._1._4)) {
+            businessType = "统配"
+          } else {
+            businessType = "直配"
+          }
+
+          val area = school2Area.value.getOrElse(x._2._1._2, "null")
+          (x._1, x._2._1._5, "1", x._2._1._2, x._2._1._3, x._2._1._1, x._2._2.getOrElse(detail)._1, businessType, area, x._2._2.getOrElse(detail)._3, x._2._2.getOrElse(detail)._5, x._2._2.getOrElse(detail)._2, x._2._2.getOrElse(detail)._4)
+      }).foreachPartition({
+      itr =>
+        val jedis = JPools.getJedis
+        itr.foreach({
+          x =>
+
+            jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._10 + "_" + "disstatus" + "_" + x._12 + "_" + "purchaseDate" + "_" + x._11 + "_" + "deliveryReDate" + "_" + x._13)
+
+            jedis.hset("b2bDistribution", x._1, x._2)
+
+        })
+    })
+  }
+
+
+  /**
+    *
+    * * b2b配送t_delivery更新和删除分析数据
+    *
+    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+    *
+    * * * @param school2Area  schoolid对于的区号
+    *
+    */
+
+
+  def B2bUpDeLedege(filterData: RDD[SchoolBean], school2Area: Broadcast[Map[String, String]]) = {
+    filterData.filter(x => x != null && x.table.equals("t_delivery") && !x.`type`.equals("insert"))
+      .map(x => (x.`type`, JSON.parseObject(x.data, classOf[B2bDelivery])))
+      .map({
+        x =>
+          val b2bDeliveryBean = x._2
+          val id = b2bDeliveryBean.id
+          val delivery_code = b2bDeliveryBean.delivery_code
+          val types = MysqlUtils.merchantToType(b2bDeliveryBean.buyer_merchant_id)
+          val eduId = MysqlUtils.merchantToEduid(b2bDeliveryBean.buyer_merchant_id)
+          val supplierId = b2bDeliveryBean.seller_merchant_id
+          val business_type = b2bDeliveryBean.business_type
+          val delivery_date = Rule.emptyToNull(b2bDeliveryBean.delivery_date)
+          val date = format.format(format.parse(delivery_date))
+          val calendar = Calendar.getInstance()
+          calendar.setTime(new Date())
+          calendar.add(Calendar.DAY_OF_MONTH, -1)
+          val time = calendar.getTime
+          val now = format.format(time)
+          val del = Rule.emptyToNull(b2bDeliveryBean.del)
+          var businessType = "null"
+          if ("1".equals(business_type)) {
+            businessType = "统配"
+          } else {
+            businessType = "直配"
+          }
+
+          val area = school2Area.value.getOrElse(eduId, "null")
+
+          if (format.parse(now).getTime <= format.parse(date).getTime) {
+            (id, types, x._1, del, (delivery_code, eduId, supplierId, businessType, date, area))
+          } else {
+            ("null", 0 , "null", "null", ("null", "null", "null", "null", "null", "null"))
+          }
+
+      }).filter(x => !"null".equals(x._1)).filter(x => x._2 == 2)
+      .foreachPartition({
+        itr =>
+          val jedis = JPools.getJedis
+          itr.foreach({
+            x =>
+              if ("update".equals(x._3) && "1".equals(x._4)) {
+                jedis.hdel(x._5._5 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + "1" + "_" + "schoolid" + "_" + x._5._2 + "_" + "area" + "_" + x._5._6 + "_" + "sourceid" + "_" + x._5._3 + "_" + "batchno" + "_" + x._5._1 + "_" + "delivery" + "_" + x._5._4)
+              } else if ("delete".equals(x._3)) {
+                jedis.hdel(x._5._5 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + "1" + "_" + "schoolid" + "_" + x._5._2 + "_" + "area" + "_" + x._5._6 + "_" + "sourceid" + "_" + x._5._3 + "_" + "batchno" + "_" + x._5._1 + "_" + "delivery" + "_" + x._5._4)
+              }
+          })
+      })
+  }
+
+  /**
+    *
+    * * b2b配送t_delivery_extra更新和删除分析数据
+    *
+    * * @param RDD[SchoolBean]  mysql的业务binlgog日志
+    *
+    */
+
+  def B2bUpDeLedegeExtra(filterData: RDD[SchoolBean]) = {
+    filterData.filter(x => x != null && x.table.equals("t_delivery_extra") && x.`type`.equals("update"))
+      .map(x => JSON.parseObject(x.data, classOf[B2bDelivery]))
+      .map({
+        x =>
+          val b2bDeliveryExtraBean = x
+          val delivery_id = b2bDeliveryExtraBean.delivery_id
+          val types = MysqlUtils.merchantToType(b2bDeliveryExtraBean.buyer_merchant_id)
+          val delivery_date = Rule.emptyToNull(b2bDeliveryExtraBean.delivery_date)
+          //验收上报时间
+          val delivery_record_date = Rule.emptyToNull(b2bDeliveryExtraBean.delivery_record_date) //验收时间
+        val haul_status = b2bDeliveryExtraBean.haul_status
+          val compliance = b2bDeliveryExtraBean.compliance
+          val purchase_date = Rule.emptyToNull(b2bDeliveryExtraBean.purchase_date) //进货时间
+
+          (delivery_id, types, (haul_status, compliance, delivery_date, delivery_record_date, purchase_date))
+      }).filter(x => x._2 == 2)
+      .foreachPartition({
+        itr =>
+          val jedis = JPools.getJedis
+          itr.foreach({
+            x =>
+              val date = jedis.hget("b2bDistribution", x._1)
+              if (StringUtils.isNoneEmpty(date) && !"null".equals(date)) {
+                val strings: util.Set[String] = jedis.hkeys(date + "_" + "DistributionDetail")
+                for (i <- strings.asScala) {
+                  val id = i.split("_type_")(0)
+                  if (id.equals("id_" + x._1)) {
+                    jedis.hset(x._2 + "_" + "DistributionDetail", i, x._3._1 + "_deliveryDate" + "_" + x._3._3 + "_" + "disstatus" + "_" + x._3._2 + "_" + "purchaseDate" + "_" + x._3._5 + "_" + "deliveryReDate" + "_" + x._3._4)
+                  }
+                }
+
+              }
+
+          })
+      })
+  }
 }
