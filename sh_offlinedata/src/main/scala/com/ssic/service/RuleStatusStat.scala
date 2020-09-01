@@ -23,53 +23,59 @@ class RuleStatusStat extends RuleStatusFuc {
     if ("未排菜".equals(have_platoon)) {
       return 4
     } else {
-      val platoon_create_time = format.parse(data._3.split("_")(3)) //排菜操作时间
-      if (week == 1) {
-        //如果当前时间是周一
-        if (platoon_create_time before (now_date)) {
-          //如果操作时间在当前时间前面，表示规范录入
-          return 1
-        } else {
-          //如果操作时间不在当前时间前面，表示逾期补录
-          return 3
-        }
-      } else {
-        if (week != 0) {
-          //当前时间不是周日
-          val calendar = Calendar.getInstance()
-          calendar.setTime(now_date)
-          calendar.add(Calendar.DAY_OF_MONTH, -(week - 1))
-          val now_week_one = calendar.getTime //当周的周一日期
-          if (platoon_create_time before (now_week_one)) {
-            //如果操作时间在周一前面，表示规范录入
+      val createTime = data._3.split("_")(3)
+      if("null".equals(createTime)){
+        return 4
+      }else{
+        val platoon_create_time = format.parse(createTime) //排菜操作时间
+        if (week == 1) {
+          //如果当前时间是周一
+          if (platoon_create_time before (now_date)) {
+            //如果操作时间在当前时间前面，表示规范录入
             return 1
           } else {
-            if (platoon_create_time before (now_date)) {
-              //如果操作时间不在周一前面，在当前时间内，表示补录
-              return 2
-            } else {
-              return 3
-            }
+            //如果操作时间不在当前时间前面，表示逾期补录
+            return 3
           }
-
         } else {
-          //当前时间是周日
-          val calendar = Calendar.getInstance()
-          calendar.setTime(now_date)
-          calendar.add(Calendar.DAY_OF_MONTH, -6)
-          val now_week_one = calendar.getTime //当周的周一日期
-          if (platoon_create_time before (now_week_one)) {
-            //如果操作时间在周一前面，表示规范录入
-            return 1
-          } else {
-            if (platoon_create_time before (now_date)) {
-              return 2
+          if (week != 0) {
+            //当前时间不是周日
+            val calendar = Calendar.getInstance()
+            calendar.setTime(now_date)
+            calendar.add(Calendar.DAY_OF_MONTH, -(week - 1))
+            val now_week_one = calendar.getTime //当周的周一日期
+            if (platoon_create_time before (now_week_one)) {
+              //如果操作时间在周一前面，表示规范录入
+              return 1
             } else {
-              return 3
+              if (platoon_create_time before (now_date)) {
+                //如果操作时间不在周一前面，在当前时间内，表示补录
+                return 2
+              } else {
+                return 3
+              }
+            }
+
+          } else {
+            //当前时间是周日
+            val calendar = Calendar.getInstance()
+            calendar.setTime(now_date)
+            calendar.add(Calendar.DAY_OF_MONTH, -6)
+            val now_week_one = calendar.getTime //当周的周一日期
+            if (platoon_create_time before (now_week_one)) {
+              //如果操作时间在周一前面，表示规范录入
+              return 1
+            } else {
+              if (platoon_create_time before (now_date)) {
+                return 2
+              } else {
+                return 3
+              }
             }
           }
         }
       }
+
     }
 
   }

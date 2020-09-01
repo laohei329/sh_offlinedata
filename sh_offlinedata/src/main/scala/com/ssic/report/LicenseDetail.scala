@@ -1,6 +1,6 @@
 package com.ssic.report
 
-import java.sql.DriverManager
+import java.sql.{Date, DriverManager}
 
 import com.ssic.utils.{JPools, Rule, Tools}
 import com.typesafe.config.ConfigFactory
@@ -141,6 +141,8 @@ object LicenseDetail {
 
           })
       })
+
+
 
 
     sc.stop()

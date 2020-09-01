@@ -44,9 +44,11 @@ object TargetDetail {
 
     val school = session.read.jdbc(url, edu_school, conn)
     val school_supplier = session.read.jdbc(url, edu_school_supplier, conn)
+    val pro_suppliers = session.read.jdbc(url, pro_supplier, conn)
 
     school.createTempView("t_edu_school")
     school_supplier.createTempView("t_edu_school_supplier")
+    pro_suppliers.createTempView("t_pro_supplier")
 
     val projid2schoolid: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolid(session))  //项目点id获取学校id
     val projid2schoolname: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolname(session)) //项目点id获取学校名字
@@ -66,6 +68,12 @@ object TargetDetail {
 
     val distributionDetail = jedis.hgetAll(date + "_DistributionDetail")
     val distributionDetailData = sc.parallelize(distributionDetail.asScala.toList) //配送计划临时表数据
+
+    val b2bLedgerDetail = jedis.hgetAll(date + "_B2b-DistributionDetail")
+    val b2bLedgerDetailData = sc.parallelize(b2bLedgerDetail.asScala.toList) //b2b配送计划主表
+
+    val b2bLedgerExtraDetail = jedis.hgetAll("b2bDistribution")
+    val b2bLedgerExtraDetailData = sc.parallelize(b2bLedgerExtraDetail.asScala.toList) //b2b配送计划子表
 
     val distributions = jedis.hgetAll(date + "_Distribution-Detail")
     val distributionData = sc.parallelize(distributions.asScala.toList)  //配送计划已经存在的数据
@@ -91,7 +99,14 @@ object TargetDetail {
 
     //配送计划的详情数据
           // 处理好的配送计划数据
-    val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailData,gongcanSchool,school2Area,date)
+
+    val distributionDetailAllData = b2bLedgerDetailData.leftOuterJoin(b2bLedgerExtraDetailData)
+      .map({
+        x =>
+          (x._2._1, x._2._2.getOrElse("null"))
+      }).filter(x => !"null".equals(x._2)).union(distributionDetailData)
+
+    val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailAllData,gongcanSchool,school2Area,date)
 
     new TargetDetailStat().distribution(distributiondealdata,distributionData,date)
 

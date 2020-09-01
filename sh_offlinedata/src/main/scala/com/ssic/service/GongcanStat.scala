@@ -44,10 +44,10 @@ class GongcanStat {
 
       }
     } else {
-      val value: String = b2bPlatoonSortData.getOrElse(key.split("_")(1), "null")
-      if (StringUtils.isNoneEmpty(value) && !"null".equals(value)) {
+      val value: String = b2bPlatoonSortData.getOrElse(key.split("_")(1), "0")
+      if (!"0".equals(value)) {
         //在b2b排菜表内
-        return "供餐_已排菜" + "_" + "create-time" + value
+        return "供餐_已排菜" + "_" + "create-time" + "_" + value
       } else {
         //不在排采临时表内
         return "供餐_未排菜" + "_" + "create-time" + "_" + "null"

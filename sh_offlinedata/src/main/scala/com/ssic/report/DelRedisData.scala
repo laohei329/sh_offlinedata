@@ -6,6 +6,7 @@ import java.util.{Calendar, Date}
 import com.ssic.report.MonthPlatoon.format
 import com.ssic.utils.{JPools, Rule, Tools}
 import com.ssic.utils.Tools.{conn, edu_bd_department, url}
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
@@ -87,11 +88,17 @@ object DelRedisData {
     val b2bDistribution: RDD[(String, String)] = sc.parallelize(jedis.hgetAll("b2bDistribution").asScala.toList)
     b2bDistribution.map({
       x =>
-        if(format.parse(x._2).getTime < format.parse(yesterday).getTime){
-          x._1
+        val deliveryDate = x._2.split("_")(2)
+        if(StringUtils.isNoneEmpty(deliveryDate) && !"null".equals(deliveryDate)){
+          if(format.parse(x._2).getTime < format.parse(yesterday).getTime){
+            x._1
+          }else{
+            "null"
+          }
         }else{
           "null"
         }
+
     }).filter(x => !"null".equals(x)).foreachPartition({
       itr =>
         val jedis = JPools.getJedis

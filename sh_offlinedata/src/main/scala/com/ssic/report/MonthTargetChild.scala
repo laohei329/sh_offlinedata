@@ -7,7 +7,7 @@ import java.util.{Calendar, Date}
 import com.ssic.report.MonthTargetDetail.{format, format1, format2, format3}
 import com.ssic.service.{DealDataStat, TargetChildStat}
 import com.ssic.utils.{JPools, Rule, Tools}
-import com.ssic.utils.Tools.{conn, edu_school, edu_school_supplier, url}
+import com.ssic.utils.Tools._
 import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -44,9 +44,11 @@ object MonthTargetChild {
 
     val school = session.read.jdbc(url, edu_school, conn)
     val school_supplier = session.read.jdbc(url, edu_school_supplier, conn)
+    val pro_suppliers = session.read.jdbc(url, pro_supplier, conn)
 
     school.createTempView("t_edu_school")
     school_supplier.createTempView("t_edu_school_supplier")
+    pro_suppliers.createTempView("t_pro_supplier")
 
     for (i <- -30 to -1) {
       val calendar = Calendar.getInstance()

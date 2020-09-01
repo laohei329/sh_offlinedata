@@ -5,7 +5,7 @@ import java.util.Date
 
 import com.ssic.report.TargetTotal.format
 import com.ssic.service.{DealDataStat, TargetChildStat}
-import com.ssic.utils.Tools.{conn, edu_school, edu_school_supplier, url}
+import com.ssic.utils.Tools._
 import com.ssic.utils.{JPools, Tools}
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.time.FastDateFormat
@@ -40,9 +40,11 @@ object TargetChild {
 
     val school = session.read.jdbc(url, edu_school, conn)
     val school_supplier = session.read.jdbc(url, edu_school_supplier, conn)
+    val pro_suppliers = session.read.jdbc(url, pro_supplier, conn)
 
     school.createTempView("t_edu_school")
     school_supplier.createTempView("t_edu_school_supplier")
+    pro_suppliers.createTempView("t_pro_supplier")
 
     val projid2schoolid: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolid(session)) //项目点id获取学校id
     val projid2schoolname: Broadcast[Map[String, String]] = sc.broadcast(Tools.projid2schoolname(session)) //项目点id获取学校名字
