@@ -1329,4 +1329,59 @@ object ZhongTaiDetailToLocal {
         }
     })
   }
+
+  /**
+    *
+    * * 将新b2b的买家和卖家关联信息迁移到cooperation_apply表
+    *
+    * * @param RDD[SchoolBean] binlog日志数据
+    *
+    */
+
+  def B2bCooperationApply(filterData: RDD[SchoolBean])={
+    filterData.filter(x => x != null
+      && x.database.equals("tf-merchant")
+      && x.table.equals("cooperation_apply"))
+      .map(x =>(x.`type`,JSON.parseObject(x.data, classOf[CooperationApply])))
+        .map({
+          case (k,v) =>
+            val cooperationApplyBean = v
+            val types = k //插入，删除，更新操作类型
+          val id = cooperationApplyBean.id
+            val buyer_merchant_id = cooperationApplyBean.buyer_merchant_id
+            val seller_merchant_id = cooperationApplyBean.seller_merchant_id
+            val status = cooperationApplyBean.status
+            val del = cooperationApplyBean.del
+            (types, (id, buyer_merchant_id, seller_merchant_id, status,del))
+
+        }).foreach({
+      x =>
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into cooperation_apply (id,buyer_merchant_id,seller_merchant_id,status,del) values (?,?,?,?,?)")
+          statement.setString(1, x._2._1)
+          statement.setString(2, x._2._2)
+          statement.setString(3, x._2._3)
+          statement.setString(4, x._2._4)
+          statement.setString(5, x._2._5)
+          statement.execute()
+          conn.close()
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into cooperation_apply (id,buyer_merchant_id,seller_merchant_id,status,del) values (?,?,?,?,?)")
+          statement.setString(1, x._2._1)
+          statement.setString(2, x._2._2)
+          statement.setString(3, x._2._3)
+          statement.setString(4, x._2._4)
+          statement.setString(5, x._2._5)
+          statement.executeUpdate()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(s"delete from t_pro_supplier where id='${x._2._1}'")
+          statement.execute()
+          conn.close()
+        }
+    })
+  }
 }

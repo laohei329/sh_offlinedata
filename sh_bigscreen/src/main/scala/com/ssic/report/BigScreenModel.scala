@@ -147,6 +147,9 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.MerchantBuyer(filterData)
         //将新b2b的商户merchant 迁移到 t_pro_supplier 表
         ZhongTaiDetailToLocal.B2bSupplierInfo(filterData)
+        //将新b2b的买家和卖家关联信息迁移到cooperation_apply表
+        ZhongTaiDetailToLocal.B2bCooperationApply(filterData)
+
 
 
 
@@ -191,12 +194,12 @@ object BigScreenModel {
           })
 
 
-        //b2b插入配送计划的详细信息
-        Distribution.B2bInsertLedege(filterData,school2Area)
+
         //b2b配送t_delivery更新和删除分析数据
         Distribution.B2bUpDeLedege(filterData,school2Area)
         //b2b配送t_delivery_extra更新和删除分析数据
         Distribution.B2bUpDeLedegeExtra(filterData)
+
 
 
         //学校详情
