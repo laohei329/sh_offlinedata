@@ -167,10 +167,12 @@ object Distribution {
           val eduId = MysqlUtils.merchantToEduid(b2bDeliveryBean.buyer_merchant_id)
           val supplierId = b2bDeliveryBean.seller_merchant_id
           val business_type = b2bDeliveryBean.business_type
-          val delivery_date = Rule.emptyToNull(b2bDeliveryBean.delivery_date)
+          //val delivery_date = Rule.emptyToNull(b2bDeliveryBean.delivery_date)  配送时间
+          //期望收货时间，相当于排菜时间
+          val expected_receive_date = Rule.emptyToNull(b2bDeliveryBean.expected_receive_date)
           var date="2020-01-01"
           try {
-             date = format.format(format.parse(delivery_date))
+             date = format.format(format.parse(expected_receive_date))
           }catch {
             case e: Exception => {
               logger.error(s"parse json error: $x", e)
