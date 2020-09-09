@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
-/*
-* 加了供餐逻辑的排菜统计数据
+/** 加了供餐逻辑的排菜统计数据，今日至未来一周的排菜统计数据
 * */
 object PlatoonTotal {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")

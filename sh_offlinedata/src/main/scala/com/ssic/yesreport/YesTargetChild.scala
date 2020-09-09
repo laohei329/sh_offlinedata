@@ -16,6 +16,10 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
+/**
+  * 昨日用料，验收，留样对学校去重子页面数据
+  */
+
 object YesTargetChild {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")

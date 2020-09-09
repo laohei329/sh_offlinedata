@@ -275,25 +275,43 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
     cell15.setCellValue("总")
     cell15.setCellStyle(style)
 
+    //应排菜统计
     val should_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).map(x => (x._1, x._8)).reduceByKey(_ + _)
+    //已排菜统计
     val have_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).map(x => (x._1, x._9)).reduceByKey(_ + _)
+    //幼托应排菜统计
     val you_should_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //幼托已排菜统计
     val you_have_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学应排菜统计
     val zhong_should_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学已排菜统计
     val zhong_have_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他应排菜统计
     val qi_should_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他已排菜统计
     val qi_have_platoon_total = data._2.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
 
+    //应验收统计
     val should_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).map(x => (x._1, x._8)).reduceByKey(_ + _)
+    //已验收统计
     val have_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).map(x => (x._1, x._9)).reduceByKey(_ + _)
+    //幼托应验收统计
     val you_should_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //幼托已验收统计
     val you_have_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学应验收统计
     val zhong_should_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学已验收统计
     val zhong_have_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他应验收统计
     val qi_should_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他已验收统计
     val qi_have_ledger_total = data._4.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
 
+    //已处理证件预警数据统计
     val deal_license_data = data._7.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "逾期".equals(x._16)).filter(x => x._11 == 4).map(x => (x._1, 1)).reduceByKey(_ + _)
+    //证件预警统计
     val license_data_total = data._7.filter(x => !"其他".equals(x._1)).filter(x => !"外籍人员子女学校".equals(x._1)).filter(x => !"市属中职校".equals(x._1)).filter(x => "逾期".equals(x._16)).map(x => (x._1, 1)).reduceByKey(_ + _)
 
 
@@ -435,7 +453,7 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
         }
 
         (qu, you_platoon_lv, zhong_platoon_lv, qi_platoon_lv, platoon_lv, you_ledger_lv, zhong_ledger_lv, qi_ledger_lv, ledger_lv, you_platoon_count, zhong_platoon_count, qi_platoon_count, you_ledger_count, zhong_ledger_count, qi_ledger_count, license_warn_lv, license_warn_count)
-      }).sortBy(x => x._5, false)
+      }).filter(x => !x._1.equals("null")).sortBy(x => x._5, false)
 
     val total_lv = totals.collect()
 
@@ -1273,30 +1291,49 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
     cell15.setCellValue("总")
     cell15.setCellStyle(style)
 
+    //应排菜统计
     val should_platoon_total = data._2.map(x => (x._1, x._8)).reduceByKey(_ + _)
+    //已排菜统计
     val have_platoon_total = data._2.map(x => (x._1, x._9)).reduceByKey(_ + _)
+    //幼托应排菜统计
     val you_should_platoon_total = data._2.filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //幼托已排菜统计
     val you_have_platoon_total = data._2.filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学应排菜统计
     val zhong_should_platoon_total = data._2.filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+      //中小学已排菜统计
     val zhong_have_platoon_total = data._2.filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他应排菜统计
     val qi_should_platoon_total = data._2.filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他已排菜
     val qi_have_platoon_total = data._2.filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
 
+    //应配送统计
     val should_ledger_total = data._4.map(x => (x._1, x._8)).reduceByKey(_ + _)
+    //已配送统计
     val have_ledger_total = data._4.map(x => (x._1, x._9)).reduceByKey(_ + _)
+    //幼托应配送统计
     val you_should_ledger_total = data._4.filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //幼托已配送统计
     val you_have_ledger_total = data._4.filter(x => "幼托".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学应配送统计
     val zhong_should_ledger_total = data._4.filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //中小学已配送统计
     val zhong_have_ledger_total = data._4.filter(x => "中小学".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他应配送统计
     val qi_should_ledger_total = data._4.filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._8)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
+    //其他已配送统计
     val qi_have_ledger_total = data._4.filter(x => "其他".equals(x._6)).map(x => ((x._1, x._6), x._9)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2)))
 
+    //已处理预警证件数
     val deal_license_data = data._7.filter(x => "逾期".equals(x._16)).filter(x => x._11 == 4).map(x => (x._1, 1)).reduceByKey(_ + _)
+    //预警证件数
     val license_data_total = data._7.filter(x => "逾期".equals(x._16)).map(x => (x._1, 1)).reduceByKey(_ + _)
 
 
     val totals = should_platoon_total.leftOuterJoin(have_platoon_total).leftOuterJoin(you_should_platoon_total).leftOuterJoin(you_have_platoon_total).leftOuterJoin(zhong_should_platoon_total).leftOuterJoin(zhong_have_platoon_total).leftOuterJoin(qi_should_platoon_total).leftOuterJoin(qi_have_platoon_total).leftOuterJoin(should_ledger_total).leftOuterJoin(have_ledger_total).leftOuterJoin(you_should_ledger_total).leftOuterJoin(you_have_ledger_total).leftOuterJoin(zhong_should_ledger_total).leftOuterJoin(zhong_have_ledger_total).leftOuterJoin(qi_should_ledger_total).leftOuterJoin(qi_have_ledger_total).leftOuterJoin(deal_license_data).leftOuterJoin(license_data_total)
       .map(x => {
+        //管理部门
         val qu = x._1
 
         val should_platoon_total = x._2._1._1._1._1._1._1._1._1._1._1._1._1._1._1._1._1._1
@@ -1433,7 +1470,7 @@ class ShanghaiWeekReport extends ShanghaiWeekRepFuc {
         }
 
         (qu, you_platoon_lv, zhong_platoon_lv, qi_platoon_lv, platoon_lv, you_ledger_lv, zhong_ledger_lv, qi_ledger_lv, ledger_lv, you_platoon_count, zhong_platoon_count, qi_platoon_count, you_ledger_count, zhong_ledger_count, qi_ledger_count, license_warn_lv, license_warn_count)
-      }).sortBy(x => x._5, false)
+      }).filter(x => !x._1.equals("null")).sortBy(x => x._5, false)
 
     val total_lv = totals.collect()
 

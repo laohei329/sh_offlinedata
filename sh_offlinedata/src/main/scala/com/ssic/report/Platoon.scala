@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
-*   加了供餐逻辑的排菜数据
+*   加了供餐逻辑的排菜数据，今天至未来一周的排菜详情数据
 * */
 
 object Platoon {

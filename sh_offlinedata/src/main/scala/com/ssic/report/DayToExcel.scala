@@ -19,13 +19,13 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
 
 /**
-  * 日报表按照上海市的报表数据
+  * 学校日报表按照上海市的报表数据
   */
 object DayToExcel {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("教委上海市周报表")
+    val sparkConf = new SparkConf().setAppName("日报表按照上海市的报表数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

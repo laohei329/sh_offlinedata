@@ -12,7 +12,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import scala.collection.JavaConverters._
 
 /**
-  * 预警的hive数据汇总处理
+  * 预警的hive数据汇总处理到redis，针对大屏的
   */
 
 object WarnHiveData {
@@ -22,7 +22,7 @@ object WarnHiveData {
   private val format2 = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("预警的hive数据汇总处理到redis")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

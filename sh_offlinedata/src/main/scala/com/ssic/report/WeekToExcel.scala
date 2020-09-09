@@ -19,13 +19,16 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.spark.broadcast.Broadcast
 
 
+/**
+  * 学校周报表
+  */
 
 object WeekToExcel {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("学校周报表")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

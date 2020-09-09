@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
+/**
+  * 判断得到学校去重页面的学校验收状态
+  */
 
 object NoDistribution {
 

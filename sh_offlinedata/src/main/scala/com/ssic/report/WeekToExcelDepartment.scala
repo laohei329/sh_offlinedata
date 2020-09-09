@@ -28,7 +28,7 @@ object WeekToExcelDepartment {
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("学校周报表按照管理部门的报表数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

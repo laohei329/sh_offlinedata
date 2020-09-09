@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
+/**
+  * 昨日排菜详情数据
+  */
+
 object YesPlatoon {
 
   private val format = FastDateFormat.getInstance("yyyy-MM-dd")

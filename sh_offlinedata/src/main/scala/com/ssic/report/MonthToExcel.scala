@@ -22,7 +22,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 
 /**
-  * 月报表按照上海市的报表数据
+  * 学校月报表按照上海市的报表数据
   */
 
 object MonthToExcel {
@@ -30,7 +30,7 @@ object MonthToExcel {
   private val format2 = FastDateFormat.getInstance("yyyy-MM-dd")
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("月报表按照上海市的报表数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 

@@ -12,6 +12,10 @@ import org.apache.spark.sql.SQLContext
 
 import scala.collection.JavaConverters._
 
+/**一个月验收对学校去重子页面验收状态数据,从hive同步到redis中
+  *
+  */
+
 object MonthNoDistribution {
 
 

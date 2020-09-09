@@ -21,7 +21,7 @@ object LicenseDetail {
   private val config = ConfigFactory.load()
 
   def main(args: Array[String]): Unit = {
-    val sparkConf = new SparkConf().setAppName("大数据运营管理后台离线数据")
+    val sparkConf = new SparkConf().setAppName("清洗学校和供应学校的供应商数据")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.debug.maxToStringFields", "200")
 
@@ -58,8 +58,8 @@ object LicenseDetail {
           x =>
             val statement = conn.prepareStatement(
               s"""
-                 |update t_edu_school
-                 |set license_main_type =? ,
+                 |update saas_v1.t_edu_school
+                 |set license_main_type =?,
                  |license_main_child =?
                  |where id = '${x._1}'
              """.stripMargin)
