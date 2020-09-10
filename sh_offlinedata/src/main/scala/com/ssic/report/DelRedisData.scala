@@ -90,7 +90,7 @@ object DelRedisData {
       x =>
         val deliveryDate = x._2.split("_")(2)
         if(StringUtils.isNoneEmpty(deliveryDate) && !"null".equals(deliveryDate)){
-          if(format.parse(x._2).getTime < format.parse(yesterday).getTime){
+          if(format.parse(deliveryDate).getTime < format.parse(yesterday).getTime){
             x._1
           }else{
             "null"
