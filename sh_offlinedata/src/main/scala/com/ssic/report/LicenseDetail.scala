@@ -143,8 +143,6 @@ object LicenseDetail {
       })
 
 
-
-
     sc.stop()
   }
 
