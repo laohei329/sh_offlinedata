@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.typesafe.sbt:compiler-interface:sources:0.12.1">
+    <CLASSES>
+      <root url="jar://D:/MAVEN_REPO/com/typesafe/sbt/compiler-interface/0.12.1/compiler-interface-0.12.1-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/MAVEN_REPO/com/typesafe/sbt/compiler-interface/0.12.1/compiler-interface-0.12.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://D:/MAVEN_REPO/com/typesafe/sbt/compiler-interface/0.12.1/compiler-interface-0.12.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
