@@ -152,7 +152,6 @@ object BigScreenModel {
 
 
 
-
         //上海市排菜计划的详细的临时表
         PlatoonPlan.PlatoonRealTimeData(filterData, school2Area, session)
           //时间，学校id，区号，表操作类型，创建时间，数据是否有效状态
