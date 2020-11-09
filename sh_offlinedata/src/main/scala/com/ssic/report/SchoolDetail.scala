@@ -2,6 +2,7 @@ package com.ssic.report
 
 import com.ssic.utils.Tools.{edu_school, _}
 import com.ssic.utils.{JPools, Rule}
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time._
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
@@ -42,7 +43,7 @@ object SchoolDetail {
     /**
       * 这是之前的原始代码
       */
-    /*    session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
+        session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
       row =>
         //id;378e5034-d02a-4f3d-842b-2f1a064e498b;schoolname;上海市静安区余姚路幼儿园;
         // isbranchschool;0;parentid;null;area;10;address;上海市静安区余姚路170号;
@@ -128,7 +129,7 @@ object SchoolDetail {
             }
 
         })
-    })*/
+    })
 
 
 
