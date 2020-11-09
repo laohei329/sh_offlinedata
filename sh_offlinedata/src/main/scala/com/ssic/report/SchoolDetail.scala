@@ -159,7 +159,6 @@ object SchoolDetail {
       */
     val cLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
         "stat from saas_v1.t_pro_license where stat = 1  and lic_type= 0;").rdd.map(row => {
-
       val relation_id = row.getAs[String]("relation_id")
       val lic_type = row.getAs[String]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
@@ -193,9 +192,7 @@ object SchoolDetail {
         } else {
           (id, slic.get + clic.get)
         }
-
       }
-
     }
 
     val schoolRDD: RDD[(String, String)] = session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
@@ -259,16 +256,13 @@ object SchoolDetail {
         itr.foreach{
           case (id,(school,lic))=>
             if (None.equals(lic)){
-              jedis.hset("schoolDetail",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
+              jedis.hset("schoolDetailTest",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
                   + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
             }else{
-              jedis.hset("schoolDetail",id,school+lic.get)
+              jedis.hset("schoolDetailTest",id,school+lic.get)
             }
-
         }
-
     }
-
     sc.stop()
   }
 
