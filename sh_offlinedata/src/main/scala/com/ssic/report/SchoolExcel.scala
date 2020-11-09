@@ -37,7 +37,7 @@ object SchoolExcel {
     //area, school_name, social_credit_code, school_nature, level, committee_name,
     //canteen_mode, student_amount, staff_count, corporation, corporation_phone, department_head,
     // department_mobilephone, authorise, province, city, address, customer_name
-    val sheetWidth = Array[Int](2500, 2500, 8000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500,3500)
+    val sheetWidth = Array[Int](2500, 2500, 8000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500)
     new ExceltitleStat().sheetname(sheet1, sheetWidth)
 
     /**
