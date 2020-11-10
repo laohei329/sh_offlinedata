@@ -140,7 +140,7 @@ object SchoolDetail {
       * 获取1:食品经营许可证
       */
     val sLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
-        "stat from saas_v1.t_pro_license where stat = 1  and lic_type=1;").rdd.map(row => {
+        "stat from t_pro_license where stat = 1  and lic_type=1;").rdd.map(row => {
       val relation_id = row.getAs[String]("relation_id")
       val lic_type = row.getAs[String]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
@@ -159,7 +159,7 @@ object SchoolDetail {
       * 获取所有的0:餐饮服务许可证
       */
     val cLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
-        "stat from saas_v1.t_pro_license where stat = 1  and lic_type= 0;").rdd.map(row => {
+        "stat from t_pro_license where stat = 1  and lic_type= 0;").rdd.map(row => {
       val relation_id = row.getAs[String]("relation_id")
       val lic_type = row.getAs[String]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
@@ -207,6 +207,7 @@ object SchoolDetail {
         // foodsafetypersion;null;foodsafetymobilephone;null;foodsafetytelephone;null;gongcan;null;slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null
 
         val id = row.getAs[String]("id")
+
         val schoolname = row.getAs[String]("school_name")
         val is_branch_school = row.getAs[Int]("is_branch_school")
         val parent_id = Rule.emptyToNull(row.getAs[String]("parent_id"))
