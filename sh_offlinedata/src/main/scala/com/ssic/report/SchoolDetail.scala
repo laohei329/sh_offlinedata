@@ -1,5 +1,7 @@
 package com.ssic.report
 
+import java.sql.Date
+
 import com.ssic.utils.Tools.{edu_school, _}
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3.StringUtils
@@ -147,8 +149,8 @@ object SchoolDetail {
       val job_organization = row.getAs[String]("job_organization")
       val lic_no = row.getAs[String]("lic_no")
       val operation = row.getAs[String]("operation")
-      val give_lic_date = row.getAs[String]("give_lic_date")
-      val lic_end_date = row.getAs[String]("lic_end_date")
+      val give_lic_date = row.getAs[Date]("give_lic_date")
+      val lic_end_date = row.getAs[Date]("lic_end_date")
       val stat = row.getAs[Int]("stat")
 
       (relation_id, "slictype;" + lic_type + ";slicpic;" + lic_pic + ";slicjob;" + job_organization + ";slicno;" + lic_no + ";soperation;"
@@ -166,8 +168,8 @@ object SchoolDetail {
       val job_organization = row.getAs[String]("job_organization")
       val lic_no = row.getAs[String]("lic_no")
       val operation = row.getAs[String]("operation")
-      val give_lic_date = row.getAs[String]("give_lic_date")
-      val lic_end_date = row.getAs[String]("lic_end_date")
+      val give_lic_date = row.getAs[Date]("give_lic_date")
+      val lic_end_date = row.getAs[Date]("lic_end_date")
       val stat = row.getAs[Int]("stat")
 
       (relation_id, "clictype;" + lic_type + ";clicpic;" + lic_pic + ";clicjob;" + job_organization + ";clicno;" + lic_no + ";coperation;"
