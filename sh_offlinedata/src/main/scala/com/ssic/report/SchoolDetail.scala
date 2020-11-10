@@ -189,7 +189,7 @@ object SchoolDetail {
                 + clic.get)
           }
         } else if (None.equals(clic)) {
-          (id, slic + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
+          (id, slic.get + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
         } else {
           (id, slic.get + clic.get)
         }
