@@ -83,6 +83,48 @@ class ExceltitleStat {
   }
 
   /**
+   *
+   * * 对标中的内容进行合并
+   *
+   * * @param Array[(String,Array[String])] 表内容
+   *
+   * * @param HSSFSheet 表
+   *
+   * * @param HSSFCellStyle  字体格式
+   *
+   * * @param int 表内容需要加的行数 这里没什么用都是加一行
+   *
+   * * @param orderNum 表自增序号的列
+   *
+   */
+  def excelcontentMerge(array: Array[(Array[String])], hSSFSheet: HSSFSheet, hSSFCellStyle: HSSFCellStyle, int: Int, orderNum: Int): Unit = {
+
+    for (i <- 0 until array.length) {
+      val row = hSSFSheet.createRow(i + 1)
+      val data = array(i)
+
+      for (j <- 0 until data.length) {
+
+        val oldConten: String = array(i)(j)
+        val newConten: String = array(i + 1)(j)
+        if (newConten==oldConten) {
+          val region = new CellRangeAddress(i, i + 1, 1, 1)
+          hSSFSheet.addMergedRegion(region)
+        }
+        if (j == orderNum) {
+          val cell = row.createCell(j)
+          cell.setCellValue((i + 1).toString)
+          cell.setCellStyle(hSSFCellStyle)
+        } else {
+          val cell = row.createCell(j)
+          cell.setCellValue(data(j))
+          cell.setCellStyle(hSSFCellStyle)
+        }
+      }
+    }
+  }
+
+  /**
     *
     * * 创建sheet
     *
@@ -96,8 +138,6 @@ class ExceltitleStat {
     for (i <- 0 until width.length) {
       hSSFSheet.setColumnWidth(i, width(i))
     }
-
-
   }
 
   /**
@@ -131,5 +171,7 @@ class ExceltitleStat {
 
     return style
   }
+
+
 
 }
