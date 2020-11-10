@@ -2,6 +2,7 @@ package com.ssic.report
 
 import com.ssic.utils.Tools.{edu_school, _}
 import com.ssic.utils.{JPools, Rule}
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time._
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
@@ -42,7 +43,7 @@ object SchoolDetail {
     /**
       * 这是之前的原始代码
       */
-    /*    session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
+        session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
       row =>
         //id;378e5034-d02a-4f3d-842b-2f1a064e498b;schoolname;上海市静安区余姚路幼儿园;
         // isbranchschool;0;parentid;null;area;10;address;上海市静安区余姚路170号;
@@ -128,7 +129,7 @@ object SchoolDetail {
             }
 
         })
-    })*/
+    })
 
 
 
@@ -159,7 +160,6 @@ object SchoolDetail {
       */
     val cLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
         "stat from saas_v1.t_pro_license where stat = 1  and lic_type= 0;").rdd.map(row => {
-
       val relation_id = row.getAs[String]("relation_id")
       val lic_type = row.getAs[String]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
@@ -193,9 +193,7 @@ object SchoolDetail {
         } else {
           (id, slic.get + clic.get)
         }
-
       }
-
     }
 
     val schoolRDD: RDD[(String, String)] = session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
@@ -259,16 +257,13 @@ object SchoolDetail {
         itr.foreach{
           case (id,(school,lic))=>
             if (None.equals(lic)){
-              jedis.hset("schoolDetail",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
+              jedis.hset("schoolDetailTest",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
                   + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
             }else{
-              jedis.hset("schoolDetail",id,school+lic.get)
+              jedis.hset("schoolDetailTest",id,school+lic.get)
             }
-
         }
-
     }
-
     sc.stop()
   }
 
