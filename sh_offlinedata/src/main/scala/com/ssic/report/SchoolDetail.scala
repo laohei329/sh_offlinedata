@@ -45,7 +45,7 @@ object SchoolDetail {
     /**
       * 这是之前的原始代码
       */
-        session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
+ /*       session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
       row =>
         //id;378e5034-d02a-4f3d-842b-2f1a064e498b;schoolname;上海市静安区余姚路幼儿园;
         // isbranchschool;0;parentid;null;area;10;address;上海市静安区余姚路170号;
@@ -131,7 +131,7 @@ object SchoolDetail {
             }
 
         })
-    })
+    })*/
 
 
 
@@ -260,10 +260,10 @@ object SchoolDetail {
         itr.foreach{
           case (id,(school,lic))=>
             if (None.equals(lic)){
-              jedis.hset("schoolDetailTest",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
+              jedis.hset("schoolDetail",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
                   + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
             }else{
-              jedis.hset("schoolDetailTest",id,school+lic.get)
+              jedis.hset("schoolDetail",id,school+lic.get)
             }
         }
     }
