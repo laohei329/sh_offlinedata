@@ -142,15 +142,14 @@ object SchoolDetail {
     val sLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
         "stat from t_pro_license where stat = 1  and lic_type=1").rdd.map(row => {
       val relation_id = row.getAs[String]("relation_id")
-      val lic_type = row.getAs[String]("lic_type")
+      val lic_type = row.getAs[Int]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
       val job_organization = row.getAs[String]("job_organization")
       val lic_no = row.getAs[String]("lic_no")
       val operation = row.getAs[String]("operation")
       val give_lic_date = row.getAs[String]("give_lic_date")
-
       val lic_end_date = row.getAs[String]("lic_end_date")
-      val stat = row.getAs[String]("stat")
+      val stat = row.getAs[Int]("stat")
 
       (relation_id, "slictype;" + lic_type + ";slicpic;" + lic_pic + ";slicjob;" + job_organization + ";slicno;" + lic_no + ";soperation;"
           + operation + ";slicdate;" + give_lic_date + ";senddate;" + lic_end_date + ";")
@@ -162,14 +161,14 @@ object SchoolDetail {
     val cLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
         "stat from t_pro_license where stat = 1  and lic_type= 0").rdd.map(row => {
       val relation_id = row.getAs[String]("relation_id")
-      val lic_type = row.getAs[String]("lic_type")
+      val lic_type = row.getAs[Int]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
       val job_organization = row.getAs[String]("job_organization")
       val lic_no = row.getAs[String]("lic_no")
       val operation = row.getAs[String]("operation")
       val give_lic_date = row.getAs[String]("give_lic_date")
       val lic_end_date = row.getAs[String]("lic_end_date")
-      val stat = row.getAs[String]("stat")
+      val stat = row.getAs[Int]("stat")
 
       (relation_id, "clictype;" + lic_type + ";clicpic;" + lic_pic + ";clicjob;" + job_organization + ";clicno;" + lic_no + ";coperation;"
           + operation + ";clicdate;" + give_lic_date + ";cenddate;" + lic_end_date)
