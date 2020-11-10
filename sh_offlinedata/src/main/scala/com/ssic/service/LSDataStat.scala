@@ -37,11 +37,11 @@ class LSDataStat extends LSDataFunc {
           itr.foreach({
             case (k, v) =>
               //表示左边没有，右边有
-              if (v._1.size == 0) {
+              if (None == v._1|| null == v._1 || v._1.size == 0) {
                 jedis.hset(date.split(" ")(0) + "_material_new", k, "0")
                 jedis.expire(date.split(" ")(0) + "_material_new",345600)
               } else {
-                jedis.hset(date.split(" ")(0) + "_material_new", k, v._1.head.toString)
+                jedis.hset(date.split(" ")(0) + "_material_new", k, if(None == v || null == v || None == v._1|| null == v._1 || None == v._1.head || null == v._1.head) "0" else v._1.head.toString)
                 jedis.expire(date.split(" ")(0) + "_material_new",345600)
               }
 

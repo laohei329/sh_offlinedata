@@ -85,6 +85,8 @@ object TargetDetail {
     val retentiondish = jedis.hgetAll(date + "_retention-dish")
     val retentiondishData: RDD[(String, String)] = sc.parallelize(retentiondish.asScala.toList)  //留样计划临时表数据
 
+    //172.18.14.20:7001> hget 2020-10-21_gc-retentiondishtotal_child area_3_id_c5149174-b743-4a6a-ae47-47b2cdd3f5bf
+    //total_14_reserve_14_noreserve_0_status_1_reservestatus_1_createtime_2020-10-21 07:16:52
     val gcretentiondish = jedis.hgetAll(date + "_gc-retentiondish")
     val gcretentiondishData: RDD[(String, String)] = sc.parallelize(gcretentiondish.asScala.toList)  //留样计划已经存在的数据
 

@@ -241,6 +241,9 @@ select id,school_name from t_edu_school
 
   def gongcanSchool(date: String): Map[String, String] = {
     val jedis = JPools.getJedis
+
+    //172.18.14.20:7001> hget 2020-10-21_platoon-feed 3_c5149174-b743-4a6a-ae47-47b2cdd3f5bf
+    //供餐_已排菜_create-time_2020-10-13 02:31:18_reason_null_plastatus_1
     jedis.hgetAll(date + "_platoon-feed").asScala.toMap
   }
 
