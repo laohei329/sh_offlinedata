@@ -33,10 +33,16 @@ class EduAllDataStat  {
     val platoon = plaData.map(x => ((x._1.split("_")(1), x._2)))
     val useMaterialData = useMaterialChildData.map(x => ((x._1.split("_")(1), x._2)))
     val distributionData = distributionchildData.map(x => ((x._1.split("id_")(1), x._2)))
+
+    //172.18.14.20:7001> hget 2020-10-21_gc-retentiondishtotal_child area_3_id_c5149174-b743-4a6a-ae47-47b2cdd3f5bf
+    //-> Redirected to slot [2663] located at 172.18.14.20:7002
+    //total_14_reserve_14_noreserve_0_status_1_reservestatus_1_createtime_2020-10-21 07:16:52
+    //    (key, value)
+    //    ("c5149174-b743-4a6a-ae47-47b2cdd3f5bf",  "total_14_reserve_14_noreserve_0_status_1_reservestatus_1_createtime_2020-10-21 07:16:52")
     val retentionData = retentionchildData.map(x => ((x._1.split("id_")(1), x._2)))
 
     platoon.leftOuterJoin(useMaterialData).leftOuterJoin(distributionData).leftOuterJoin(retentionData).map({
-      x =>
+              x =>
         //供餐_已排菜_create-time_2019-05-07 10:27:58+"_"+"reason"+"_"+reason+"_"+"plastatus"+"_"+"4"
         val id = x._1
         val platooData = x._2._1._1._1
