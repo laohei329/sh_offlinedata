@@ -1,5 +1,7 @@
 package com.ssic.report
 
+import java.sql.Date
+
 import com.ssic.utils.Tools.{edu_school, _}
 import com.ssic.utils.{JPools, Rule}
 import org.apache.commons.lang3.StringUtils
@@ -43,7 +45,7 @@ object SchoolDetail {
     /**
       * 这是之前的原始代码
       */
-        session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
+ /*       session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
       row =>
         //id;378e5034-d02a-4f3d-842b-2f1a064e498b;schoolname;上海市静安区余姚路幼儿园;
         // isbranchschool;0;parentid;null;area;10;address;上海市静安区余姚路170号;
@@ -129,8 +131,7 @@ object SchoolDetail {
             }
 
         })
-    })
-
+    })*/
 
 
     val t_pro_license = session.read.jdbc(url, edu_bd_pro_license, conn)
@@ -140,16 +141,16 @@ object SchoolDetail {
       * 获取1:食品经营许可证
       */
     val sLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
-        "stat from saas_v1.t_pro_license where stat = 1  and lic_type=1;").rdd.map(row => {
+        "stat from t_pro_license where stat = 1  and lic_type=1").rdd.map(row => {
       val relation_id = row.getAs[String]("relation_id")
-      val lic_type = row.getAs[String]("lic_type")
+      val lic_type = row.getAs[Int]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
       val job_organization = row.getAs[String]("job_organization")
       val lic_no = row.getAs[String]("lic_no")
       val operation = row.getAs[String]("operation")
-      val give_lic_date = row.getAs[String]("give_lic_date")
-      val lic_end_date = row.getAs[String]("lic_end_date")
-      val stat = row.getAs[String]("stat")
+      val give_lic_date = row.getAs[Date]("give_lic_date")
+      val lic_end_date = row.getAs[Date]("lic_end_date")
+      val stat = row.getAs[Int]("stat")
 
       (relation_id, "slictype;" + lic_type + ";slicpic;" + lic_pic + ";slicjob;" + job_organization + ";slicno;" + lic_no + ";soperation;"
           + operation + ";slicdate;" + give_lic_date + ";senddate;" + lic_end_date + ";")
@@ -159,16 +160,16 @@ object SchoolDetail {
       * 获取所有的0:餐饮服务许可证
       */
     val cLicenseRDD = session.sql("SELECT relation_id,lic_type,lic_pic,job_organization,lic_no,operation,give_lic_date,lic_end_date," +
-        "stat from saas_v1.t_pro_license where stat = 1  and lic_type= 0;").rdd.map(row => {
+        "stat from t_pro_license where stat = 1  and lic_type= 0").rdd.map(row => {
       val relation_id = row.getAs[String]("relation_id")
-      val lic_type = row.getAs[String]("lic_type")
+      val lic_type = row.getAs[Int]("lic_type")
       val lic_pic = row.getAs[String]("lic_pic")
       val job_organization = row.getAs[String]("job_organization")
       val lic_no = row.getAs[String]("lic_no")
       val operation = row.getAs[String]("operation")
-      val give_lic_date = row.getAs[String]("give_lic_date")
-      val lic_end_date = row.getAs[String]("lic_end_date")
-      val stat = row.getAs[String]("stat")
+      val give_lic_date = row.getAs[Date]("give_lic_date")
+      val lic_end_date = row.getAs[Date]("lic_end_date")
+      val stat = row.getAs[Int]("stat")
 
       (relation_id, "clictype;" + lic_type + ";clicpic;" + lic_pic + ";clicjob;" + job_organization + ";clicno;" + lic_no + ";coperation;"
           + operation + ";clicdate;" + give_lic_date + ";cenddate;" + lic_end_date)
@@ -189,11 +190,13 @@ object SchoolDetail {
                 + clic.get)
           }
         } else if (None.equals(clic)) {
-          (id, slic + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
+          (id, slic.get + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
         } else {
           (id, slic.get + clic.get)
         }
+
       }
+
     }
 
     val schoolRDD: RDD[(String, String)] = session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
@@ -207,6 +210,7 @@ object SchoolDetail {
         // foodsafetypersion;null;foodsafetymobilephone;null;foodsafetytelephone;null;gongcan;null;slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null
 
         val id = row.getAs[String]("id")
+
         val schoolname = row.getAs[String]("school_name")
         val is_branch_school = row.getAs[Int]("is_branch_school")
         val parent_id = Rule.emptyToNull(row.getAs[String]("parent_id"))
@@ -257,10 +261,10 @@ object SchoolDetail {
         itr.foreach{
           case (id,(school,lic))=>
             if (None.equals(lic)){
-              jedis.hset("schoolDetailTest",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
+              jedis.hset("schoolDetail",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
                   + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
             }else{
-              jedis.hset("schoolDetailTest",id,school+lic.get)
+              jedis.hset("schoolDetail",id,school+lic.get)
             }
         }
     }
