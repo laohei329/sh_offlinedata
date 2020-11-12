@@ -123,52 +123,67 @@ object LicenseDetail {
     hiveContext.sql(
       """
         |SELECT
-        |      temp.supplierId AS supplierId,
-        |      temp.supplier_name AS supplier_name,
-        |      temp.supplier_classify AS supplier_classify,
-        |      temp.address AS address,
-        |      temp.business_license,
-        |      temp.shipin_jinyin_no,
-        |      temp.shipin_liutong_no,
-        |      temp.shipin_shengchang_no
+        |	temp.supplierId AS supplierId,
+        |	temp.supplier_name AS supplier_name,
+        |	temp.supplier_classify AS supplier_classify,
+        |	temp.address AS address,
+        |	temp.business_license,
+        |	temp.shipin_jinyin_no,
+        |	temp.shipin_liutong_no,
+        |	temp.shipin_shengchang_no
         |FROM
-        |      (
-        |            SELECT a.id AS supplierId,a.supplier_name AS supplier_name,
-        |                  a.supplier_classify AS supplier_classify,
-        |                  a.address AS address,a.business_license AS business_license,
-        |                  ROW_NUMBER () over (PARTITION BY a.business_license ORDER BY a.id) AS rn,
-        |                  c.lic_no AS shipin_jinyin_no,d.lic_no AS shipin_liutong_no,
-        |                  e.lic_no AS shipin_shengchang_no
-        |            FROM
-        |                  (
-        |                        SELECT
-        |                              id,supplier_name,business_license,supplier_classify,address
-        |                        FROM  app_saas_v1.t_pro_supplier
-        |                        WHERE supplier_type = 2  AND business_license IS NOT NULL
-        |                  ) AS a
-        |            LEFT OUTER JOIN (
-        |                  SELECT *
-        |                  FROM  app_saas_v1.supplier_tab
-        |                  WHERE tab [ 0 ] = 1
-        |            ) AS b ON a.id = b.supplier_id
-        |            LEFT OUTER JOIN (
-        |                  SELECT supplier_id,lic_no
-        |                  FROM  ods.ods_saas_v1_db_t_pro_license
-        |                  WHERE lic_type = 1 AND stat = 1
-        |                ) AS c ON a.id = c.supplier_id
-        |            LEFT OUTER JOIN (
-        |                  SELECT supplier_id,lic_no
-        |                  FROM  ods.ods_saas_v1_db_t_pro_license lic
-        |                  WHERE lic_type = 2 AND stat = 1
-        |             ) AS d ON a.id = d.supplier_id
-        |            LEFT OUTER JOIN (
-        |                  SELECT supplier_id,lic_no
-        |                  FROM ods.ods_saas_v1_db_t_pro_license lic
-        |                  WHERE lic_type = 3  AND stat = 1
-        |            ) AS e ON a.id = e.supplier_id
-        |            WHERE b.tab IS NOT NULL
-        |      ) AS temp
-        |WHERE      temp.rn = 1
+        |	(
+        |		SELECT
+        |			a.id AS supplierId,
+        |			a.supplier_name AS supplier_name,
+        |			a.supplier_classify AS supplier_classify,
+        |			a.address AS address,
+        |			a.business_license AS business_license,
+        |			ROW_NUMBER () over (PARTITION BY a.business_license ORDER BY a.id) AS rn,
+        |			c.lic_no AS shipin_jinyin_no,
+        |			d.lic_no AS shipin_liutong_no,
+        |			e.lic_no AS shipin_shengchang_no
+        |		FROM
+        |			(
+        |				SELECT id,supplier_name,business_license,supplier_classify,address
+        |				FROM	app_saas_v1.t_pro_supplier
+        |				WHERE	supplier_type = 2
+        |				AND business_license IS NOT NULL
+        |			) AS a
+        |		LEFT OUTER JOIN (
+        |			SELECT	*
+        |			FROM	app_saas_v1.supplier_tab
+        |			WHERE	tab [ 0 ] = 1
+        |		) AS b ON a.id = b.supplier_id
+        |		LEFT OUTER JOIN (
+        |			SELECT	supplier_id,lic_no
+        |			FROM	ods.ods_saas_v1_db_t_pro_license
+        |			WHERE	lic_type = 1 AND stat = 1
+        |		) AS c ON a.id = c.supplier_id
+        |		LEFT OUTER JOIN (
+        |			SELECT	supplier_id,lic_no
+        |			FROM ods.ods_saas_v1_db_t_pro_license
+        |			WHERE	lic_type = 2	AND stat = 1
+        |		) AS d ON a.id = d.supplier_id
+        |		LEFT OUTER JOIN (
+        |			SELECT	supplier_id,lic_no
+        |			FROM  ods.ods_saas_v1_db_t_pro_license
+        |			WHERE	lic_type = 3	AND stat = 1
+        |		) AS e ON a.id = e.supplier_id
+        |		WHERE
+        |			b.tab IS NOT NULL
+        |	) AS temp
+        |WHERE
+        |	temp.rn = 1
+        |GROUP BY 	temp.supplierId ,
+        |	temp.supplier_name,
+        |	temp.supplier_classify,
+        |	temp.address,
+        |	temp.business_license,
+        |	temp.shipin_jinyin_no,
+        |	temp.shipin_liutong_no,
+        |	temp.shipin_shengchang_no
+        |
         |UNION all
         |  SELECT
         |            a.id AS supplierId,
@@ -222,8 +237,9 @@ object LicenseDetail {
         |                  ) AS temp
         |            WHERE  temp.rn = 1
         |      ) AS f ON c.id = f.merchant_apply_id
-        |where address NOT LIKE "%临时%"
+        |where address NOT LIKE "%临时%" and  address NOT LIKE "%测试%"
         |GROUP BY a.id, a.supplier_name , a.address,d.qualification_code,e.qualification_code, f.qualification_code
+        |
       """.stripMargin).rdd
       .map({
         row =>
