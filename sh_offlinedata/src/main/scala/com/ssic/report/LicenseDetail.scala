@@ -72,7 +72,10 @@ object LicenseDetail {
 
     //供应商数据按照统一信用代码去重写到redis中
 
-    hiveContext.sql(
+    /**
+     * 之前的代码  t_pro_supplier这个表已经不存在了
+     */
+    /*    hiveContext.sql(
       """
         |select temp.supplierId as supplierId,temp.supplier_name
         |as supplier_name,temp.supplier_classify as supplier_classify ,temp.address as address,temp.business_license,temp.shipin_jinyin_no,temp.shipin_liutong_no,temp.shipin_shengchang_no
@@ -114,6 +117,113 @@ object LicenseDetail {
         |(select * from
         |(select id,qualification_name,qualification_code,merchant_apply_id,start_effective_date,end_effective_date,ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn from ods_b2b_new.merchant_apply_qualification where del=0 and  qualification_name="食品生产许可证") as temp where temp.rn =1) as f
         |on c.id = f.merchant_apply_id where b.tab is not null
+      """.stripMargin).rdd*/
+
+
+    hiveContext.sql(
+      """
+        |SELECT
+        |      temp.supplierId AS supplierId,
+        |      temp.supplier_name AS supplier_name,
+        |      temp.supplier_classify AS supplier_classify,
+        |      temp.address AS address,
+        |      temp.business_license,
+        |      temp.shipin_jinyin_no,
+        |      temp.shipin_liutong_no,
+        |      temp.shipin_shengchang_no
+        |FROM
+        |      (
+        |            SELECT a.id AS supplierId,a.supplier_name AS supplier_name,
+        |                  a.supplier_classify AS supplier_classify,
+        |                  a.address AS address,a.business_license AS business_license,
+        |                  ROW_NUMBER () over (PARTITION BY a.business_license ORDER BY a.id) AS rn,
+        |                  c.lic_no AS shipin_jinyin_no,d.lic_no AS shipin_liutong_no,
+        |                  e.lic_no AS shipin_shengchang_no
+        |            FROM
+        |                  (
+        |                        SELECT
+        |                              id,supplier_name,business_license,supplier_classify,address
+        |                        FROM  app_saas_v1.t_pro_supplier
+        |                        WHERE supplier_type = 2  AND business_license IS NOT NULL
+        |                  ) AS a
+        |            LEFT OUTER JOIN (
+        |                  SELECT *
+        |                  FROM  app_saas_v1.supplier_tab
+        |                  WHERE tab [ 0 ] = 1
+        |            ) AS b ON a.id = b.supplier_id
+        |            LEFT OUTER JOIN (
+        |                  SELECT supplier_id,lic_no
+        |                  FROM  ods.ods_saas_v1_db_t_pro_license
+        |                  WHERE lic_type = 1 AND stat = 1
+        |                ) AS c ON a.id = c.supplier_id
+        |            LEFT OUTER JOIN (
+        |                  SELECT supplier_id,lic_no
+        |                  FROM  ods.ods_saas_v1_db_t_pro_license lic
+        |                  WHERE lic_type = 2 AND stat = 1
+        |             ) AS d ON a.id = d.supplier_id
+        |            LEFT OUTER JOIN (
+        |                  SELECT supplier_id,lic_no
+        |                  FROM ods.ods_saas_v1_db_t_pro_license lic
+        |                  WHERE lic_type = 3  AND stat = 1
+        |            ) AS e ON a.id = e.supplier_id
+        |            WHERE b.tab IS NOT NULL
+        |      ) AS temp
+        |WHERE      temp.rn = 1
+        |UNION all
+        |  SELECT
+        |            a.id AS supplierId,
+        |            a.supplier_name AS supplier_name,
+        |            0 AS supplier_classify,
+        |            a.address AS address,
+        |            d.qualification_code AS business_license,
+        |            e.qualification_code AS shipin_jinyin_no,
+        |            NULL AS shipin_liutong_no,
+        |            f.qualification_code AS shipin_shengchang_no
+        |      FROM
+        |            (
+        |                  SELECT id,supplier_name,business_license,address
+        |                  FROM  app_saas_v1.t_pro_supplier
+        |                  WHERE supplier_type IS NULL
+        |            ) AS a
+        |      LEFT OUTER JOIN (
+        |            SELECT *  FROM ods_b2b_new.merchant_apply
+        |      ) AS c ON a.id = c.merchant_id
+        |      LEFT OUTER JOIN (
+        |            SELECT *   FROM
+        |                  (
+        |                        SELECT
+        |                              id,qualification_name, qualification_code, merchant_apply_id,start_effective_date,end_effective_date,
+        |                              ROW_NUMBER () over (PARTITION BY merchant_apply_id,qualification_name ORDER BY id ) AS rn
+        |                        FROM ods_b2b_new.merchant_apply_qualification
+        |                        WHERE qualification_name = "营业执照"
+        |                  ) AS temp
+        |            WHERE  temp.rn = 1
+        |      ) AS d ON c.id = d.merchant_apply_id
+        |      LEFT OUTER JOIN (
+        |            SELECT *
+        |            FROM
+        |                  (
+        |                        SELECT
+        |                              id, qualification_name,qualification_code,merchant_apply_id,start_effective_date,end_effective_date,
+        |                              ROW_NUMBER () over (PARTITION BY merchant_apply_id,qualification_name ORDER BY id ) AS rn
+        |                        FROM  ods_b2b_new.merchant_apply_qualification
+        |                        WHERE qualification_name = "食品经营许可证"
+        |                  ) AS temp
+        |            WHERE  temp.rn = 1
+        |      ) AS e ON c.id = e.merchant_apply_id
+        |      LEFT OUTER JOIN (
+        |            SELECT    *
+        |            FROM    (
+        |                        SELECT
+        |                              id,qualification_name,merchant_apply_id,qualification_code,start_effective_date,end_effective_date,
+        |                              ROW_NUMBER () over ( PARTITION BY merchant_apply_id,qualification_name ORDER BY id  ) AS rn
+        |                        FROM ods_b2b_new.merchant_apply_qualification
+        |                        WHERE  qualification_name = "食品生产许可证"
+        |                  ) AS temp
+        |            WHERE  temp.rn = 1
+        |      ) AS f ON c.id = f.merchant_apply_id
+        |where address NOT LIKE "%临时%"
+        |GROUP BY a.id, a.supplier_name , a.address,d.qualification_code,e.qualification_code, f.qualification_code
       """.stripMargin).rdd
       .map({
         row =>
