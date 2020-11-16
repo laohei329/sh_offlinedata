@@ -82,6 +82,9 @@ object Platoon {
 
       val b2bPlatoonSortData = b2bPlatoon.map(x => (x._1.split("_")(1),x._2.split("create-time_")(1))).groupByKey().mapValues(x => x.toList.reverse(0)).collect().toMap //同一个学校的排菜数据，取排菜时间早的的一个
 
+      /**
+       *
+       */
       new PlatoonStat().platoredis(session,plaData,date,holiday,calen,schoolTerm,schoolTermSys,term_year,platoondata,b2bPlatoonSortData)
 
 

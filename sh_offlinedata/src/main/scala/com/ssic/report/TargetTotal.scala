@@ -619,6 +619,19 @@ object TargetTotal {
     val edu_all = jedis.hgetAll(date + "_allUseData")
     val eduAllData = sc.parallelize(edu_all.asScala.toList) //redis中存的所有维度的数据
 
+
+    /**
+     *   plaData 排菜数据
+     *   useMaterialChildData 用料子页面数据
+     *   distributionchildData 配送子页面数据
+     *   retentionchildData 留样子页面数据
+     *   schoolData 学校基础数据
+     *   eduAllData 已存在的排菜，用料，配送，留样操作数据
+     *   date  时间
+     *   commiteeid2commiteeid 教属id信息
+     *   schoolid2suppliername 团餐公司名字
+     */
+    //todo
     new EduAllDataStat().platoonmaterialdetailresert(plaData,useMaterialChildData,distributionchildData,retentionchildData,schoolData,eduAllData,date,commiteeid2commiteeid,schoolid2suppliername)
 
 
