@@ -98,6 +98,9 @@ object ExportExcelByPoiUtil {
           for (i <- 0 until title.length) {
             if (index == 3) {
               poiModels = poiModels :+ PoiModel(map.get(title(i)).getOrElse(""), map.get(title(i)).getOrElse(""), index, i)
+              breakable(
+                break()
+              )
             }
             for (j <- mergeIndex) {
 
