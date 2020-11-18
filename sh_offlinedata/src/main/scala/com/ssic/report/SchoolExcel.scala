@@ -88,7 +88,8 @@ object SchoolExcel {
     val sheetWidth2 = Array[Int](3000, 3000, 3000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500)
     new ExceltitleStat().sheetname(sheet2, sheetWidth2)
 
-    val excelTitleValue2 = Array[String]("区号", "学校总数量", "学生总人数", "教职工总人数", "办学性质", "学校数量", "学生数量", "教职数量", "学制小计", "学校数量", "学生人数", "教职工人数", "学制", "学校数量", "学生人数", "教职工人数")
+    val excelTitleValue2 = Array[String]("区号", "学校总数量", "学生总人数",
+      "教职工总人数", "办学性质", "学校数量", "学生数量", "教职数量", "学制小计", "小计学校数量", "小计学生人数", "小计教职工人数", "学制", "学制学校数量", "学制学生人数", "学制教职工人数")
     val schoolNature= hiveContext.sql(s"select * from ads.ads_report_school_group_nature ")
       .rdd.map({
       row =>
@@ -138,7 +139,7 @@ object SchoolExcel {
     val sheet3 = workbook.createSheet("学校信息汇总表2")
     val sheetWidth3 = Array[Int](100, 100, 100, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150)
     new ExceltitleStat().sheetname(sheet3, sheetWidth3)
-    val excelTitleValue3 = Array[String]("区号", "学制小计", "学校数量", "学生人数", "教职工人数", "学制", "学校数量", "学生人数", "教职工人数", "性质", "学校数量", "学生人数", "教职工人数")
+    val excelTitleValue3 = Array[String]("区号", "学制小计", "小计学校数量", "小计学生人数", "小计教职工人数", "学制", "学制学校数量", "学制学生人数", "学制教职工人数", "性质", "性质学校数量", "性质学生人数", "性质教职工人数")
 
     val schoolLevel= hiveContext.sql(s"select * from ads.ads_report_school_group_level ")
       .rdd.map({
