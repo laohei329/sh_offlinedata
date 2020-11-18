@@ -4,12 +4,11 @@ import java.io.{File, FileOutputStream}
 import java.net.URI
 
 import com.ssic.service.ExceltitleStat
-import com.ssic.utils.Rule
+import com.ssic.utils.{ExportExcelByPoiUtil, Rule}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.{BorderStyle, HorizontalAlignment}
-
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
@@ -29,7 +28,7 @@ object SchoolExcel {
      */
     val nowday = Rule.timeToStamp("yyyy-MM-dd", 0) //format.format(time2)
 
-    val filename = "学校信息概括" + nowday + ".xls"
+    val filename = "运营后台一期改造-学校信息概括" + nowday + ".xls"
     val file = new File("/data/" + filename)
     val workbook = new HSSFWorkbook()
     val sheet1 = workbook.createSheet("学校信息表")
@@ -86,7 +85,7 @@ object SchoolExcel {
 
 
     val sheet2 = workbook.createSheet("学校信息汇总表1")
-    val sheetWidth2 = Array[Int](100, 100, 100, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150)
+    val sheetWidth2 = Array[Int](3000, 3000, 3000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500)
     new ExceltitleStat().sheetname(sheet2, sheetWidth2)
 
     val excelTitleValue2 = Array[String]("区号", "学校总数量", "学生总人数", "教职工总人数", "办学性质", "学校数量", "学生数量", "教职数量", "学制小计", "学校数量", "学生人数", "教职工人数", "学制", "学校数量", "学生人数", "教职工人数")    val row2 = sheet1.createRow(0)
@@ -94,7 +93,7 @@ object SchoolExcel {
     val schoolNature= hiveContext.sql(s"select * from ads.ads_report_school_group_nature ")
       .rdd.map({
       row =>
-
+        var temp:Map[String,String] = Map()
         val area = row.getAs[String]("area")
         val area_sch_count = row.getAs[String]("area_sch_count")
         val area_stu_sum = row.getAs[String]("area_stu_sum")
@@ -115,18 +114,27 @@ object SchoolExcel {
         val level_stu_sum = row.getAs[String]("level_stu_sum")
         val level_staff_sum = row.getAs[String]("level_staff_sum")
 
-        val arr = Array[String](area, area_sch_count, area_stu_sum, area_staff_sum, school_nature, natu_sch_count,
-          natu_stu_sum, natu_staff_sum, level_code, code_sch_count, code_stu_sum, code_staff_sum,
-          level, level_sch_count, level_stu_sum, level_staff_sum)
-        ("1",arr)
-    }).collect()
-
-    new ExceltitleStat().excelcontent(schoolNature, sheet2, style, 1, 1)
-    //new ExceltitleStat().excelcontentMerge(schoolNature, sheet2, style, 1, 1)
-
-
-
-
+        temp+=("区级"->area)
+        temp+=("学校总数量"-> area_sch_count)
+        temp+=("学生总人数"-> area_stu_sum)
+        temp+=("教职工总人数"-> area_staff_sum)
+        temp+=("办学性质"-> school_nature)
+        temp+=("学校数量"-> natu_sch_count)
+        temp+=("学生数量"-> natu_stu_sum)
+        temp+=("教职数量"-> natu_staff_sum)
+        temp+=("学制小计"-> level_code)
+        temp+=("小计学校数量"-> code_sch_count)
+        temp+=("小计学生人数"-> code_stu_sum)
+        temp+=("小计教职工人数"->code_staff_sum)
+        temp+=("学制"-> level)
+        temp+=("学制学校数量"-> level_sch_count)
+        temp+=("学制学生人数"-> level_stu_sum)
+        temp+=("学制教职工人数"-> level_staff_sum)
+        temp
+    }).collect().toList
+    //建Excel 表格
+    ExportExcelByPoiUtil.createExcelMerge(excelTitleValue2,sheetWidth2,
+      Map("学校信息汇总表1"->schoolNature),Array(0,1,2,3,4,5,6,7,8,9,10,11))
 
     val sheet3 = workbook.createSheet("学校信息汇总表2")
     val sheetWidth3 = Array[Int](100, 100, 100, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150)
@@ -153,18 +161,25 @@ object SchoolExcel {
         val natu_sch_count = row.getAs[String]("natu_sch_count")
         val natu_stu_sum = row.getAs[String]("natu_stu_sum")
         val natu_staff_sum = row.getAs[String]("natu_staff_sum")
+        var temp:Map[String,String] = Map()
+        temp+=("区级"->area)
+        temp+=("学制小计"-> level_code)
+        temp+=("小计学校数量"-> code_sch_count)
+        temp+=("小计学生人数"-> code_stu_sum)
+        temp+=("小计教职工人数"-> code_staff_sum)
+        temp+=("学制"-> level)
+        temp+=("学制学校数量"-> level_sch_count)
+        temp+=("学制学生人数"-> level_stu_sum)
+        temp+=("学制教职工人数"-> level_staff_sum)
+        temp+=("性质"-> school_nature)
+        temp+=("性质学校数量"-> natu_sch_count)
+        temp+=("性质学生人数"->natu_stu_sum)
+        temp+=("性质教职工人数"-> natu_staff_sum)
+        temp
 
-
-        val arr = Array[String](area, level_code, code_sch_count, code_stu_sum,level,
-          level_sch_count,level_stu_sum,level_staff_sum,school_nature,natu_sch_count,natu_stu_sum,natu_staff_sum)
-        ("1",arr)
-    }).collect()
-
-    new ExceltitleStat().excelcontent(schoolLevel, sheet3, style, 1, 1)
-
-
-
-
+    }).collect().toList
+    ExportExcelByPoiUtil.createExcelMerge(excelTitleValue3,sheetWidth3,
+      Map("学校信息汇总表2"->schoolNature),Array(0,1,2,3,4,5,6,7,8))
 
     val stream = new FileOutputStream(file)
 
