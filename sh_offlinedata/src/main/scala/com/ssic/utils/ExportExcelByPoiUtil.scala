@@ -97,38 +97,38 @@ object ExportExcelByPoiUtil {
           //循环列数
           for (i <- 0 until title.length) {
             if (index == 3) {
-              poiModels = poiModels :+ PoiModel(map.get(title(i)).get, map.get(title(i)).get, index, i)
+              poiModels = poiModels :+ PoiModel(map.get(title(i)).getOrElse(""), map.get(title(i)).getOrElse(""), index, i)
             }
             for (j <- mergeIndex) {
 
               if (j > 0 && i == j) {
 
-                if (!poiModels(i - 1).oldContent.equals(map.get(title(i - 1)).get)) {
+                if (!poiModels(i - 1).oldContent.equals(map.get(title(i)).getOrElse(""))) {
 
                   if (poiModels(i).rowIndex != index - 1) {
                     sheet.addMergedRegion(new CellRangeAddress(poiModels(i).rowIndex, index - 1, poiModels(i).cellIndex, poiModels(i).cellIndex))
-                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                   } else {
-                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                   }
-                } else if (!poiModels(i).content.equals(map.get(title(i)).get)) {
+                } else if (!poiModels(i).content.equals(map.get(title(i)).getOrElse(""))) {
                   if (poiModels(i).rowIndex != index - 1) {
                     sheet.addMergedRegion(new CellRangeAddress(poiModels(i).rowIndex, index - 1, poiModels(i).cellIndex, poiModels(i).cellIndex))
-                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                   } else {
-                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                   }
                 } else {
-                  poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, poiModels(i).rowIndex, i))
+                  poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, poiModels(i).rowIndex, i))
                 }
               }
               //第一列 上下两行数据不一样是时
               if (j == 0 && i == j) {
-                if (!poiModels(i).content.equals(map.get(title(i)).get)) {
+                if (!poiModels(i).content.equals(map.get(title(i)).getOrElse(""))) {
                   sheet.addMergedRegion(new CellRangeAddress(poiModels(i).rowIndex, index - 1, poiModels(i).cellIndex, poiModels(i).cellIndex))
-                  poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                  poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                 } else {
-                  poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, poiModels(i).rowIndex, i))
+                  poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, poiModels(i).rowIndex, i))
                 }
 
               }
@@ -139,7 +139,7 @@ object ExportExcelByPoiUtil {
                   val cra = new CellRangeAddress(poiModels(i).rowIndex /*从第二行开始*/ , index /*到第几行*/ , poiModels(i).cellIndex /*从某一列开始*/ , poiModels(i).cellIndex /*到第几列*/)
                   //在sheet里增加合并单元格
                   sheet.addMergedRegion(cra)
-                  val poiModel: PoiModel = PoiModel(map.get(title(i)).get, map.get(title(i)).get, index, i)
+                  val poiModel: PoiModel = PoiModel(map.get(title(i)).getOrElse(""), map.get(title(i)).getOrElse(""), index, i)
                   poiModels = poiModels.updated(i, poiModel)
                 }
 
@@ -151,7 +151,7 @@ object ExportExcelByPoiUtil {
 
             sheet.setColumnWidth(i, 4000)
             val cell: Cell = row.createCell(i, CellType.STRING)
-            cell.setCellValue(map.get(title(i)).get)
+            cell.setCellValue(map.get(title(i)).getOrElse(""))
             cell.setCellStyle(cellStyle)
 
           }
@@ -262,9 +262,9 @@ object ExportExcelByPoiUtil {
 
                   if (poiModels(i).rowIndex != index - 1) {
                     sheet.addMergedRegion(new CellRangeAddress(poiModels(i).rowIndex, index - 1, poiModels(i).cellIndex, poiModels(i).cellIndex))
-                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                   } else {
-                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).get, poiModels(i).content, index, i))
+                    poiModels = poiModels.updated(i, PoiModel(map.get(title(i)).getOrElse(""), poiModels(i).content, index, i))
                   }
                 } else if (!poiModels(i).content.equals(map.get(title(i)).getOrElse(""))) {
                   if (poiModels(i).rowIndex != index - 1) {
