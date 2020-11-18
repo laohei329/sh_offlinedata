@@ -167,10 +167,10 @@ object ExportExcelByPoiUtil {
   }
   def createExcelNOMerge(title: Array[String], widthAttr: Array[Int],
                        maps: Map[String /*sheet名*/ , List[Map[String /*对应title的值*/ , String]]],
-                       mergeIndex: Array[Int]) = {
+                       mergeIndex: Array[Int],workbook: Workbook) = {
     if (title.length == 0) null
 
-    val workbook: Workbook = new HSSFWorkbook()
+
     var sheet: Sheet = null
     //记录统一张表中sheet 的数量
     var n: Int = 0

@@ -134,7 +134,7 @@ object SchoolExcel {
     }).collect().toList
     //建Excel 表格
     ExportExcelByPoiUtil.createExcelNOMerge(excelTitleValue2,sheetWidth2,
-      Map("学校信息汇总表1"->schoolNature),Array(0,1,2,3,4,5,6,7,8,9,10,11))
+      Map("学校信息汇总表1"->schoolNature),Array(0,1,2,3,4,5,6,7,8,9,10,11),workbook)
 
     val sheet3 = workbook.createSheet("学校信息汇总表2")
     val sheetWidth3 = Array[Int](100, 100, 100, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150)
