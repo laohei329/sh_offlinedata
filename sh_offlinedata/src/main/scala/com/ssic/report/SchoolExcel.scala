@@ -176,8 +176,8 @@ object SchoolExcel {
         temp
 
     }).collect().toList
-    ExportExcelByPoiUtil.createExcelNOMerge(excelTitleValue3,sheetWidth3,
-      Map("学校信息汇总表2"->schoolNature),Array(0,1,2,3,4,5,6,7,8))
+//    ExportExcelByPoiUtil.createExcelNOMerge(excelTitleValue3,sheetWidth3,
+//      Map("学校信息汇总表2"->schoolNature),Array(0,1,2,3,4,5,6,7,8))
 
     val stream = new FileOutputStream(file)
 
