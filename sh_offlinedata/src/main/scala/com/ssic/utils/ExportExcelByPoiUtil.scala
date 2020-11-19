@@ -19,7 +19,7 @@ object ExportExcelByPoiUtil {
    * @param title      传入的表头列表信息
    * @param widthAttr  没列宽度
    * @param maps       表名映射的数据信息   表名-> list
-   * @param mergeIndex 需要合并的列
+   * @param mergeIndex 需要合并的列 如果不需要合并传入 一个空的array的数组即可
    * @param workbook   传入工作环境
    */
   def createExcel(title: Array[String], widthAttr: Array[Int],
@@ -261,130 +261,6 @@ object ExportExcelByPoiUtil {
       }
     }
   }
-
-  /**
-   *
-   * @param title  表头文件字段
-   * @param widthAttr 每列单元格宽度
-   * @param maps    对应的表名和数据的映射
-   * @param workbook  工作环境
-   */
-  def createExcelNoMerge(title: Array[String], widthAttr: Array[Int],
-                  maps: Map[String /*sheet名*/ , List[Map[String /*对应title的值*/ , String]]], workbook: Workbook) = {
-    if (title.length == 0) null
-
-    var sheet: Sheet = null
-    for (elem <- maps) {
-      try {
-        sheet = workbook.createSheet(elem._1)
-      } catch {
-        case e: Exception =>
-          e.printStackTrace()
-      }
-
-      // 设置样式 头 cellStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-      // 水平方向的对齐方式
-      val cellStyle_head: CellStyle = style(0, workbook)
-      // 导出时间
-      val cellStyle_export: CellStyle = style(3, workbook)
-      // 标题
-      val cellStyle_title: CellStyle = style(1, workbook)
-      // 正文
-      val cellStyle: CellStyle = style(2, workbook)
-      // 合并单元格CellRangeAddress构造参数依次表示起始行，截至行，起始列， 截至列
-      /*初始化标题，填值标题行（第一行）*/
-      //todo 从第三行还是创建row和cell 是数据的第一行不会出现合并操作
-      var row2 = sheet.createRow(0);
-      //设置这一行的每个单元格的格式
-      for (i <- 0 until widthAttr.length) {
-        /*创建单元格，指定类型*/
-        val cell_1: Cell = row2.createCell(i, CellType.STRING)
-        //设置标题的值
-        cell_1.setCellValue(title(i))
-        //设置标题样式
-        cell_1.setCellStyle(cellStyle_title)
-      }
-      /*得到当前sheet下的数据集合*/
-      val list: List[Map[String, String]] = elem._2
-      //todo 这个数组是存储需要合并的信息
-      var poiModels: List[PoiModel] = List()
-      if (null != workbook) {
-        val iterator: Iterator[Map[String, String]] = list.toIterator
-        /* 因为标题行前还有2行  所以index从3开始    也就是第四行 表格数据的第二行*/
-        var index = 1
-        while (iterator.hasNext) {
-
-          val row = sheet.createRow(index)
-          val map: Map[String, String] = iterator.next()
-          //循环列数
-          for (i <- 0 until title.length) {
-            val cell: Cell = row.createCell(i, CellType.STRING)
-            cell.setCellValue(map.getOrElse(title(i),""))
-            cell.setCellStyle(cellStyle)
-          }
-          index += 1
-        }
-      }
-    }
-  }
-
-  def createExcelNoMerge(title: Array[String], widthAttr: Array[Int],
-                         maps: Map[String /*sheet名*/ , List[Map[String /*对应title的值*/ , String]]], workbook: Workbook,startIndex:Int) = {
-    if (title.length == 0) null
-
-    var sheet: Sheet = null
-    for (elem <- maps) {
-      try {
-        sheet = workbook.createSheet(elem._1)
-      } catch {
-        case e: Exception =>
-          e.printStackTrace()
-      }
-
-      // 设置样式 头 cellStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-      // 水平方向的对齐方式
-      val cellStyle_head: CellStyle = style(0, workbook)
-      // 导出时间
-      val cellStyle_export: CellStyle = style(3, workbook)
-      // 标题
-      val cellStyle_title: CellStyle = style(1, workbook)
-      // 正文
-      val cellStyle: CellStyle = style(2, workbook)
-      // 合并单元格CellRangeAddress构造参数依次表示起始行，截至行，起始列， 截至列
-      /*初始化标题，填值标题行（第一行）*/
-      //todo 从第三行还是创建row和cell 是数据的第一行不会出现合并操作
-      var row2 = sheet.createRow(startIndex);
-      //设置这一行的每个单元格的格式
-      for (i <- 0 until widthAttr.length) {
-        /*创建单元格，指定类型*/
-        val cell_1: Cell = row2.createCell(i, CellType.STRING)
-        //设置标题的值
-        cell_1.setCellValue(title(i))
-        //设置标题样式
-        cell_1.setCellStyle(cellStyle_title)
-      }
-      /*得到当前sheet下的数据集合*/
-      val list: List[Map[String, String]] = elem._2
-      if (null != workbook) {
-        val iterator: Iterator[Map[String, String]] = list.toIterator
-        /* 因为标题行前还有2行  所以index从3开始    也就是第四行 表格数据的第二行*/
-        var index = startIndex+1
-        while (iterator.hasNext) {
-
-          val row = sheet.createRow(index)
-          val map: Map[String, String] = iterator.next()
-          //循环列数
-          for (i <- 0 until title.length) {
-            val cell: Cell = row.createCell(i, CellType.STRING)
-            cell.setCellValue(map.getOrElse(title(i),""))
-            cell.setCellStyle(cellStyle)
-          }
-          index += 1
-        }
-      }
-    }
-  }
-
 
 
   /**

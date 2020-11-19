@@ -32,8 +32,12 @@ object SchoolExcel {
     val file = new File("/data/" + filename)
     val workbook = new HSSFWorkbook()
 
-    val sheetWidth = Array[Int](1500, 2500, 8000, 4500, 5500, 5500, 3500, 3500, 3500, 3500, 9500, 3500, 9500, 4500, 3500, 3500, 13500, 13500)
-    val excelTitleValue = Array[String]("序号", "区", "学校名称", "社会统一信用代码", "办学性质", "学制", "主管部门", "供餐模式", "学生人数", "教职工人数", "法定代表人", "法定代表人手机", "联系人", "授权交易平台", "所在省", "所在市", "详细地址", "关联单位名称")
+    val sheetWidth = Array[Int](1500, 3500, 6000, 12500, 5500, 5500, 6500, 3500, 3500, 3500, 3500, 9500, 4500, 9500, 3500, 3500, 3500, 13500,13500)
+    val excelTitleValue = Array[String]("序号", "区", "学校名称", "社会统一信用代码",
+      "办学性质", "学制", "主管部门", "供餐模式",
+      "学生人数", "教职工人数", "法定代表人", "法定代表人手机",
+      "联系人","联系手机", "授权交易平台", "所在省", "所在市",
+      "详细地址", "关联单位名称")
 
     /**
      * 查询从数据库中查询学校的基本数据
@@ -72,6 +76,7 @@ object SchoolExcel {
         temp += ("学制" -> level)
         temp += ("主管部门" -> committee_name)
         temp += ("供餐模式" -> canteen_mode)
+        temp += ("联系手机" -> department_mobilephone)
         temp += ("学生人数" -> student_amount)
         temp += ("教职工人数" -> staff_count)
         temp += ("法定代表人" -> corporation)
@@ -86,8 +91,8 @@ object SchoolExcel {
         temp
 
     }).collect().toList
-    ExportExcelByPoiUtil.createExcelNoMerge(excelTitleValue, sheetWidth,
-      Map("学校信息汇总表1" -> schoolArr), workbook)
+    ExportExcelByPoiUtil.createExcel(excelTitleValue, sheetWidth,
+      Map("学校基础表" -> schoolArr),Array[Int](), workbook)
 
     val sheetWidth2 = Array[Int](3000, 3000, 3000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 5500, 3500, 3500, 3500)
     val excelTitleValue2 = Array[String]("区", "学校总数量", "学生总人数", "教职工总人数",
