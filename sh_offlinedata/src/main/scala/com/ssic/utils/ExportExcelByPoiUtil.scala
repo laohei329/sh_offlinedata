@@ -107,7 +107,9 @@ object ExportExcelByPoiUtil {
               //第一列 上下两行数据不一样是时
               if (j == 0 && i == j) {
                 if (!poiModels(i).content.equals(map.getOrElse(title(i),""))) {
-                  sheet.addMergedRegion(new CellRangeAddress(poiModels(i).rowIndex, index - 1, poiModels(i).cellIndex, poiModels(i).cellIndex))
+                  if (poiModels(i).rowIndex != index - 1) {
+                    sheet.addMergedRegion(new CellRangeAddress(poiModels(i).rowIndex, index - 1, poiModels(i).cellIndex, poiModels(i).cellIndex))
+                  }
                   poiModels = poiModels.updated(i, PoiModel(map.getOrElse(title(i),""), poiModels(i).content, index, i))
                 } else {
                   poiModels = poiModels.updated(i, PoiModel(map.getOrElse(title(i),""), poiModels(i).content, poiModels(i).rowIndex, i))
@@ -137,6 +139,7 @@ object ExportExcelByPoiUtil {
       }
     }
   }
+
 
   /***
    *

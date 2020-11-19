@@ -152,6 +152,7 @@ object SchoolExcel {
       "学制小计", "小计学校数量", "小计学生人数", "小计教职工人数",
       "学制", "学制学校数量", "学制学生人数", "学制教职工人数",
       "性质", "性质学校数量", "性质学生人数", "性质教职工人数")
+
     val schoolLevel = hiveContext.sql(s"select * from ads.ads_report_school_group_level ")
       .rdd.map({
       row =>
