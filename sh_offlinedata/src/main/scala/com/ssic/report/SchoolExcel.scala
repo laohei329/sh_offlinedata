@@ -13,6 +13,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
 
+/**
+ * 运营后台项目 一期改造  学校execel表格导出功能
+ */
 object SchoolExcel {
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf().setAppName("运营后台一期改造-学校信息概括")
@@ -144,7 +147,7 @@ object SchoolExcel {
 
     //建Excel 表格
     ExportExcelByPoiUtil.createExcel(excelTitleValue2, sheetWidth2,
-      Map("学校信息汇总表1" -> schoolNature), Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11), workbook)
+      Map("学校信息按性质汇总" -> schoolNature), Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11), workbook)
 
 
     val sheetWidth3 = Array[Int](3000, 3000, 3000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500)
@@ -190,7 +193,7 @@ object SchoolExcel {
 
     }).collect().toList
     ExportExcelByPoiUtil.createExcel(excelTitleValue3, sheetWidth3,
-      Map("学校信息汇总表2" -> schoolLevel), Array(0, 1, 2, 3, 4, 5, 6, 7, 8), workbook)
+      Map("学校信息按学制汇总" -> schoolLevel), Array(0, 1, 2, 3, 4, 5, 6, 7, 8), workbook)
 
     val stream = new FileOutputStream(file)
 
