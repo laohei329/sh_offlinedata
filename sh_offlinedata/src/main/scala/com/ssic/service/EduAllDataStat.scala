@@ -8,25 +8,15 @@ class EduAllDataStat  {
   /**
 
     * * 排菜，用料，配送，留样操作情况
-
     * * @param plaData 排菜数据
-
     * * @param useMaterialChildData 用料子页面数据
-
     * * @param distributionchildData 配送子页面数据
-
     * * @param retentionchildData   留样子页面数据
-
     * * @param schoolData 学校基础数据
-
     * * @param eduAllData 已存在的排菜，用料，配送，留样操作数据
-
     * * @param date 时间
-
     * * @param commiteeid2commiteeid 教属id信息
-
     * * @param schoolid2suppliername 团餐公司名字
-
     */
   def platoonmaterialdetailresert(plaData:RDD[(String, String)], useMaterialChildData:RDD[(String, String)],distributionchildData: RDD[(String, String)], retentionchildData:RDD[(String, String)], schoolData:Broadcast[Map[String, List[String]]],eduAllData:RDD[(String, String)],date:String,commiteeid2commiteeid:Broadcast[Map[String, String]],schoolid2suppliername:Broadcast[Map[String, String]]): Unit = {
 
