@@ -11,13 +11,9 @@ class ExceltitleStat {
   /**
     *
     * * 表头格式
-    *
     * * @param Array[String] 表头名
-    *
     * * @param HSSFCellStyle  字体格式
-    *
     * * @param HSSFRow 行
-    *
     */
   def exceltitle(array: Array[String], hSSFCellStyle: HSSFCellStyle, hSSFRow: HSSFRow): Unit = {
     for (i <- 0 until array.length) {
@@ -29,13 +25,9 @@ class ExceltitleStat {
   /**
     *
     * * 表头格式
-    *
     * * @param Array[String] 表头名
-    *
     * * @param HSSFCellStyle  字体格式
-    *
     * * @param HSSFRow 行
-    *
     *   @param cells 列
     *
     */
@@ -48,19 +40,12 @@ class ExceltitleStat {
   }
 
   /**
-    *
     * * 表中内容
-    *
     * * @param Array[(String,Array[String])] 表内容
-    *
     * * @param HSSFSheet 表
-    *
     * * @param HSSFCellStyle  字体格式
-    *
     * * @param int 表内容需要加的行数
-    *
     * * @param orderNum 表自增序号的列
-    *
     */
 
   def excelcontent(array: Array[(String, Array[String])], hSSFSheet: HSSFSheet, hSSFCellStyle: HSSFCellStyle, int: Int, orderNum: Int): Unit = {
@@ -85,17 +70,11 @@ class ExceltitleStat {
   /**
    *
    * * 对标中的内容进行合并
-   *
    * * @param Array[(String,Array[String])] 表内容
-   *
    * * @param HSSFSheet 表
-   *
    * * @param HSSFCellStyle  字体格式
-   *
    * * @param int 表内容需要加的行数 这里没什么用都是加一行
-   *
    * * @param orderNum 表自增序号的列
-   *
    */
   def excelcontentMerge(array: Array[(Array[String])], hSSFSheet: HSSFSheet, hSSFCellStyle: HSSFCellStyle, int: Int, orderNum: Int): Unit = {
 
@@ -127,12 +106,8 @@ class ExceltitleStat {
   /**
     *
     * * 创建sheet
-    *
     * * @param HSSFSheet
-    *
     * * @param  Array[Int]  列宽
-    *
-    *
     */
   def sheetname(hSSFSheet: HSSFSheet, width: Array[Int]): Unit = {
     for (i <- 0 until width.length) {
@@ -143,17 +118,11 @@ class ExceltitleStat {
   /**
     *
     * * 创建格式
-    *
     * * @param HSSFWorkbook
-    *
     * * @param  Short  字体大小
-    *
     * * @param Boolean 是否加粗
-    *
     * * @param String 字体类型
-    *
     * * @param HorizontalAlignment 是否居中
-    *
     * * @param BorderStyle 边框线
     */
   def style(workbook: HSSFWorkbook, fontheight: Short, boo: Boolean, footname: String, align: HorizontalAlignment, border: BorderStyle): HSSFCellStyle = {
