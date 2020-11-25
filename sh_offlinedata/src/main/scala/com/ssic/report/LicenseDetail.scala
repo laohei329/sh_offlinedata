@@ -12,8 +12,8 @@ import org.apache.spark.sql.hive.HiveContext
 import scala.collection.JavaConverters._
 
 /**
-  * 清洗学校和供应学校的供应商数据，将清洗后的数据从hive转移到mysql中
-  */
+ * 清洗学校和供应学校的供应商数据，将清洗后的数据从hive转移到mysql中
+ */
 
 object LicenseDetail {
   private val format3 = FastDateFormat.getInstance("MM")
@@ -74,7 +74,7 @@ object LicenseDetail {
     /**
      * 原来的数据sql 方法
      */
-    hiveContext.sql(
+   /* hiveContext.sql(
       """
         |select temp.supplierId as supplierId,temp.supplier_name
         |as supplier_name,temp.supplier_classify as supplier_classify ,temp.address as address,temp.business_license,temp.shipin_jinyin_no,temp.shipin_liutong_no,temp.shipin_shengchang_no
@@ -142,7 +142,7 @@ object LicenseDetail {
                 jedis.hset("supplier-detail",k,"id"+";"+k+";"+"suppliername"+";"+v._1.head._1+";"+"classify"+";"+v._1.head._2+";"+"area"+";"+"null"+";"+"address"+";"+v._1.head._3+";"+"businesslicense"+";"+v._1.head._4+";"+"regcapital"+";"+"null"+";"+"foodbusiness"+";"+v._1.head._5+";"+"foodcirculation"+";"+v._1.head._6+";"+"foodproduce"+";"+v._1.head._7)
               }
           })
-      })
+      })*/
 
 
     /**
@@ -288,15 +288,13 @@ object LicenseDetail {
             case (k, v) =>
               //表示左边没有，右边有
               if (v._1.size == 0) {
-                jedis.hdel("supplier-detail_test", k)
+                jedis.hdel("supplier-detail", k)
               }else{
-                jedis.hset("supplier-detail_test",k,"id"+";"+k+";"+"suppliername"+";"+v._1.head._1+";"+"classify"+";"+v._1.head._2+";"+"area"+";"+"null"+";"+"address"+";"+v._1.head._3+";"+"businesslicense"+";"+v._1.head._4+";"+"regcapital"+";"+"null"+";"+"foodbusiness"+";"+v._1.head._5+";"+"foodcirculation"+";"+v._1.head._6+";"+"foodproduce"+";"+v._1.head._7)
+                jedis.hset("supplier-detail",k,"id"+";"+k+";"+"suppliername"+";"+v._1.head._1+";"+"classify"+";"+v._1.head._2+";"+"area"+";"+"null"+";"+"address"+";"+v._1.head._3+";"+"businesslicense"+";"+v._1.head._4+";"+"regcapital"+";"+"null"+";"+"foodbusiness"+";"+v._1.head._5+";"+"foodcirculation"+";"+v._1.head._6+";"+"foodproduce"+";"+v._1.head._7)
               }
 
           })
       })
-
-
     sc.stop()
   }
 
