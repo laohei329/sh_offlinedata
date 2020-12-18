@@ -246,11 +246,13 @@ select id,school_name from t_edu_school
     //供餐_已排菜_create-time_2020-10-13 02:31:18_reason_null_plastatus_1
     jedis.hgetAll(date + "_platoon-feed").asScala.toMap
   }
-
+  //hiveContext,datetime,year,month
   def hivedishmenu(hivedata: (HiveContext, String, String, String)): RDD[(String, String, String, String, String, String, String, String)] = {
 
-    hivedata._1.sql(s"select package_id,school_id,area,menu_group_name,dishes_name,cater_type_name,dishes_number,supplier_id from app_saas_v1.app_t_edu_dish_menu where year ='${hivedata._3}' and month ='${hivedata._4}' and supply_date = '${hivedata._2}' and dishes_name is not null")
-      .rdd.map(x => (x.getAs[String]("package_id"), x.getAs[String]("school_id"), x.getAs[String]("area"), x.getAs[String]("menu_group_name"), x.getAs[String]("dishes_name"), x.getAs[String]("cater_type_name"), x.getAs[Integer]("dishes_number").toString, x.getAs[String]("supplier_id")))
+    hivedata._1.sql(s"select package_id,school_id,area,menu_group_name,dishes_name,cater_type_name,dishes_number,supplier_id from app_saas_v1.app_t_edu_dish_menu where year ='${hivedata._3}'" +
+      s" and month ='${hivedata._4}' and supply_date = '${hivedata._2}' and dishes_name is not null")
+      .rdd.map(x => (x.getAs[String]("package_id"), x.getAs[String]("school_id"), x.getAs[String]("area"), x.getAs[String]("menu_group_name"),
+      x.getAs[String]("dishes_name"), x.getAs[String]("cater_type_name"), x.getAs[Integer]("dishes_number").toString, x.getAs[String]("supplier_id")))
   }
 
   def commiteeid2commiteename(session: SparkSession): Map[String, String] = {

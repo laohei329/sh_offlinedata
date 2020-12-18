@@ -56,25 +56,15 @@ class DealDataStat extends DealDataFunc {
   /**
 
     * * 对用料计划的详情数据进行数据处理
-
     * * @param useMaterialPlanDetailData 已存在的排菜表的统计数据
-
     * * @param projid2schoolid 项目点id获取学校id
-
     * * @param projid2schoolname 项目点id获取学校名字
-
     * * @param gongcanSchool 供餐学校数据
-
     * * @param projid2Area 项目点id获取学校区号
-
     * * @param b2bPlatoonSchool b2b的排菜学校id
-
     * * @param schoolid2Projid 学校id对于项目点id
-
     * * @param schoolid2suppliername 学校id对于团餐公司名字
-
     * * @return  RDD[(String, String, String, String, String, String, String)] (区号，供餐，状态，key，学校名字，学校id,valuedata)
-
     */
   override def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]] , b2bPlatoonSchool: RDD[(String, Int)],schoolid2Projid:Broadcast[Map[String, String]],schoolid2suppliername:Broadcast[Map[String, String]]): RDD[(String, String, String, String, String, String, String)] = {
 
@@ -160,20 +150,15 @@ class DealDataStat extends DealDataFunc {
   }
 
   /**
-
-    * * 对配送计划的详情数据进行数据处理
-
-    * * @param distributionDetailData 配送计划临时表数据
-
-    * * @param gongcanSchool 供餐学校数据
-
-    * * @param school2Area 学校id获取学校区号
-
-    * * @param date 时间
-
-    * * @param RDD[(String, String, String, String, String, String, String)]  （区号，供餐，处理后的value，学校id，key，状态，规范状态）
-
-
+    * 对配送计划的详情数据进行数据处理
+   *
+   * @param distributionDetailData 配送计划临时表数据
+   *[  (id_主键id_type_配送类型（1 原料，2 成品菜）_schoolid_学校id_area_区号_sourceid_团餐公司id_batchno_发货批次号_delivery_统配/直配) ,
+   * (配送状态_deliveryDate_验收上报时间_disstatus_配送规则_purchaseDate_进货时间_deliveryReDate_验收时间（手动）]
+    * @param gongcanSchool 供餐学校数据
+    * @param school2Area 学校id获取学校区号
+    * @param date 时间
+    * @return RDD[(String, String, String, String, String, String, String)]  （区号，供餐，处理后的value，学校id，key，状态，规范状态）
     */
   override def distributiondealdata(distributionDetailData:RDD[(String, String)],gongcanSchool:Broadcast[Map[String, String]],school2Area:Broadcast[Map[String, String]],date:String): RDD[(String, String, String, String, String, String, String)] = {
     val distribution = distributionDetailData.map({
@@ -233,11 +218,8 @@ class DealDataStat extends DealDataFunc {
     distribution
   }
   /**
-
-    * * 对配送的统计数据进行数据处理
-
-    * * @param data 已存在的配送计划统计数据
-
+    * 对配送的统计数据进行数据处理
+    * @param data 已存在的配送计划统计数据
     */
   override def distributiondealtotaldata(data: RDD[(String, String)]):RDD[(String,(String, String))] = {
 

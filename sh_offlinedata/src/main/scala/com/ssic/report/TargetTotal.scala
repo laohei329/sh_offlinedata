@@ -43,6 +43,10 @@ object TargetTotal {
     val supplier =session.read.jdbc(url, pro_supplier, conn)
     val bd_department = session.read.jdbc(url, edu_bd_department, conn)
 
+
+    /**
+     * 学校 供应商 管理部门 等都是从mysql数据库查的数据
+     */
     school.createTempView("t_edu_school")
     school_supplier.createTempView("t_edu_school_supplier")
     committee.createTempView("t_edu_committee")
@@ -631,7 +635,8 @@ object TargetTotal {
      *   commiteeid2commiteeid 教属id信息
      *   schoolid2suppliername 团餐公司名字
      */
-    //todo
+    //      plaData  =   date_platoon-feed     useMaterialChildData=   date_useMaterialPlanTotal_child
+    //   distributionchildData = date_DistributionTotal_child
     new EduAllDataStat().platoonmaterialdetailresert(plaData,useMaterialChildData,distributionchildData,retentionchildData,schoolData,eduAllData,date,commiteeid2commiteeid,schoolid2suppliername)
 
 

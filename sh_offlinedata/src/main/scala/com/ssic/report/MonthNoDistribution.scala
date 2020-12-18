@@ -38,13 +38,27 @@ object MonthNoDistribution {
       val date = format.format(time)
 
       val jedis = JPools.getJedis
+
       val dischild = jedis.hgetAll(date + "_DistributionTotal_child")
       val dischilddata = sc.parallelize(dischild.asScala.toList) //配送子页面数据
 
+
+      /**
+       * Field:区号_学校id   9_cfee5c7f-7c7a-4443-b97c-d138754d0f1c
+       * Value: 供餐_已排菜_create-time_创建时间_reason_原因_plastatus_排菜操作状态
+       */
       val platoon: util.Map[String, String] = jedis.hgetAll(date + "_platoon-feed")
       val platoonData = sc.parallelize(platoon.asScala.toList) //学校的供餐数据
-
-      platoonData.filter(x => !x._2.split("_")(0).equals("不供餐")).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), x._2)).cogroup(dischilddata)
+      /**
+       * dischilddata
+       * Feild:
+       * (area_区号_id_学校id)
+       * Value:
+       * (total_配送计划总数量_accept_已验收数量_assign_已指派数量_shipp_已配送数量_status_配送计划状态_disstatus_验收操作状态_deliveryDate_验收上报时间)
+       */
+      platoonData.filter(x => !x._2.split("_")(0).equals("不供餐"))
+        .map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), x._2))
+        .cogroup(dischilddata)
         .foreachPartition({
           itr =>
             val jedis = JPools.getJedis

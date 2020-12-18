@@ -8,17 +8,11 @@ import org.apache.spark.rdd.RDD
 class TargetChildStat extends TargetChildFunc {
 
   /**
-
-    * * 用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
-
-    * * @param platoonData 学校的供餐数据
-
-    * * @param useValue 用料计划的子页面数据
-
-    * * @param date 时间
-
-    * * @param useMaterialChildData 已存在的用料计划子页面数据
-
+    *  用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
+    *  @param platoonData 学校的供餐数据    例如: (9_cfee5c7f-7c7a-4443-b97c-d138754d0f1c,供餐_已排菜_create-time_2019-04-11 17:16:25_reason_null_plastatus_1)
+    *  @param useValue 用料计划的子页面数据    [区_学校id ,List("area" + "_" + 区 + "_" + "type" + 类型 + "name" + "_" + schoolname + "_" + "projid" + 项目点id, 状态)]
+    *  @param date 时间
+    *  @param useMaterialChildData 已存在的用料计划子页面数据
     */
 
   override def usematerialchild(platoonData:RDD[(String, String)],useValue:RDD[(String, List[String])],date:String,useMaterialChildData:RDD[(String, String)]): Unit = {
@@ -33,7 +27,7 @@ class TargetChildStat extends TargetChildFunc {
           if ("0".equals(usmaterialList(1))) {
             (x._1, "1")
           } else {
-            (x._1, usmaterialList(1))
+            (x._1, usmaterialList(1))   // (区_学校id ,("area" + "_" + 区 + "_" + "type" + 类型 + "name" + "_" + schoolname + "_" + "projid" + 项目点id, 状态))
           }
         }
     })
@@ -83,17 +77,11 @@ class TargetChildStat extends TargetChildFunc {
     })
   }
   /**
-
-    * * 配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
-
-    * * @param platoonData 学校的供餐数据
-
-    * * @param disValue 配送计划的子页面数据
-
-    * * @param date 时间
-
-    * * @param distributionChildData 已存在的配送计划子页面数据
-
+    * 配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
+    * @param platoonData 学校的供餐数据
+    * @param disValue 配送计划的子页面数据
+    * @param date 时间
+    * @param distributionChildData 已存在的配送计划子页面数据
     */
   override def distributionchild(platoonData:RDD[(String, String)],disValue:RDD[(String, String)],date:String,distributionChildData:RDD[(String, String)]): Unit = {
     val allSchoolUse = platoonData.filter(x => !x._2.split("_")(0).equals("不供餐")).leftOuterJoin(disValue).map({
@@ -121,10 +109,10 @@ class TargetChildStat extends TargetChildFunc {
         }
     })
 
+
     val allSchoolUseTotal = allSchoolUse.map(x => (x._1, 1)).reduceByKey(_ + _) //每个学校的配送订单总数
     val allSchoolUseStatusTotal = allSchoolUse.map(x => ((x._1, x._2), 1)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2))) //每个学校的每个验收状态的订单总数
     val allSchoolUseDisStatusTotal = allSchoolUse.map(x => (x._1, x._3)).coalesce(1).sortBy(x => x._2).groupByKey().mapValues(x => x.toList.reverse(0)) //每个学校的每个配送操作状态的倒序，取第一个值
-
     val allSchooldeliveryDateTotal =allSchoolUse.map(x => (x._1, x._4)).coalesce(1).sortBy(x => x._2).groupByKey().mapValues(x => x.toList.reverse(0)) //每个学校的每个配送上报时间的倒序，取第一个值
 
     allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).leftOuterJoin(allSchoolUseDisStatusTotal).leftOuterJoin(allSchooldeliveryDateTotal).map(x => (x._1,(x._2._1._1._1,x._2._1._1._2.getOrElse("null", -1),x._2._1._2.getOrElse("null"),x._2._2.getOrElse("-1")))).filter(x => x._2._2._2 != -1).filter(x => !"null".equals(x._2._3)).filter(x => !"-1".equals(x._2._4)).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), (x._2._1, x._2._2, x._2._3,x._2._4))).sortBy(x => x._2._2._1, false).foreachPartition({
@@ -134,11 +122,8 @@ class TargetChildStat extends TargetChildFunc {
             case (k, v) =>
               val value = jedis.hget(date + "_DistributionTotal_child", k)
               if (StringUtils.isNoneEmpty(value) && !value.equals("null")) {
-
                 if ("3".equals(v._2._1)) {
-
                   jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + v._2._2 + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
-
                 } else if ("2".equals(v._2._1)) {
                   //待验收
                   jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + value.split("accept_")(1).split("_")(0) + "_" + "assign" + "_" + (value.split("accept_")(1).split("_")(0).toInt + v._2._2) + "_" + "shipp" + "_" + (value.split("accept_")(1).split("_")(0).toInt + v._2._2) + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
@@ -153,7 +138,6 @@ class TargetChildStat extends TargetChildFunc {
               } else {
                 if ("3".equals(v._2._1)) {
                   jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + v._2._2 + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
-
                 } else if ("2".equals(v._2._1)) {
                   jedis.hset(date + "_DistributionTotal_child", k, "total" + "_" + v._1 + "_" + "accept" + "_" + "0" + "_" + "assign" + "_" + v._2._2 + "_" + "shipp" + "_" + v._2._2 + "_" + "status" + "_" + v._2._1 + "_" + "disstatus" + "_" + v._3+"_"+"deliveryDate"+"_"+v._4)
                 } else if ("0".equals(v._2._1)) {
@@ -219,17 +203,11 @@ class TargetChildStat extends TargetChildFunc {
 
   }
   /**
-
-    * * 留样计划的子页面，没有产生留样计划的学校也要放入到子页面中
-
-    * * @param platoonData 学校的供餐数据
-
-    * * @param reValue 留样计划处理后的数据
-
-    * * @param date 时间
-
-    * * @param retentionChildData 已存在的留样计划子页面数据
-
+    *  留样计划的子页面，没有产生留样计划的学校也要放入到子页面中
+    *  @param platoonData 学校的供餐数据
+    *  @param reValue 留样计划处理后的数据
+    *  @param date 时间
+    *  @param retentionChildData 已存在的留样计划子页面数据
     */
   override def retentionchild(platoonData:RDD[(String, String)],reValue:RDD[(String, String,String,String,String,String,String)], date:String,retentionChildData:RDD[(String, String)]): Unit = {
 

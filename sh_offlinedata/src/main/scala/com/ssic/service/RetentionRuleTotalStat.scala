@@ -121,17 +121,11 @@ class RetentionRuleTotalStat extends TargetTotalFuc{
   }
 
   /**
-
-    * * 按上海市办学性质来留样操作规则各状态数据统计（nature）
-
-    * * @param targetData 处理好的留样计划数据
-
-    * * @param date 时间
-
-    * * @param schoolData 学校基础信息
-
-    * * @return RDD[(String, String)]  (re-nature_0_nature-sub_1_reservestatus_1,1)
-
+    *  按上海市办学性质来留样操作规则各状态数据统计（nature）
+    * @param targetData 处理好的留样计划数据
+    *  @param date 时间
+    *  @param schoolData 学校基础信息
+    *  @return RDD[(String, String)]  (re-nature_0_nature-sub_1_reservestatus_1,1)
     */
   override def naturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)] = {
     targetData.map(x => {
@@ -146,17 +140,11 @@ class RetentionRuleTotalStat extends TargetTotalFuc{
   }
 
   /**
-
-    * * 按权限上海市办学性质来留样操作规则各状态数据统计（nature）
-
-    * * @param targetData 处理好的留样计划数据
-
-    * * @param date 时间
-
-    * * @param schoolData 学校基础信息
-
-    * * @return RDD[(String, String, String)]  (管理部门id,re-nature_0_nature-sub_1_reservestatus_1,1)
-
+    * 按权限上海市办学性质来留样操作规则各状态数据统计（nature）
+    * @param targetData 处理好的留样计划数据
+    * @param date 时间
+    * @param schoolData 学校基础信息
+    * @return RDD[(String, String, String)]  (管理部门id,re-nature_0_nature-sub_1_reservestatus_1,1)
     */
   override def departmentnaturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = {
     targetData.map(x => {
@@ -175,17 +163,11 @@ class RetentionRuleTotalStat extends TargetTotalFuc{
   override def departmentareanaturestatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String, String)] = ???
 
   /**
-
-    * * 按上海市各类型学校来留样操作规则数据统计（level）
-
-    * * @param targetData 已处理的留样计划数据
-
-    * * @param date 时间
-
-    * * @param schoolData 学校基础信息
-
-    * * @return RDD[(String, String)]  (re-level_1_reservestatus_1,1)
-
+    * 按上海市各类型学校来留样操作规则数据统计（level）
+    * @param targetData 已处理的留样计划数据
+    * @param date 时间
+    * @param schoolData 学校基础信息
+    * @return RDD[(String, String)]  (re-level_1_reservestatus_1,1)
     */
   override def levelstatus(targetData: RDD[(String, String, String, String, String, String, String)], date: String, schoolData: Broadcast[Map[String, List[String]]]): RDD[(String, String)] = {
     targetData.map(x => {

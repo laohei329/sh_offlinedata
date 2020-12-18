@@ -125,14 +125,7 @@ object GroupSupplierDetail {
               }else if ("1".equals(x._14) && !"1".equals(x._15)) {
                 jedis.hdel("group-supplier-detail", x._2)
               }
-              //              } else {
-              //                val v = jedis.hget("group-supplier-detail", x._2)
-              //                if (StringUtils.isNoneEmpty(v) && !v.equals("null")) {
-              //                  jedis.hset("group-supplier-detail", x._2, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
-              //                } else {
-              //                  jedis.hset("group-supplier-detail", x._2, "id" + ";" + x._2 + ";" + "suppliername" + ";" + x._4 + ";" + "area" + ";" + x._5 + ";" + "address" + ";" + x._6 + ";" + "contact" + ";" + x._7 + ";" + "contactway" + ";" + x._8 + ";" + "qaperson" + ";" + x._9 + ";" + "qaway" + ";" + x._10 + ";" + "regaddress" + ";" + x._11 + ";" + "regcapital" + ";" + x._12 + ";" + "corporation" + ";" + x._13)
-              //                }
-              //              }
+
             }
 
         })

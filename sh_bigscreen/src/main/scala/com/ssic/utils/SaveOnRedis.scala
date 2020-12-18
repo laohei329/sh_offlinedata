@@ -198,9 +198,8 @@ object SaveOnRedis {
 
   /**
 
-    * * 配送数据存入redis的临时表中
-
-    * * @param Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]
+    * 配送数据存入redis的临时表中
+    * @param itr Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]
     * Iterator[(id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,验收日期)]
 
     */

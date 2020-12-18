@@ -27,11 +27,11 @@ object PlatoonPlan {
     *
     * * 分析，获取排菜数据
     *
-    * * @param filterData binlog日志数据
+    * @param filterData binlog日志数据
     *
-    * * @param  school2Area 学校对应的区数据
+    *  @param  school2Area 学校对应的区数据
     *
-    * * @param SparkSession
+    * @param session
     *
     * * @return RDD[(String, String, String, String, String, String)]  时间，学校id，区号，表操作类型，创建时间,有效状态
     *
@@ -71,11 +71,8 @@ object PlatoonPlan {
   }
 
   /**
-    *
-    * * 分析，获取排菜数据
-    *
-    * * @param filterData binlog日志数据
-    *
+    * 分析，获取排菜数据
+    * @param filterData binlog日志数据
     */
   def b2bPlatoon(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null && x.table.equals("arrange_dish_detail_info"))

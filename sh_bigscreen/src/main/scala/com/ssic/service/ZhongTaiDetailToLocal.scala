@@ -14,21 +14,16 @@ object ZhongTaiDetailToLocal {
   //将中台的学校基础信息表转到本地的学校基础信息表
 
   /**
-    *
-    * *  写数据到学校基础信息表
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
-    * * @param Broadcast[Map[String, String]]  主管部门映射
-    *
-    * * @param Broadcast[Map[String, String]]  主管部门映射的名字
-    *
+    *  写数据到学校基础信息表
+    * @param filterData  RDD[SchoolBean] binlog日志数据
+    *  //@param   //Broadcast[Map[String, String]]  主管部门映射
+    * //@param   Broadcast[Map[String, String]]  主管部门映射的名字
     */
 
   def SchoolDetail(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) = {
     filterData._1.filter(x => x != null
       && x.database.equals("merchant")
-      && x.table.equals("t_edu_school")).map({
+      && x.table.equals("1t_edu_school")).map({
       x =>
         val schoolBean = JSON.parseObject(x.data, classOf[School])
         val types = x.`type` //插入，删除，更新操作类型
@@ -316,11 +311,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * *  将中台的学校与团餐公司的关联表信息，转到本地
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    *   将中台的学校与团餐公司的关联表信息，转到本地
+    *  @param filterData RDD[SchoolBean] binlog日志数据
     */
   def SchoolSupplier(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
@@ -384,11 +376,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 将中台的团餐公司信息表转到本地的t_pro_supplier表
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 将中台的团餐公司信息表转到本地的t_pro_supplier表
+    * @param filterData RDD[SchoolBean] binlog日志数据
     */
   def GroupSupplier(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
@@ -505,11 +494,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 中台的供应商信息转到本地的t_pro_supplier
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    *  中台的供应商信息转到本地的t_pro_supplier
+    *  @param  filterData RDD[SchoolBean] binlog日志数据
     */
 
   def SupplierInfo(filterData: RDD[SchoolBean]) = {
@@ -633,11 +619,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 中台的地域信息转到本地的area
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 中台的地域信息转到本地的area
+    * @param  filterData RDD[SchoolBean] binlog日志数据
     */
 
   def Area(filterData: RDD[SchoolBean]) = {
@@ -701,11 +684,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 中台的t_edu_competent_department转到本地的t_edu_competent_department
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    *  中台的t_edu_competent_department转到本地的t_edu_competent_department
+    *  @param filterData RDD[SchoolBean] binlog日志数据
     */
 
   def EduCompetentDepartment(filterData: RDD[SchoolBean]) = {
@@ -776,11 +756,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 阳光午餐的t_edu_calendar转到本地的t_edu_calendar
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 阳光午餐的t_edu_calendar转到本地的t_edu_calendar
+    *  @param filterData RDD[SchoolBean] binlog日志数据
     */
 
   def EduCalendar(filterData: RDD[SchoolBean]) = {
@@ -847,10 +824,8 @@ object ZhongTaiDetailToLocal {
 
   /**
     *
-    * * 阳光午餐的t_edu_schoolterm转到本地的t_edu_schoolterm
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    *阳光午餐的t_edu_schoolterm转到本地的t_edu_schoolterm
+    *@param filterData binlog日志数据
     */
   def EduSchooltrem(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
@@ -921,11 +896,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 阳光午餐的t_edu_schoolterm_system转到本地的t_edu_schoolterm_system
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * *阳光午餐的t_edu_schoolterm_system转到本地的t_edu_schoolterm_system
+    *  @param filterData[SchoolBean] binlog日志数据
     */
 
   def EduSchooltermSystem(filterData: RDD[SchoolBean]) = {
@@ -990,11 +962,8 @@ object ZhongTaiDetailToLocal {
   }
 
   /**
-    *
-    * * 阳光午餐的t_edu_holiday转到本地的t_edu_holiday
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 阳光午餐的t_edu_holiday转到本地的t_edu_holiday
+    *@param filterData binlog日志数据
     */
 
   def EduHoliday(filterData: RDD[SchoolBean]) = {
@@ -1056,11 +1025,8 @@ object ZhongTaiDetailToLocal {
   }
 
   /**
-    *
-    * * 新b2b2的merchant转到本地的merchant
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 新b2b2的merchant转到本地的merchant
+    *@param filterData[SchoolBean] binlog日志数据
     */
 
   def Merchant(filterData: RDD[SchoolBean]) = {
@@ -1132,11 +1098,8 @@ object ZhongTaiDetailToLocal {
   }
 
   /**
-    *
-    * * 新b2b2的merchant_buyer转到本地的merchant_buyer
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 新b2b2的merchant_buyer转到本地的merchant_buyer
+    *  @param filterData[SchoolBean] binlog日志数据
     */
   def MerchantBuyer(filterData: RDD[SchoolBean])={
     filterData.filter(x => x != null
@@ -1202,11 +1165,8 @@ object ZhongTaiDetailToLocal {
 
 
   /**
-    *
-    * * 将新b2b的商户merchant 迁移到 t_pro_supplier 表
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+    * 将新b2b的商户merchant 迁移到 t_pro_supplier 表
+    * @param filterData[SchoolBean] binlog日志数据
     */
   def B2bSupplierInfo(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
@@ -1331,11 +1291,9 @@ object ZhongTaiDetailToLocal {
   }
 
   /**
-    *
-    * * 将新b2b的买家和卖家关联信息迁移到cooperation_apply表
-    *
-    * * @param RDD[SchoolBean] binlog日志数据
-    *
+
+    * 将新b2b的买家和卖家关联信息迁移到cooperation_apply表
+    *  @param filterData[SchoolBean] binlog日志数据
     */
 
   def B2bCooperationApply(filterData: RDD[SchoolBean])={

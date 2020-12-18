@@ -60,7 +60,6 @@ object LSData {
       //将供应商供应学校排名的统计数据放入到redis中
       new LSDataStat().supplynametotaltoredis(hiveContext,date,year,month,supplierToSchoolData)
 
-
     }
     sc.stop()
   }

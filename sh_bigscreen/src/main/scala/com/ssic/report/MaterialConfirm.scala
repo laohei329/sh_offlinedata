@@ -77,13 +77,10 @@ object MaterialConfirm {
 
   /**
     *
-    * * 用料计划存入redis的临时表中 useMaterialPlanDetail
-    *
-    * * @param filterData  mysql的业务binlgog日志
-    *
-    * * @param  projid2Area 项目点的id 对应的 区
-    *
-    * * @param supplierid2supplierName 团餐公司id对应团餐公司name
+    * 用料计划存入redis的临时表中 useMaterialPlanDetail
+    * @param filterData  mysql的业务binlgog日志
+    * @param  projid2Area 项目点的id 对应的 区
+    * @param supplierid2supplierName 团餐公司id对应团餐公司name
     *
     */
 

@@ -26,9 +26,11 @@ object RetentionDish {
 
   /**
     *
-    * * 当天的排菜的菜品数据存入到redis的临时表中
+    * 当天的排菜的菜品数据存入到redis的临时表中
     *
-    * * @param RDD[SchoolBean] binlog日志数据
+    * @param data
+   *
+   * RDD[SchoolBean] binlog日志数据
     *
     */
   def dishDetail(data: (RDD[SchoolBean])) = {
