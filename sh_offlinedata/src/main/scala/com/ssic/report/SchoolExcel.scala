@@ -99,10 +99,6 @@ object SchoolExcel {
       Map("学校基础表" -> schoolArr),Array[Int](), workbook)
 
 
-
-
-
-
     val sheetWidth2 = Array[Int](3000, 3000, 3000, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 5500, 3500, 3500, 3500)
     val excelTitleValue2 = Array[String]("主管部门", "学校总数量", "学生总人数", "教职工总人数",
       "办学性质", "学校数量", "学生数量", "教职数量",
