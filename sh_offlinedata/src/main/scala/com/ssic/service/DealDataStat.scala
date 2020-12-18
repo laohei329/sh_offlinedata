@@ -68,6 +68,12 @@ class DealDataStat extends DealDataFunc {
     */
   override def usematerialdealdata(useMaterialPlanDetailData:RDD[(String, String)],projid2schoolid:Broadcast[Map[String, String]],projid2schoolname:Broadcast[Map[String, String]],gongcanSchool:Broadcast[Map[String, String]],projid2Area:Broadcast[Map[String, String]] , b2bPlatoonSchool: RDD[(String, Int)],schoolid2Projid:Broadcast[Map[String, String]],schoolid2suppliername:Broadcast[Map[String, String]]): RDD[(String, String, String, String, String, String, String)] = {
 
+
+    //  * useMaterialPlanDetailData
+    //     * Feild:
+    //     * （area_区号_type_用料类别（0原料1成品菜）_name_项目点名称_projid_项目点id_suppliername_团餐公司名称）
+    //     * Value:
+    //     * (用料状态，0和1都表示未确认，2表示已确认
     val useMaterialData = useMaterialPlanDetailData.map({
       x =>
 
