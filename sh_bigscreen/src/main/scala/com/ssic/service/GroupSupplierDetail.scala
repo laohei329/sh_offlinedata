@@ -22,7 +22,7 @@ object GroupSupplierDetail {
 
   def groupSupplierInsert(filterData: RDD[SchoolBean]) = {
     val supplierData = filterData.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_group_catering_company")
       && x.`type`.equals("insert"))
       .map(x => JSON.parseObject(x.data,classOf[GroupSupplier]))
@@ -74,7 +74,7 @@ object GroupSupplierDetail {
 
   def groupSupplierUpDe(filterData: RDD[SchoolBean]) = {
     val supplierData = filterData.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_group_catering_company")
       && !x.`type`.equals("insert"))
       .map(x => (x.`type`,JSON.parseObject(x.data,classOf[GroupSupplier])))

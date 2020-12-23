@@ -51,7 +51,7 @@ object SchoolData {
 
   def SchoolInsert(filterData:RDD[SchoolBean], data:String, school2commitee:Broadcast[Map[String, String]], school2commiteename:Broadcast[Map[String, String]]) = {
     val schoolData = filterData.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_school")
       && x.`type`.equals("insert"))
         .map(x => JSON.parseObject(x.data, classOf[School]))
@@ -179,7 +179,7 @@ object SchoolData {
   def School(filterData: RDD[SchoolBean], data:String, commiteeid2commiteename:Broadcast[Map[String, String]], school2commitee:Broadcast[Map[String, String]], school2commiteename:Broadcast[Map[String, String]]) = {
 
     val schoolData = filterData.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_school"))
         .map(x => (x.`type`,JSON.parseObject(x.data, classOf[School])))
       .filter(x => "8627".equals(x._2.seat_district_id)

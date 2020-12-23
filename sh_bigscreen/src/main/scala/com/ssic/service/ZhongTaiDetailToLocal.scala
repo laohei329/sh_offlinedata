@@ -27,7 +27,7 @@ object ZhongTaiDetailToLocal {
 
   def SchoolDetail(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]])) = {
     filterData._1.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_school")).map({
       x =>
         val schoolBean = JSON.parseObject(x.data, classOf[School])
@@ -324,7 +324,7 @@ object ZhongTaiDetailToLocal {
     */
   def SchoolSupplier(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
-      && x.database.equals("order")
+      && x.database.equals("ssl-user")
       && x.table.equals("groupon_customer")).map({
       x =>
         val schoolSupplierBean = JSON.parseObject(x.data, classOf[SchoolSupplier])
@@ -392,7 +392,7 @@ object ZhongTaiDetailToLocal {
     */
   def GroupSupplier(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_group_catering_company")).map({
       x =>
         val groupSupplierBean = JSON.parseObject(x.data, classOf[GroupSupplier])
@@ -642,7 +642,7 @@ object ZhongTaiDetailToLocal {
 
   def Area(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
-      && x.database.equals("misc")
+      && x.database.equals("ssl-user")
       && x.table.equals("area")).map({
       x =>
         val types = x.`type`
@@ -710,7 +710,7 @@ object ZhongTaiDetailToLocal {
 
   def EduCompetentDepartment(filterData: RDD[SchoolBean]) = {
     filterData.filter(x => x != null
-      && x.database.equals("merchant")
+      && x.database.equals("ssl-user")
       && x.table.equals("t_edu_competent_department")).map({
       x =>
         val eduCompetentDepartmentBean = JSON.parseObject(x.data, classOf[EduCompetentDepartment])
