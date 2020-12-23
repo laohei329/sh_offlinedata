@@ -189,7 +189,7 @@ class DealDataStat extends DealDataFunc {
         var disstatus = "null"
         if(x._2.split("_").length >= 4) {
           if (StringUtils.isNoneEmpty(x._2.split("_")(4)) && !"null".equals(x._2.split("_")(4))) {
-            if ("4".equals(x._2.split("_")(0))) {
+            /*if ("4".equals(x._2.split("_")(0))) {
               status = "-1"
               valuedata = "-1" + "_" +"deliveryDate"+ x._2.split("deliveryDate")(1)
               disstatus = x._2.split("_")(4)
@@ -198,9 +198,13 @@ class DealDataStat extends DealDataFunc {
               disstatus = x._2.split("_")(4)
               valuedata = x._2
               status = x._2.split("_")(0)
-            }
+            }*/
+            val deliveryDate = x._2.split("_")(2)
+            disstatus = x._2.split("_")(4)
+            valuedata = x._2
+            status = x._2.split("_")(0)
           } else {
-            if ("4".equals(x._2.split("_")(0))) {
+            /*if ("4".equals(x._2.split("_")(0))) {
               status = "-1"
               valuedata = "-1" + "_deliveryDate_" + x._2.split("_")(2) + "_disstatus_" + "4" + "_purchaseDate" + x._2.split("_purchaseDate")(1)
               disstatus = "4"
@@ -209,20 +213,27 @@ class DealDataStat extends DealDataFunc {
               disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
               valuedata = x._2.split("_disstatus_")(0) + "_disstatus_" + disstatus + "_purchaseDate" + x._2.split("_purchaseDate")(1)
               status = x._2.split("_")(0)
-            }
+            }*/
+            val deliveryDate = x._2.split("_")(2)
+            disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
+            valuedata = x._2.split("_disstatus_")(0) + "_disstatus_" + disstatus + "_purchaseDate" + x._2.split("_purchaseDate")(1)
+            status = x._2.split("_")(0)
           }
         }else{
-          if ("4".equals(x._2.split("_")(0))) {
+          /*if ("4".equals(x._2.split("_")(0))) {
             status = "-1"
             valuedata = "-1" + "_deliveryDate_" + x._2.split("_")(2) + "_" + "disstatus" + "_" + "4" + "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
             disstatus = "4"
           } else {
-
             val deliveryDate = x._2.split("_")(2)
             disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
             valuedata = x._2 + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
             status = x._2.split("_")(0)
-          }
+          }*/
+          val deliveryDate = x._2.split("_")(2)
+          disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
+          valuedata = x._2 + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
+          status = x._2.split("_")(0)
         }
 
         val key = x._1.split("area")(0) + "area" + "_" + area + "_" + "sourceid" + x._1.split("sourceid")(1)
