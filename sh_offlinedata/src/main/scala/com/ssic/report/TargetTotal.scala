@@ -72,6 +72,10 @@ object TargetTotal {
     val useMaterialTotal = jedis.hgetAll(date + "_useMaterialPlanTotal")
     val useMaterialTotalData = sc.parallelize(useMaterialTotal.asScala.toList) //已存在的用料计划统计数据
 
+    /**
+      * 172.18.14.21:7004> hget 2020-12-23_useMaterialPlanTotal_child 3_4f678a18-88b3-416b-b663-d5b034e3d932
+      * total_2_usematerial_2_nousematerial_0_status_2
+      */
     val useMaterialChild: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlanTotal_child")
     val useMaterialChildData = sc.parallelize(useMaterialChild.asScala.toList) //已存在的用料计划子页面数据
 
@@ -81,6 +85,11 @@ object TargetTotal {
     val distributionTotal = jedis.hgetAll(date + "_DistributionTotal")
     val distributionTotalData = sc.parallelize(distributionTotal.asScala.toList) //已存在的配送计划统计数据
 
+    /**
+      * 172.18.14.21:7004> hget 2020-12-23_DistributionTotal_child area_3_id_4f678a18-88b3-416b-b663-d5b034e3d932
+      *
+      * total_2_accept_1_assign_1_shipp_1_status_-1_disstatus_4_deliveryDate_null
+      */
     val distributionchild: util.Map[String, String] = jedis.hgetAll(date + "_DistributionTotal_child")
     val distributionchildData = sc.parallelize(distributionchild.asScala.toList) //已存在的配送计划子页面数据
 

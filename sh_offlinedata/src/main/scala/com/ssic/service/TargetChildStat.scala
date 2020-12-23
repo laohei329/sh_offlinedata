@@ -115,7 +115,9 @@ class TargetChildStat extends TargetChildFunc {
     val allSchoolUseDisStatusTotal = allSchoolUse.map(x => (x._1, x._3)).coalesce(1).sortBy(x => x._2).groupByKey().mapValues(x => x.toList.reverse(0)) //每个学校的每个配送操作状态的倒序，取第一个值
     val allSchooldeliveryDateTotal =allSchoolUse.map(x => (x._1, x._4)).coalesce(1).sortBy(x => x._2).groupByKey().mapValues(x => x.toList.reverse(0)) //每个学校的每个配送上报时间的倒序，取第一个值
 
-    allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).leftOuterJoin(allSchoolUseDisStatusTotal).leftOuterJoin(allSchooldeliveryDateTotal).map(x => (x._1,(x._2._1._1._1,x._2._1._1._2.getOrElse("null", -1),x._2._1._2.getOrElse("null"),x._2._2.getOrElse("-1")))).filter(x => x._2._2._2 != -1).filter(x => !"null".equals(x._2._3)).filter(x => !"-1".equals(x._2._4)).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), (x._2._1, x._2._2, x._2._3,x._2._4))).sortBy(x => x._2._2._1, false).foreachPartition({
+    //RDD[(String, (((Int, Option[(String, Int)]), Option[String]), Option[String]))]
+    allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).leftOuterJoin(allSchoolUseDisStatusTotal).leftOuterJoin(allSchooldeliveryDateTotal)
+      .map(x => (x._1,(x._2._1._1._1,x._2._1._1._2.getOrElse("null", -1),x._2._1._2.getOrElse("null"),x._2._2.getOrElse("-1")))).filter(x => x._2._2._2 != -1).filter(x => !"null".equals(x._2._3)).filter(x => !"-1".equals(x._2._4)).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), (x._2._1, x._2._2, x._2._3,x._2._4))).sortBy(x => x._2._2._1, false).foreachPartition({
         itr =>
           val jedis = JPools.getJedis
           itr.foreach({
