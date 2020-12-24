@@ -36,7 +36,7 @@ object GroupSupplierDetail {
       x =>
         val id = x.uuid
         val supplier_type = "1" //1团餐公司 2供应商
-      val supplier_name = x.supplier_namet_edu_group_catering_company
+      val supplier_name = x.supplier_name
         val area = NewSchoolToOldSchool.committeeToOldArea(x.area)
         //val area = x.data.district_id
         val address = x.address //详情地址
