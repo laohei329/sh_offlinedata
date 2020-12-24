@@ -208,6 +208,7 @@ class DealDataStat extends DealDataFunc {
             val deliveryDate = x._2.split("_")(2)
             disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
             valuedata = x._2.split("_disstatus_")(0) + "_disstatus_" + disstatus + "_purchaseDate" + x._2.split("_purchaseDate")(1)
+
             status = x._2.split("_")(0)
           }
         }else{
@@ -223,6 +224,7 @@ class DealDataStat extends DealDataFunc {
           }*/
           val deliveryDate = x._2.split("_")(2)
           disstatus = new RuleStatusStat().distributionstatus(date, deliveryDate).toString
+          //(配送状态_deliveryDate_验收上报时间_disstatus_配送规则_purchaseDate_进货时间_deliveryReDate_验收时间（手动）
           valuedata = x._2 + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null"
           status = x._2.split("_")(0)
         }

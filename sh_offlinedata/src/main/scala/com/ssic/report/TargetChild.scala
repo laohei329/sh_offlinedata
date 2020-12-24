@@ -113,7 +113,7 @@ object TargetChild {
 
     //配送计划处理后的数据
     /**
-     * distributionData  已排查数据
+     * distributionData  （区号，供餐，处理后的value，学校id，key，状态，规范状态）
      */
     val distributionDealData = new DealDataStat().distributiondealdata(distributionData, gongcanSchool, school2Area, date)
     //配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
