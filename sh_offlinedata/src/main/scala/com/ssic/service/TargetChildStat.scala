@@ -108,7 +108,8 @@ class TargetChildStat extends TargetChildFunc {
             (x._1, "0", disstatus, deliveryDate)
           } else if ("-1".equals(status)) {
             (x._1, "-1", disstatus, deliveryDate)
-          } else if ("4".equals(status)) {
+          } //新加入对配送已取消逻辑的处理
+          else if ("4".equals(status)) {
             (x._1, "4", disstatus, deliveryDate)
           } else {
             (x._1, status, disstatus, deliveryDate)
@@ -116,7 +117,12 @@ class TargetChildStat extends TargetChildFunc {
         }
     })
 
-
+    /**
+      * 2020-12-24日新增逻辑：配送订单总数中去除已取消类型的配送订单。这样操作可能会产生如下情况：
+      *  如果排了菜，一条用料计划也不确认， 或生单后全部取消的情况，即生单后全部取消，阳光午餐端会触发未验收预警（教委五级预警中的一种）
+      *  而大数据侧会在“业务监管-》业务操作状态”功能中显示该校为正常状态，这样两端的UED交互逻辑会不一致。
+      *  这块后续需要运营、产品、测试端同事共同商讨一个产品方案。
+      */
     val allSchoolUseTotal = allSchoolUse.filter(!_._2.equals("4")).map(x => (x._1, 1)).reduceByKey(_ + _) //每个学校的配送订单总数
     val allSchoolUseStatusTotal = allSchoolUse.map(x => ((x._1, x._2), 1)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2))) //每个学校的每个验收状态的订单总数
     val allSchoolUseDisStatusTotal = allSchoolUse.map(x => (x._1, x._3)).coalesce(1).sortBy(x => x._2).groupByKey().mapValues(x => x.toList.reverse(0)) //每个学校的每个配送操作状态的倒序，取第一个值
