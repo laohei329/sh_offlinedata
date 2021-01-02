@@ -15,11 +15,11 @@ object SaveOnRedis {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
-
+    *
     * * 将排菜分析数据存入到redis的临时表中platoon
-
+    *
     * * @param Iterator[(String, String, String, String, String, String)]  Iterator[(时间，区号，schoolid，表操作类型，创建时间, 是否有效)]
-
+    *
     */
 
   def PlatoonPlanReal(itr: Iterator[(String, String, String, String, String, String)]) = {
@@ -45,11 +45,11 @@ object SaveOnRedis {
   }
 
   /**
-
+    *
     * * 学校实时使用排菜系统功能的情况展现
-
+    *
     * * @param Iterator[(String, String)]  Iterator[(时间，学校id)]
-
+    *
     */
   def DisplayRealTime(itr: Iterator[(String, String)]) = {
     val jedis = JPools.getJedis
@@ -197,11 +197,12 @@ object SaveOnRedis {
   //配送计划的详细的计算
 
   /**
-
+    *
     * 配送数据存入redis的临时表中
+    *
     * @param itr Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]
-    * Iterator[(id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,验收日期)]
-
+    *            Iterator[(id,配送时间，配送类型，学校ID，团餐公司ID，发货批次，配送状态，统配,区号，表类型，stat,验收上报日期,进货日期,验收规则,验收日期)]
+    *
     */
   def DistributionDetailRealTime(itr: Iterator[(String, String, String, String, String, String, Int, String, String, String, String, String, String, String, String)]) = {
     val jedis = JPools.getJedis
@@ -211,40 +212,56 @@ object SaveOnRedis {
         logger.info(x._1 + "_" + x._2 + "_" + x._3 + "_" + x._4 + "_" + x._5 + "_" + x._6 + "_" + x._7 + "_" + x._8 + "_" + x._9 + "_" + x._10 + "_" + x._11)
         if (jedis.exists(x._2 + "_" + "DistributionDetail").equals(true)) {
           val strings: util.Set[String] = jedis.hkeys(x._2 + "_" + "DistributionDetail")
-            if ("insert".equals(x._10) && "1".equals(x._11)) {
-              if (StringUtils.isNoneEmpty(x._8) && !x._8.equals("null")) {
-                jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
-              } else {
-                jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + "直配", x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
-              }
+          if ("insert".equals(x._10) && "1".equals(x._11)) {
+            if (StringUtils.isNoneEmpty(x._8) && !x._8.equals("null")) {
+              jedis.hset(
+                //Redis key
+                x._2 + "_" + "DistributionDetail",
 
-            } else if ("update".equals(x._10)) {
-              for (i <- strings.asScala) {
-                val id = i.split("_type_")(0)
-                if (id.equals("id_" + x._1)) {
+                //Redis field
+                "id" + "_" + x._1 +
+                  "_" + "type" + "_" + x._3 +
+                  "_" + "schoolid" + "_" + x._4 +
+                  "_" + "area" + "_" + x._9 +
+                  "_" + "sourceid" + "_" + x._5 +
+                  "_" + "batchno" + "_" + x._6 +
+                  "_" + "delivery" + "_" + x._8,
 
-                  if ("0".equals(x._11)) {
-                    jedis.hdel(x._2 + "_" + "DistributionDetail", i)
-                  } else if ("1".equals(x._11)) {
-                    jedis.hset(x._2 + "_" + "DistributionDetail", i, x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
-                  }
-                }
-              }
-
-            } else if ("delete".equals(x._10)) {
-              for (i <- strings.asScala) {
-                val id = i.split("_type_")(0)
-                if (id.equals("id_" + x._1)) {
-                  jedis.hdel(x._2 + "_" + "DistributionDetail", i)
-                }
-              }
+                //Redis value
+                x._7 + "_deliveryDate" + "_" + x._12 +
+                  "_" + "disstatus" + "_" + x._14 +
+                  "_" + "purchaseDate" + "_" + x._13 +
+                  "_" + "deliveryReDate" + "_" + x._15)
             } else {
-              logger.info("配送计划详情不需要计算的---------------------------------------")
+              jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + "直配", x._7 + "_deliveryDate" + "_" + x._12 + "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
             }
 
+          } else if ("update".equals(x._10)) {
+            for (i <- strings.asScala) {
+              val id = i.split("_type_")(0)
+              if (id.equals("id_" + x._1)) {
+
+                if ("0".equals(x._11)) {
+                  jedis.hdel(x._2 + "_" + "DistributionDetail", i)
+                } else if ("1".equals(x._11)) {
+                  jedis.hset(x._2 + "_" + "DistributionDetail", i, x._7 + "_deliveryDate" + "_" + x._12 + "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
+                }
+              }
+            }
+
+          } else if ("delete".equals(x._10)) {
+            for (i <- strings.asScala) {
+              val id = i.split("_type_")(0)
+              if (id.equals("id_" + x._1)) {
+                jedis.hdel(x._2 + "_" + "DistributionDetail", i)
+              }
+            }
+          } else {
+            logger.info("配送计划详情不需要计算的---------------------------------------")
           }
-        else {
-          jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12+ "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
+
+        } else {
+          jedis.hset(x._2 + "_" + "DistributionDetail", "id" + "_" + x._1 + "_" + "type" + "_" + x._3 + "_" + "schoolid" + "_" + x._4 + "_" + "area" + "_" + x._9 + "_" + "sourceid" + "_" + x._5 + "_" + "batchno" + "_" + x._6 + "_" + "delivery" + "_" + x._8, x._7 + "_deliveryDate" + "_" + x._12 + "_" + "disstatus" + "_" + x._14 + "_" + "purchaseDate" + "_" + x._13 + "_" + "deliveryReDate" + "_" + x._15)
         }
 
     })

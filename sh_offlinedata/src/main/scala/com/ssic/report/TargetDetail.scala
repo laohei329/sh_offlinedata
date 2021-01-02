@@ -102,11 +102,13 @@ object TargetDetail {
     //配送计划的详情数据
           // 处理好的配送计划数据
 
-    val distributionDetailAllData = b2bLedgerDetailData.leftOuterJoin(b2bLedgerExtraDetailData)
+    val distributionDetailAllData = b2bLedgerDetailData.leftOuterJoin(b2bLedgerExtraDetailData) //B2B交易配送数据
       .map({
         x =>
           (x._2._1, x._2._2.getOrElse("null"))
-      }).filter(x => !"null".equals(x._2)).union(distributionDetailData)
+      })
+      .filter(x => !"null".equals(x._2))
+      .union(distributionDetailData) //阳光午餐配送数据
 
     val distributiondealdata = new DealDataStat().distributiondealdata(distributionDetailAllData,gongcanSchool,school2Area,date)
 
