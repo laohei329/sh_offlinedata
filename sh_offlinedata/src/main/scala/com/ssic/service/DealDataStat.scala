@@ -330,12 +330,8 @@ class DealDataStat extends DealDataFunc {
   }
 
   /**
-
-    * * 处理好的留样计划统计数据
-
-    * * @param data 已存在的留样计划统计数据
-
-
+    *  处理好的留样计划统计数据
+    * @param data 已存在的留样计划统计数据
     */
   override def retentiondealtotaldata(data: RDD[(String, String)]):RDD[(String,(String, String))] = {
 
@@ -401,9 +397,6 @@ class DealDataStat extends DealDataFunc {
         }
     })
     redishDa
-
-
-
   }
 
   override def shanghaitotal(data: RDD[(String, String)]):RDD[(String,(String, String))] = {

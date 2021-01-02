@@ -63,7 +63,8 @@ object HospitalWeekToExcel {
     val nowday1 = Rule.timeToStamp("yyyyMMdd",0) //format3.format(time2)
 
     //医院周基础数据
-    val hospital_data = hiveContext.sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='${monday}' and end_use_date='${sunday}'")
+    val hospital_data = hiveContext
+      .sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='${monday}' and end_use_date='${sunday}'")
       .rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
@@ -75,7 +76,8 @@ object HospitalWeekToExcel {
 
 
     //医院排菜，验收数据
-    val platoon_data = hiveContext.sql(s"select use_date,hospital_id,have_platoon,haul_status,driver_app_day from saas_v1_dw.dw_t_hospital_platoon_detail where use_date >= '${monday}' and use_date <= '${sunday}' ").rdd.map({
+    val platoon_data = hiveContext
+      .sql(s"select use_date,hospital_id,have_platoon,haul_status,driver_app_day from saas_v1_dw.dw_t_hospital_platoon_detail where use_date >= '${monday}' and use_date <= '${sunday}' ").rdd.map({
       row =>
         val use_date = row.getAs[String]("use_date")
         val hospital_id = row.getAs[String]("hospital_id")
@@ -86,7 +88,8 @@ object HospitalWeekToExcel {
     })
 
     //医院菜品数
-    val hospital_dish = hiveContext.sql(s"select * from app_saas_v1.app_t_hospital_dish_menu where  supply_date >='${monday}' and supply_date <='${sunday}' ").rdd.map({
+    val hospital_dish = hiveContext
+      .sql(s"select * from app_saas_v1.app_t_hospital_dish_menu where  supply_date >='${monday}' and supply_date <='${sunday}' ").rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
         val hospital_name = row.getAs[String]("hospital_name")
@@ -95,8 +98,9 @@ object HospitalWeekToExcel {
         (hospital_id, dish_exact, have_reserve)
     })
 
-    //医院原料数
-    val hospital_material = hiveContext.sql(s"select * from app_saas_v1.app_t_hospital_ledege_detail where use_date >='${monday}' and use_date <='${sunday}' ").rdd.map({
+    //医院原料数.
+    val hospital_material = hiveContext
+      .sql(s"select * from app_saas_v1.app_t_hospital_ledege_detail where use_date >='${monday}' and use_date <='${sunday}' ").rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
         val hospital_name = row.getAs[String]("hospital_name")
@@ -136,6 +140,7 @@ object HospitalWeekToExcel {
         val hospital_name = x._2._1._1._1._1._1._1._1._1._1._1._1 //医院名字
         val level_name = x._2._1._1._1._1._1._1._1._1._1._1._2 //是否公立
         val have_class_day = x._2._1._1._1._1._1._1._1._1._1._1._3 //应排菜天数
+          //todo 这个地方有问题
         val have_platoon_total = x._2._1._1._1._1._1._1._1._1._1._2.getOrElse(0) //已排菜天数
         val have_ledger_total = x._2._1._1._1._1._1._1._1._1._2.getOrElse(0) //已验收天数
         val hospital_dish_total = x._2._1._1._1._1._1._1._1._2.getOrElse(0) //菜品总数
