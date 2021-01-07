@@ -66,7 +66,8 @@ object TargetTotal {
 
 
     val jedis = JPools.getJedis
-    val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlan-Detail")
+    val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlanDetail")
+   // val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlan-Detail")
     val usematerialData = sc.parallelize(useMaterialPlanDetail.asScala.toList) //已存在的用料计划数据
 
     val useMaterialTotal = jedis.hgetAll(date + "_useMaterialPlanTotal")
