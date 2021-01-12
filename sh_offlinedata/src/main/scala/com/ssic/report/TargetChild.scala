@@ -58,7 +58,8 @@ object TargetChild {
     val platoon: util.Map[String, String] = jedis.hgetAll(date + "_platoon-feed")
     val platoonData = sc.parallelize(platoon.asScala.toList) //学校的供餐数据
 
-    val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlan-Detail")
+    val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlanDetail")
+   // val useMaterialPlanDetail: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlan-Detail")
     val usematerialData = sc.parallelize(useMaterialPlanDetail.asScala.toList) //已存在的用料计划数据
 
     val useMaterialChild: util.Map[String, String] = jedis.hgetAll(date + "_useMaterialPlanTotal_child")
@@ -101,7 +102,9 @@ object TargetChild {
     val b2bPlatoonSchool: RDD[(String, Int)] = b2bPlatoon.map(x => (x._1.split("_")(1),2)).distinct() //b2b排菜的学校就算做用料确认
     //(区号，供餐，状态，key，学校名字，学校id,valuedata)
     //key "area" + "_" + 区 + "_" + "type" + 类型 + "name" + "_" + schoolname + "_" + "projid" + 项目点id
-    val usematerialDealData = new DealDataStat().usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool, projid2Area,b2bPlatoonSchool,schoolid2Projid,schoolid2suppliername)
+    val usematerialDealData = new DealDataStat()
+      .usematerialdealdata(usematerialData, projid2schoolid, projid2schoolname, gongcanSchool, projid2Area,
+        b2bPlatoonSchool,schoolid2Projid,schoolid2suppliername)
 
     //用料计划的子页面,没有产生用料计划的的学校也要放入到子页面中
     val useValue = usematerialDealData.map(x => (x._1 + "_" + x._6, List(x._4, x._3)))

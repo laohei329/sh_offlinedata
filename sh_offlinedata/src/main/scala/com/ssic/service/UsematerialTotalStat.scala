@@ -8,17 +8,16 @@ import org.apache.spark.rdd.RDD
 class UsematerialTotalStat extends TargetTotalFuc {
   /**
     *
-    * * 各区用料计划总数据统计
-    *
-    * * @param targetData 处理好的用料计划数据
-    *
-    * * @param date 时间
-    *
-    * * @return RDD[(String, String)]  (area_1,1)
-    *
+    * *各区用料计划总数据统计
+    *  @param targetData 处理好的用料计划数据
+    *  @param date 时间
+    *  @return RDD[(String, String)]  (area_1,1)
     */
   override def areatotal(targetData: RDD[(String, String, String, String, String, String, String)], date: String): RDD[(String, String)] = {
-    targetData.map(x => (x._1, 1)).reduceByKey(_ + _).map(x => ("area_" + x._1, x._2.toString))
+    targetData
+      .map(x => (x._1, 1))
+      .reduceByKey(_ + _)
+      .map(x => ("area_" + x._1, x._2.toString))
   }
   /**
 

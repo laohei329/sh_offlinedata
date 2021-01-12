@@ -61,6 +61,7 @@ object TargetDetail {
     val jedis = JPools.getJedis
 
     val useMaterialPlanDetail = jedis.hgetAll(date + "_useMaterialPlanDetail")
+    //val useMaterialPlanDetail = jedis.hgetAll(date + "_useMaterialPlan-Detail")
     val useMaterialPlanDetailData = sc.parallelize(useMaterialPlanDetail.asScala.toList) //用料计划临时表数据
 
     val useMaterials = jedis.hgetAll(date + "_useMaterialPlan-Detail")

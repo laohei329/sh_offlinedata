@@ -4,8 +4,10 @@ import com.ssic.impl.DealDataFunc
 import org.apache.commons.lang3._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
+import org.slf4j.{Logger, LoggerFactory}
 
-class DealDataStat extends DealDataFunc {
+class DealDataStat extends DealDataFunc with  Serializable {
+  private val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
   /**
 

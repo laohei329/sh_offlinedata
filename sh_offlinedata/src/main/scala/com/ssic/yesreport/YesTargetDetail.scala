@@ -99,7 +99,6 @@ object YesTargetDetail {
     //配送计划的详情数据
     // 处理好的配送计划数据
 
-
     val distributionDetailAllData = b2bLedgerDetailData.leftOuterJoin(b2bLedgerExtraDetailData)
       .map({
         x =>
