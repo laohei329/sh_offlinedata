@@ -102,6 +102,7 @@ class DealDataStat extends DealDataFunc with  Serializable {
         val key = "area" + "_" + area + "_" + "type" + "_" + "0" + "_" + "name" + "_" + schoolname + "_" + "projid" + "_" + projid + "_" + "suppliername" + "_" + suppliername
         val gongcan = gongcanSchool.value.getOrElse(area + "_" + schoolid, "null")
         val valuedata = "null"
+        logger.error("b2b的用料计划    area="+area+"   gongcan="+gongcan+"   status="+status+"  key="+ key+"   schoolname="+ schoolname+"   schoolid="+ schoolid+"   valuedata="+valuedata)
         (area, gongcan, status, key, schoolname, schoolid, valuedata)
     }).filter(x => !x._2.equals("null")).filter(x => !x._2.split("_")(0).equals("不供餐")).filter(x => !x._5.equals("null")).filter(x => !x._6.equals("null"))
 
