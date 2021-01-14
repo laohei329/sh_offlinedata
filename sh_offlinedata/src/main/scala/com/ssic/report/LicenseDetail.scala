@@ -74,9 +74,10 @@ object LicenseDetail {
     /**
      * 原来的数据sql 方法
      */
-    hiveContext.sql(
+
+/*    hiveContext.sql(
       """
-        |select temp.supplierId as supplierId,temp.supplier_name
+       |select temp.supplierId as supplierId,temp.supplier_name
         |as supplier_name,temp.supplier_classify as supplier_classify ,temp.address as address,temp.business_license,temp.shipin_jinyin_no,temp.shipin_liutong_no,temp.shipin_shengchang_no
         |from (
         |select a.id as supplierId,a.supplier_name as supplier_name,a.supplier_classify as supplier_classify,a.address as address,a.business_license as business_license,ROW_NUMBER() over(PARTITION BY a.business_license ORDER BY a.id) as rn ,c.lic_no as shipin_jinyin_no,d.lic_no as shipin_liutong_no,e.lic_no as shipin_shengchang_no
@@ -139,134 +140,234 @@ object LicenseDetail {
               if (v._1.size == 0) {
                 jedis.hdel("supplier-detail", k)
               }else{
-                jedis.hset("supplier-detail",k,"id"+";"+k+";"+"suppliername"+";"+v._1.head._1+";"+"classify"+";"+v._1.head._2+";"+"area"+";"+"null"+";"+"address"+";"+v._1.head._3+";"+"businesslicense"+";"+v._1.head._4+";"+"regcapital"+";"+"null"+";"+"foodbusiness"+";"+v._1.head._5+";"+"foodcirculation"+";"+v._1.head._6+";"+"foodproduce"+";"+v._1.head._7)
+                jedis.hset("supplier-detail",k,
+                  "id"+";"+k+";suppliername;"+v._1.head._1+";classify;"+v._1.head._2+";area;null;address;"
+                    +v._1.head._3+";businesslicense;"+v._1.head._4+";regcapital;null;foodbusiness;"+v._1.head._5
+                    +";foodcirculation;"+v._1.head._6+";foodproduce;"+v._1.head._7)
+              }
+          })
+      })*/
+
+    hiveContext.sql(
+      """
+        |select
+        |temp.supplierId as supplierId,
+        |temp.supplier_name as supplier_name,
+        |temp.supplier_classify as supplier_classify ,
+        |temp.address as address,
+        |temp.business_license,
+        |temp.shipin_jinyin_no,
+        |temp.shipin_liutong_no,
+        |temp.shipin_shengchang_no
+        |from (
+        |select
+        |a.id as supplierId,
+        |a.supplier_name as supplier_name,
+        |a.supplier_classify as supplier_classify,
+        |a.address as address,
+        |a.business_license as business_license,
+        |ROW_NUMBER() over(PARTITION BY a.business_license ORDER BY a.id) as rn ,
+        |c.lic_no as shipin_jinyin_no,
+        |d.lic_no as shipin_liutong_no,
+        |e.lic_no as shipin_shengchang_no
+        |from
+        |(select id ,supplier_name,business_license,supplier_classify,address
+        |	from app_saas_v1.t_pro_supplier
+        |	where supplier_type =2 and business_license is not null and trim(business_license) <> "") as a
+        |left outer join
+        |(select * from app_saas_v1.supplier_tab where tab[0] = 1) as b
+        |on a.id = b.supplier_id
+        |left outer join
+        |(select supplier_id,lic_no
+        |	from ods.ods_saas_v1_db_t_pro_license
+        |	where lic_type = 1 and stat=1 and reviewed =1) as c
+        |on a.id = c.supplier_id
+        |left outer join
+        |(select supplier_id,lic_no
+        |	from ods.ods_saas_v1_db_t_pro_license
+        |	where lic_type = 2 and stat=1 and reviewed =1) as d
+        |on a.id = d.supplier_id
+        |left outer join
+        |(select supplier_id,lic_no
+        |	from ods.ods_saas_v1_db_t_pro_license
+        |	where lic_type = 3 and stat=1 and reviewed =1) as e
+        |on a.id = e.supplier_id where b.tab is not null
+        |) as temp where temp.rn =1
+        |
+        | union all
+        | select
+        | a.id as supplierId,
+        | a.supplier_name as supplier_name,
+        | 0 as supplier_classify ,
+        | a.address as address,
+        | d.qualification_code as business_license,
+        | e.qualification_code as shipin_jinyin_no,
+        | null as shipin_liutong_no,
+        | f.qualification_code as shipin_shengchang_no
+        |from
+        |(select id ,supplier_name,business_license,address
+        |	from app_saas_v1.t_pro_supplier
+        |	where supplier_type is null ) as a
+        |left outer join
+        |(select *
+        |	from app_saas_v1.supplier_tab
+        |	where tab[0] = 1) as b
+        |on a.id = b.supplier_id
+        |left outer join
+        |(select * from ods_b2b_new.merchant_apply ) as c
+        |on a.id = c.merchant_id
+        |left outer join
+        |(select * from
+        |(select id,qualification_name,qualification_code,
+        |	merchant_apply_id,start_effective_date,
+        |	end_effective_date,ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn
+        |	from ods_b2b_new.merchant_apply_qualification
+        |	where del=0 and  qualification_name="营业执照") as temp
+        |where temp.rn =1) as d
+        |on c.id = d.merchant_apply_id
+        |left outer join
+        |(select * from
+        |(select id,qualification_name,qualification_code,
+        |	merchant_apply_id,start_effective_date,end_effective_date,
+        |	ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn
+        |	from ods_b2b_new.merchant_apply_qualification
+        |	where del=0 and  qualification_name="食品经营许可证") as temp where temp.rn =1) as e
+        |on c.id = e.merchant_apply_id
+        |left outer join
+        |(select * from
+        |(select id,qualification_name,qualification_code,
+        |	merchant_apply_id,start_effective_date,
+        |	end_effective_date,ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn
+        |	from ods_b2b_new.merchant_apply_qualification
+        |	where del=0 and  qualification_name="食品生产许可证") as temp
+        |where temp.rn =1) as f
+        |on c.id = f.merchant_apply_id where b.tab is not null
+        |
+      """.stripMargin).rdd
+      .map({
+        row =>
+          val supplierId = Rule.emptyToNull(row.getAs[String]("supplierId"))
+          val supplier_name = Rule.emptyToNull(row.getAs("supplier_name"))
+          val supplier_classify = Rule.intToString(row.getAs[Integer]("supplier_classify"))
+          val address = Rule.emptyToNull(row.getAs[String]("address"))
+          val business_license = Rule.emptyToNull(row.getAs[String]("business_license"))
+          val shipin_jinyin_no = Rule.emptyToNull(row.getAs[String]("shipin_jinyin_no"))
+          val shipin_liutong_no = Rule.emptyToNull(row.getAs[String]("shipin_liutong_no"))
+          val shipin_shengchang_no = Rule.emptyToNull(row.getAs[String]("shipin_shengchang_no"))
+          (supplierId,(supplier_name,supplier_classify,address,business_license,shipin_jinyin_no,shipin_liutong_no,shipin_shengchang_no))
+      }).cogroup(supplierDetailData)
+      .foreachPartition({
+        itr =>
+          val jedis = JPools.getJedis
+          itr.foreach({
+            case (k, v) =>
+              //表示左边没有，右边有
+              if (v._1.size == 0) {
+                jedis.hdel("supplier-detail", k)
+              }else{
+                jedis.hset("supplier-detail",k,
+                  "id"+";"+k+";suppliername;"+v._1.head._1+";classify;"+v._1.head._2+";area;null;address;"
+                    +v._1.head._3+";businesslicense;"+v._1.head._4+";regcapital;null;foodbusiness;"+v._1.head._5
+                    +";foodcirculation;"+v._1.head._6+";foodproduce;"+v._1.head._7)
               }
           })
       })
-
-
     /**
      * 先尝试写入到test 的 redis中
      */
-    hiveContext.sql(
+/*    hiveContext.sql(
       """
-        |SELECT
-        |	temp.supplierId AS supplierId,
-        |	temp.supplier_name AS supplier_name,
-        |	temp.supplier_classify AS supplier_classify,
-        |	temp.address AS address,
-        |	temp.business_license,
-        |	temp.shipin_jinyin_no,
-        |	temp.shipin_liutong_no,
-        |	temp.shipin_shengchang_no
-        |FROM
-        |	(
-        |		SELECT
-        |			a.id AS supplierId,
-        |			a.supplier_name AS supplier_name,
-        |			a.supplier_classify AS supplier_classify,
-        |			a.address AS address,
-        |			a.business_license AS business_license,
-        |			ROW_NUMBER () over (PARTITION BY a.business_license ORDER BY a.id) AS rn,
-        |			c.lic_no AS shipin_jinyin_no,
-        |			d.lic_no AS shipin_liutong_no,
-        |			e.lic_no AS shipin_shengchang_no
-        |		FROM
-        |			(
-        |				SELECT id,supplier_name,business_license,supplier_classify,address
-        |				FROM	app_saas_v1.t_pro_supplier
-        |				WHERE	supplier_type = 2
-        |				AND business_license IS NOT NULL and trim(business_license) <> ""
-        |			) AS a
-        |		LEFT OUTER JOIN (
-        |			SELECT	*
-        |			FROM	app_saas_v1.supplier_tab
-        |			WHERE	tab [ 0 ] = 1
-        |		) AS b ON a.id = b.supplier_id
-        |		LEFT OUTER JOIN (
-        |			SELECT	supplier_id,lic_no
-        |			FROM	ods.ods_saas_v1_db_t_pro_license
-        |			WHERE	lic_type = 1 AND stat = 1
-        |		) AS c ON a.id = c.supplier_id
-        |		LEFT OUTER JOIN (
-        |			SELECT	supplier_id,lic_no
-        |			FROM ods.ods_saas_v1_db_t_pro_license
-        |			WHERE	lic_type = 2	AND stat = 1
-        |		) AS d ON a.id = d.supplier_id
-        |		LEFT OUTER JOIN (
-        |			SELECT	supplier_id,lic_no
-        |			FROM  ods.ods_saas_v1_db_t_pro_license
-        |			WHERE	lic_type = 3	AND stat = 1
-        |		) AS e ON a.id = e.supplier_id
-        |		WHERE
-        |			b.tab IS NOT NULL
-        |	) AS temp
-        |WHERE
-        |	temp.rn = 1
-        |GROUP BY 	temp.supplierId ,
-        |	temp.supplier_name,
-        |	temp.supplier_classify,
-        |	temp.address,
-        |	temp.business_license,
-        |	temp.shipin_jinyin_no,
-        |	temp.shipin_liutong_no,
-        |	temp.shipin_shengchang_no
-        |
-        |UNION all
-        |  SELECT
-        |            a.id AS supplierId,
-        |            a.supplier_name AS supplier_name,
-        |            0 AS supplier_classify,
-        |            a.address AS address,
-        |            d.qualification_code AS business_license,
-        |            e.qualification_code AS shipin_jinyin_no,
-        |            NULL AS shipin_liutong_no,
-        |            f.qualification_code AS shipin_shengchang_no
-        |      FROM
-        |            (
-        |                  SELECT id,supplier_name,business_license,address
-        |                  FROM  app_saas_v1.t_pro_supplier
-        |                  WHERE supplier_type IS NULL
-        |            ) AS a
-        |      LEFT OUTER JOIN (
-        |            SELECT *  FROM ods_b2b_new.merchant_apply
-        |      ) AS c ON a.id = c.merchant_id
-        |      LEFT OUTER JOIN (
-        |            SELECT *   FROM
-        |                  (
-        |                        SELECT
-        |                              id,qualification_name, qualification_code, merchant_apply_id,start_effective_date,end_effective_date,
-        |                              ROW_NUMBER () over (PARTITION BY merchant_apply_id,qualification_name ORDER BY id ) AS rn
-        |                        FROM ods_b2b_new.merchant_apply_qualification
-        |                        WHERE qualification_name = "营业执照"
-        |                  ) AS temp
-        |            WHERE  temp.rn = 1
-        |      ) AS d ON c.id = d.merchant_apply_id
-        |      LEFT OUTER JOIN (
-        |            SELECT *
-        |            FROM
-        |                  (
-        |                        SELECT
-        |                              id, qualification_name,qualification_code,merchant_apply_id,start_effective_date,end_effective_date,
-        |                              ROW_NUMBER () over (PARTITION BY merchant_apply_id,qualification_name ORDER BY id ) AS rn
-        |                        FROM  ods_b2b_new.merchant_apply_qualification
-        |                        WHERE qualification_name = "食品经营许可证"
-        |                  ) AS temp
-        |            WHERE  temp.rn = 1
-        |      ) AS e ON c.id = e.merchant_apply_id
-        |      LEFT OUTER JOIN (
-        |            SELECT    *
-        |            FROM    (
-        |                        SELECT
-        |                              id,qualification_name,merchant_apply_id,qualification_code,start_effective_date,end_effective_date,
-        |                              ROW_NUMBER () over ( PARTITION BY merchant_apply_id,qualification_name ORDER BY id  ) AS rn
-        |                        FROM ods_b2b_new.merchant_apply_qualification
-        |                        WHERE  qualification_name = "食品生产许可证"
-        |                  ) AS temp
-        |            WHERE  temp.rn = 1
-        |      ) AS f ON c.id = f.merchant_apply_id
-        |where address NOT LIKE "%临时%" and  address NOT LIKE "%测试%"
-        |GROUP BY a.id, a.supplier_name , a.address,d.qualification_code,e.qualification_code, f.qualification_code
+ select
+        |temp.supplierId as supplierId,
+        |temp.supplier_name as supplier_name,
+        |temp.supplier_classify as supplier_classify ,
+        |temp.address as address,
+        |temp.business_license,
+        |temp.shipin_jinyin_no,
+        |temp.shipin_liutong_no,
+        |temp.shipin_shengchang_no
+        |from (
+        |select
+        |a.id as supplierId,
+        |a.supplier_name as supplier_name,
+        |a.supplier_classify as supplier_classify,
+        |a.address as address,
+        |a.business_license as business_license,
+        |ROW_NUMBER() over(PARTITION BY a.business_license ORDER BY a.id) as rn ,
+        |c.lic_no as shipin_jinyin_no,
+        |d.lic_no as shipin_liutong_no,
+        |e.lic_no as shipin_shengchang_no
+        |from
+        |(select id ,supplier_name,business_license,supplier_classify,address
+        |	from app_saas_v1.t_pro_supplier
+        |	where supplier_type =2 and business_license is not null ) as a
+        |left outer join
+        |(select * from app_saas_v1.supplier_tab where tab[0] = 1) as b
+        |on a.id = b.supplier_id
+        |left outer join
+        |(select supplier_id,lic_no
+        |	from ods.ods_saas_v1_db_t_pro_license
+        |	where lic_type = 1 and stat=1 ) as c
+        |on a.id = c.supplier_id
+        |left outer join
+        |(select supplier_id,lic_no
+        |	from ods.ods_saas_v1_db_t_pro_license
+        |	where lic_type = 2 and stat=1 ) as d
+        |on a.id = d.supplier_id
+        |left outer join
+        |(select supplier_id,lic_no
+        |	from ods.ods_saas_v1_db_t_pro_license
+        |	where lic_type = 3 and stat=1 ) as e
+        |on a.id = e.supplier_id where b.tab is not null
+        |) as temp where temp.rn =1
+        | union all
+        | select
+        | a.id as supplierId,
+        | a.supplier_name as supplier_name,
+        | 0 as supplier_classify ,
+        | a.address as address,
+        | d.qualification_code as business_license,
+        | e.qualification_code as shipin_jinyin_no,
+        | null as shipin_liutong_no,
+        | f.qualification_code as shipin_shengchang_no
+        |from
+        |(select id ,supplier_name,business_license,address
+        |	from app_saas_v1.t_pro_supplier
+        |	where supplier_type is null ) as a
+        |left outer join
+        |(select *
+        |	from app_saas_v1.supplier_tab
+        |	where tab[0] = 1) as b
+        |on a.id = b.supplier_id
+        |left outer join
+        |(select * from ods_b2b_new.merchant_apply ) as c
+        |on a.id = c.merchant_id
+        |left outer join
+        |(select * from
+        |(select id,qualification_name,qualification_code,
+        |	merchant_apply_id,start_effective_date,
+        |	end_effective_date,ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn
+        |	from ods_b2b_new.merchant_apply_qualification
+        |	where del=0 and  qualification_name="营业执照") as temp
+        |where temp.rn =1) as d
+        |on c.id = d.merchant_apply_id
+        |left outer join
+        |(select * from
+        |(select id,qualification_name,qualification_code,
+        |	merchant_apply_id,start_effective_date,end_effective_date,
+        |	ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn
+        |	from ods_b2b_new.merchant_apply_qualification
+        |	where del=0 and  qualification_name="食品经营许可证") as temp where temp.rn =1) as e
+        |on c.id = e.merchant_apply_id
+        |left outer join
+        |(select * from
+        |(select id,qualification_name,qualification_code,
+        |	merchant_apply_id,start_effective_date,
+        |	end_effective_date,ROW_NUMBER() over(PARTITION BY merchant_apply_id,qualification_name ORDER BY id) as rn
+        |	from ods_b2b_new.merchant_apply_qualification
+        |	where del=0 and  qualification_name="食品生产许可证") as temp
+        |where temp.rn =1) as f
+        |on c.id = f.merchant_apply_id where b.tab is not null
         |
       """.stripMargin).rdd
       .map({
@@ -294,7 +395,8 @@ object LicenseDetail {
               }
 
           })
-      })
+      })*/
+
     sc.stop()
   }
 
