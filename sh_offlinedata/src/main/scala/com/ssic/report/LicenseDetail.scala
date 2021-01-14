@@ -180,17 +180,17 @@ object LicenseDetail {
         |left outer join
         |(select supplier_id,lic_no
         |	from ods.ods_saas_v1_db_t_pro_license
-        |	where lic_type = 1 and stat=1 and reviewed =1) as c
+        |	where lic_type = 1 and stat=1 ) as c
         |on a.id = c.supplier_id
         |left outer join
         |(select supplier_id,lic_no
         |	from ods.ods_saas_v1_db_t_pro_license
-        |	where lic_type = 2 and stat=1 and reviewed =1) as d
+        |	where lic_type = 2 and stat=1 ) as d
         |on a.id = d.supplier_id
         |left outer join
         |(select supplier_id,lic_no
         |	from ods.ods_saas_v1_db_t_pro_license
-        |	where lic_type = 3 and stat=1 and reviewed =1) as e
+        |	where lic_type = 3 and stat=1 ) as e
         |on a.id = e.supplier_id where b.tab is not null
         |) as temp where temp.rn =1
         |
