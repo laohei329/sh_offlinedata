@@ -696,7 +696,11 @@ object MinzhengExcel {
         val supplier_id = gerocomiumDishDetail._2(0)
         val b2bSupplierLicense = new MinzhengExcelStat().b2bSupplierLicense(hiveContext, supplier_id)
         val keyBackRow15 = keyBackSheet.createRow(21 + gerocomiumDishDetail._1.size + 2 + supplierLicenseData._1.size + 2)
-        new ExceltitleStat().exceltitle(b2bSupplierLicense(0)._2, keyBackContentStyle, keyBackRow15)
+//        ("1", Array[String]
+//  ("1", company_name, "", credit_code, qualification_code, end_effective_date, name, office_address, legal_representative, contact_person, contact_phone))
+        if (b2bSupplierLicense.length>0){
+          new ExceltitleStat().exceltitle(b2bSupplierLicense(0)._2, keyBackContentStyle, keyBackRow15)
+        }
       }
 
       val keyBackValue13 = Array[String]("⑤供应商信息")

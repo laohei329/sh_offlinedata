@@ -874,17 +874,16 @@ class MinzhengExcelStat {
 
 
   /**
-    * *民政对应的菜品信息
-    *
+    * 民政对应的菜品信息
     * @param hiveContext  hive链接
     * @param year         年
     * @param month        月
     * @param supplyDate   时间
     * @param gerocomiumId 民政
-    *
     **/
   def gerocomiumDishDetail(hiveContext: HiveContext, year: String, month: String, supplyDate: String, gerocomiumId: String): (Array[(String, Array[String])], Array[String]) = {
-    val data = hiveContext.sql(s"select * from app_saas_v1.app_t_gerocomium_dish_menu where year ='${year}' and month ='${month}' and supply_date ='${supplyDate}' and gerocomium_id = '${gerocomiumId}'")
+    val data = hiveContext
+      .sql(s"select * from app_saas_v1.app_t_gerocomium_dish_menu where year ='${year}' and month ='${month}' and supply_date ='${supplyDate}' and gerocomium_id = '${gerocomiumId}'")
       .rdd.map({
       row =>
         val gerocomium_name = Rule.nullToEmpty(row.getAs[String]("gerocomium_name"))
@@ -900,11 +899,9 @@ class MinzhengExcelStat {
   }
 
   /**
-    * *阳光午餐团餐公司对应的证件信息
-    *
+    * 阳光午餐团餐公司对应的证件信息
     * @param hiveContext hive链接
     * @param ygSupplieId 团餐公司id
-    *
     **/
 
   def supplierLicense(hiveContext: HiveContext, ygSupplieId: String): (Array[(String, Array[String])], Int, Int, Int, Int, Int) = {
@@ -954,11 +951,9 @@ class MinzhengExcelStat {
   }
 
   /**
-    * *b2b团餐公司对应的证件信息
-    *
+    * b2b团餐公司对应的证件信息
     * @param hiveContext  hive链接
     * @param b2bSupplieId 团餐公司id
-    *
     **/
 
   def b2bSupplierLicense(hiveContext: HiveContext, b2bSupplieId: String): Array[(String, Array[String])] = {
@@ -994,14 +989,12 @@ class MinzhengExcelStat {
   }
 
   /**
-    * *民政对应的原料信息
-    *
+    * 民政对应的原料信息
     * @param hiveContext  hive链接
     * @param year         年
     * @param month        月
     * @param supplyDate   时间
     * @param gerocomiumId 民政
-    *
     **/
   def gerocomiumLedegeDetail(hiveContext: HiveContext, year: String, month: String, supplyDate: String, gerocomiumId: String): Array[((String, String), Int, Array[String])] = {
     val data = hiveContext.sql(s"select * from app_saas_v1.app_t_gerocomium_ledege_detail where year ='${year}' and month ='${month}' and use_date ='${supplyDate}' and gerocomium_id = '${gerocomiumId}'")
