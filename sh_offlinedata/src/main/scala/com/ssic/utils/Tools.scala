@@ -52,9 +52,7 @@ object Tools {
   /**
     *
     * * 当天的学校在供餐表的数据
-    *
     * * @param SparkSession
-    *
     * * @param String 当天时间
     *
     */

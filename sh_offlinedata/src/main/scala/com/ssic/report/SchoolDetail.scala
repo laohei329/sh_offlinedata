@@ -38,9 +38,9 @@ object SchoolDetail {
 
     db_edu_school.createTempView("t_edu_school")
 
-    val jedis = JPools.getJedis
+/*    val jedis = JPools.getJedis
     val schoolDetail = jedis.hgetAll("schoolDetail")
-    val schoolDetailaData = sc.parallelize(schoolDetail.asScala.toList)
+    val schoolDetailaData = sc.parallelize(schoolDetail.asScala.toList)*/
 
     /**
       * 这是之前的原始代码
@@ -101,38 +101,40 @@ object SchoolDetail {
             val v = jedis.hget("schoolDetail",x._1 )
 
             if (StringUtils.isNoneEmpty(v) && !"null".equals(v)) {
-              jedis.hset("schoolDetail", x._1, "id" + ";" + x._1 + ";" + "schoolname" + ";"
-                + x._2._1 + ";" + "isbranchschool" + ";"
-                + x._2._2 + ";" + "parentid" + ";"
-                +x._2._3 + ";" + "area" + ";"
-                +x._2._4 + ";" + "address" + ";"
-                + x._2._5 + ";" + "socialcreditcode" + ";"
-                +x._2._6 + ";" + "level" + ";"
-                +x._2._7 + ";" + "schoolnature" + ";"
-                + x._2._8 + ";" + "schoolnaturesub" + ";"
-                + x._2._9 + ";" + "departmentmasterid" + ";"
-                + x._2._10 + ";" + "departmentslaveid" + ";"
-                + x._2._11 + ";" + "canteenmode" + ";"
-                + x._2._12 + ";" + "ledgertype" + ";"
-                +x._2._13 + ";" + "studentsamount" + ";"
-                +x._2._14+ ";" + "staffamount" + ";"
-                + x._2._15 + ";" + "corporation" + ";"
-                +x._3._1 + ";" + "corporationway" + ";"
-                +x._3._2 + ";" + "corporationtelephone" + ";"
-                + x._3._3 + ";" + "departmenthead" + ";"
-                +x._3._4 + ";" + "departmentmobilephone" + ";"
-                + x._3._5 + ";" + "departmenttelephone" + ";"
-                +x._3._6 + ";" + "departmentfax" + ";"
-                + x._3._7 + ";" + "departmentemail" + ";"
-                +x._3._8 + ";" + "foodsafetypersion" + ";"
-                +x._3._9 + ";" + "foodsafetymobilephone" + ";"
-                +x._3._10 + ";" + "foodsafetytelephone" + ";"
-                +x._3._11 + ";" + "gongcan" + ";" + "1" + ";" + "slictype" + v.split("slictype")(1))
+              jedis.hset("schoolDetail", x._1,
+              "id;" + x._1
+              + ";schoolname;"+ x._2._1
+              + ";isbranchschool;"+ x._2._2
+              + ";parentid;"+x._2._3
+              + ";area;"+x._2._4
+              + ";address;"+ x._2._5
+              + ";socialcreditcode;"+x._2._6
+              + ";level;"+x._2._7
+              + ";schoolnature;"+x._2._8
+              + ";schoolnaturesub";"+x._2._9
+              + ";departmentmasterid;"+x._2._10
+              + ";departmentslaveid;"+x._2._11
+              + ";canteenmode;" +x._2._12
+              + ";ledgertype;"+x._2._13
+              + ";studentsamount;"+x._2._14
+              + ";staffamount;"+ x._2._15
+              + ";corporation;"+x._3._1
+              + ";corporationway;"+x._3._2
+              + ";corporationtelephone;" + x._3._3
+              + ";departmenthead;"+x._3._4
+              + ";departmentmobilephone;"+ x._3._5
+              + ";departmenttelephone;"+x._3._6
+              + ";departmentfax;"+ x._3._7
+              + ";departmentemail;"+x._3._8
+              + ";foodsafetypersion;"+x._3._9
+              + ";foodsafetymobilephone;"+x._3._10
+              + ";foodsafetytelephone;"+x._3._11
+              + ";gongcan;" + "1" + ";"
+              + "slictype" + v.split("slictype")(1))
             }
 
         })
     })*/
-
 
     val t_pro_license = session.read.jdbc(url, edu_bd_pro_license, conn)
     t_pro_license.createTempView("t_pro_license")
@@ -210,7 +212,6 @@ object SchoolDetail {
         // foodsafetypersion;null;foodsafetymobilephone;null;foodsafetytelephone;null;gongcan;null;slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null
 
         val id = row.getAs[String]("id")
-
         val schoolname = row.getAs[String]("school_name")
         val is_branch_school = row.getAs[Int]("is_branch_school")
         val parent_id = Rule.emptyToNull(row.getAs[String]("parent_id"))
@@ -223,6 +224,7 @@ object SchoolDetail {
         val department_master_id = Rule.emptyToNull(row.getAs[String]("department_master_id"))
         val department_slave_id = Rule.emptyToNull(row.getAs[String]("department_slave_id"))
         val license_main_type = Rule.emptyToNull(row.getAs[String]("license_main_type"))
+        //val license_main_type = Rule.emptyToNull(row.getAs[String]("canteen_mode"))
         val license_main_child = row.getAs[Int]("license_main_child")
         val students_amount = row.getAs[Int]("students_amount")
         val staff_amount = row.getAs[Int]("staff_amount")

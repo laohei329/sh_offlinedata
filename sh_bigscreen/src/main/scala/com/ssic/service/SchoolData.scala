@@ -84,10 +84,8 @@ object SchoolData {
         val committee_org_merchant_id = x.committee_org_merchant_id //中台的字段，用来获取教属信息，需要转到以前老阳光午餐的逻辑
         val master_id = school2commitee.value.getOrElse(committee_org_merchant_id, "null")
         val department_master_id = NewSchoolToOldSchool.committeeToOldMasterId(master_id) //将中台的关于教属的映射转到以前老的教属的映射
-
         val commite_name = school2commiteename.value.getOrElse(committee_org_merchant_id, "null")
         val department_slave_id = NewSchoolToOldSchool.committeeToOldSlaveId((master_id, commite_name)) //将中台的关于教属的映射转到以前老的教属的映射department_slave_id
-
         val students_amount = Rule.emptyToNull(x.students_amount) //学生人数
         val staff_amount = Rule.emptyToNull(x.staff_amount) //教职工人数
         val corporation = Rule.emptyToNull(x.corporation) //法人代表
@@ -101,7 +99,6 @@ object SchoolData {
         val food_safety_persion = Rule.emptyToNull(x.food_safety_persion) //项目负责人
         val food_safety_mobilephone = Rule.emptyToNull(x.food_safety_mobilephone) //项目负责人手机
         val food_safety_telephone = Rule.emptyToNull(x.food_safety_telephone) //项目负责人座机
-
         // 将上海市各区的新的district_id映射 => 旧的area的映射
         val area = NewSchoolToOldSchool.committeeToOldArea(x.seat_district_id)
         val level = x.level

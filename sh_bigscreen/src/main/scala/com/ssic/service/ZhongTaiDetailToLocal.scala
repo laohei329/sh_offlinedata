@@ -40,7 +40,7 @@ object ZhongTaiDetailToLocal {
         val commite_name = filterData._3.value.getOrElse(committee_org_merchant_id, "null")
 
         val department_slave_id = NewSchoolToOldSchool.committeeToOldSlaveId((master_id, commite_name)) //将中台的关于教属的映射转到以前老的教属的映射department_slave_id
-      val committee_id = schoolBean.committee_id
+        val committee_id = schoolBean.committee_id
         val school_name = schoolBean.school_name
         val corporation = schoolBean.corporation
         val corporation_way = schoolBean.corporation_way
@@ -126,7 +126,12 @@ object ZhongTaiDetailToLocal {
         }
 
 
-        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation), (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code), (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone), (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name), (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time, canteen_mode, ledger_type, department_id), (is_customer, customer_school_id))
+        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation),
+          (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code),
+          (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone),
+          (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name),
+          (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time, canteen_mode, ledger_type, department_id),
+          (is_customer, customer_school_id))
 
     }).foreach({
       x =>
