@@ -30,6 +30,7 @@ object Tools {
   val edu_calendar = config.getString("db.default.edu_calendar")
   val edu_schoolterm = config.getString("db.default.edu_schoolterm")
   val edu_school = config.getString("db.default.edu_school")
+  val edu_groupon_customer = config.getString("db.default.groupon_customer")
   val edu_committee = config.getString("db.default.edu_committee")
   val edu_schoolterm_system = config.getString("db.default.edu_schoolterm_system")
   val edu_holiday = config.getString("db.default.edu_holiday")
