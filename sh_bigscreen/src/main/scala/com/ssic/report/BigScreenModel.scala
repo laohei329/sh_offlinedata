@@ -129,6 +129,8 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.SchoolSupplier(filterData)
         //将中台的团餐公司信息 迁移到 本地的t_pro_supplier表
         ZhongTaiDetailToLocal.GroupSupplier(filterData)
+        //将中台的团餐公司信息 迁移到 本地的grouponCustomer表
+        ZhongTaiDetailToLocal.grouponCustomer(filterData)
         //将中台的供应商公司信息 迁移到 本地的t_pro_supplier表
         ZhongTaiDetailToLocal.SupplierInfo(filterData)
         //将中台的学校信息 迁移到 本地的t_edu_school表

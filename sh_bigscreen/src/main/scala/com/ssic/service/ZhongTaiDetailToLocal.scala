@@ -1,5 +1,7 @@
 package com.ssic.service
 
+import java.sql.Timestamp
+
 import com.alibaba.fastjson.JSON
 import com.ssic.beans._
 import com.ssic.utils._
@@ -379,6 +381,132 @@ object ZhongTaiDetailToLocal {
     })
   }
 
+  def grouponCustomer(filterData: RDD[SchoolBean]) = {
+    filterData.filter(x => x != null
+      && x.database.equals("ssl-user")
+      && x.table.equals("groupon_customer")).map({
+      x =>
+        val grouponCustomerBean = JSON.parseObject(x.data, classOf[GrouponCustomer])
+        val types = x.`type` //插入，删除，更新操作类型
+        val id = grouponCustomerBean.id
+        val org_merchant_id = grouponCustomerBean.org_merchant_id
+        val uuid: String = grouponCustomerBean.uuid
+        val customer_name: String = grouponCustomerBean.customer_name
+        val customer_type: Int = grouponCustomerBean.customer_type
+        val contact_mobile: String = grouponCustomerBean.contact_mobile
+        val address: String = grouponCustomerBean.address
+        val merchant_id: Long = grouponCustomerBean.merchant_id
+        val is_available: Int = grouponCustomerBean.is_available
+        val is_deleted: Int = grouponCustomerBean.is_deleted
+        val version_no: Int = grouponCustomerBean.version_no
+        val platform_id: Long = grouponCustomerBean.platform_id
+        val company_id: Long = grouponCustomerBean.company_id
+        val org_id: Long = grouponCustomerBean.org_id
+        val org_type: Int = grouponCustomerBean.org_type
+        val catering_new_type: Int = grouponCustomerBean.catering_new_type
+        val process_type: Int = grouponCustomerBean.process_type
+        val people_num: Int = grouponCustomerBean.people_num
+        val identity_card_name: String = grouponCustomerBean.identity_card_name
+        val identity_card_phone: String = grouponCustomerBean.identity_card_phone
+        val status: Int = grouponCustomerBean.status
+        val school_id: String = grouponCustomerBean.school_id
+        val supplier_id: String = grouponCustomerBean.supplier_id
+        val school_name: String = grouponCustomerBean.school_name
+        val contact: String = grouponCustomerBean.contact
+        val vote: Int = grouponCustomerBean.vote
+        val pj_no: String = grouponCustomerBean.pj_no
+        val manager_status: Int = grouponCustomerBean.manager_status
+        val proj_type: Int = grouponCustomerBean.proj_type
+        val level: String = grouponCustomerBean.level
+        val meal_type: Int = grouponCustomerBean.meal_type
+        val package_num: Int = grouponCustomerBean.package_num
+        val delivery_way: Int = grouponCustomerBean.delivery_way
+        val staff_count: Int = grouponCustomerBean.staff_count
+        val worker_count: Int = grouponCustomerBean.worker_count
+        val student_count: Int = grouponCustomerBean.student_count
+        val stat: Int = grouponCustomerBean.stat
+        val relation: Int = grouponCustomerBean.relation
+        val prov: String = grouponCustomerBean.prov
+        val prov_id: Long = grouponCustomerBean.prov_id
+        val city: String = grouponCustomerBean.city
+        val city_id: Long = grouponCustomerBean.city_id
+        val district_name: String = grouponCustomerBean.district_name
+        val district_id: Long = grouponCustomerBean.district_id
+        val industry_type: Int = grouponCustomerBean.industry_type
+
+        (types
+          , (id,org_merchant_id,uuid,customer_name,customer_type,contact_mobile,address,merchant_id,is_available,is_deleted,
+          version_no,platform_id,company_id,org_id,org_type,catering_new_type,process_type,people_num)
+          ,(identity_card_name,identity_card_phone,status,school_id,supplier_id,school_name,contact,vote,pj_no,manager_status,proj_type)
+          ,(level,meal_type,package_num,delivery_way,staff_count,worker_count,student_count,stat,relation,prov,prov_id,city,city_id,district_name,district_id,industry_type))
+    })
+      .
+      foreach({
+
+      x =>
+        if ("insert".equals(x._1) || "update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into groupon_customer (types,id,org_merchant_id,uuid,customer_name," +
+            "customer_type,contact_mobile,address,merchant_id,is_available,is_deleted,version_no,platform_id,company_id," +
+            "org_id,org_type,catering_new_type,process_type,people_num,identity_card_name,identity_card_phone,status," +
+            "school_id,supplier_id,school_name,contact,vote,pj_no,manager_status,proj_type,level,meal_type,package_num," +
+            "delivery_way,staff_count,worker_count,student_count,stat,relation,prov,prov_id,city,city_id,district_name," +
+            "district_id,industry_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setLong(1 , x._2._1 )
+          statement.setLong(2 , x._2._2 )
+          statement.setString(3 , x._2._3 )
+          statement.setString(4 , x._2._4 )
+          statement.setInt(5 , x._2._5 )
+          statement.setString(6 , x._2._6 )
+          statement.setString(7 , x._2._7 )
+          statement.setLong(8 , x._2._8 )
+          statement.setInt(9 , x._2._9 )
+          statement.setInt(10, x._2._10)
+          statement.setInt(11, x._2._11)
+          statement.setLong(12, x._2._12)
+          statement.setLong(13, x._2._13)
+          statement.setLong(14, x._2._14)
+          statement.setInt(15, x._2._15)
+          statement.setInt(16, x._2._16)
+          statement.setInt(17, x._2._17)
+          statement.setInt(18, x._2._18)
+          statement.setString(19, x._3._1)
+          statement.setString(20, x._3._2)
+          statement.setInt(21, x._3._3)
+          statement.setString(22, x._3._4)
+          statement.setString(23, x._3._5)
+          statement.setString(24, x._3._6)
+          statement.setString(25, x._3._7)
+          statement.setInt(26, x._3._8)
+          statement.setString(27, x._3._9)
+          statement.setInt(28, x._3._10)
+          statement.setInt(29, x._3._11)
+          statement.setString(30, x._4._1)
+          statement.setInt(31, x._4._2)
+          statement.setInt(32, x._4._3)
+          statement.setInt(33, x._4._4)
+          statement.setInt(34, x._4._5)
+          statement.setInt(35, x._4._6)
+          statement.setInt(36, x._4._7)
+          statement.setInt(37, x._4._8)
+          statement.setInt(38, x._4._9)
+          statement.setString(39, x._4._10)
+          statement.setLong(40,  x._4._11)
+          statement.setString(41,  x._4._12)
+          statement.setLong(42, x._4._13)
+          statement.setString(43,  x._4._14)
+          statement.setLong(44,  x._4._15)
+          statement.setInt(45, x._4._16)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(s"delete from groupon_customer where id='${x._1}'")
+          statement.execute()
+          conn.close()
+        }
+    })
+  }
 
   /**
     * 将中台的团餐公司信息表转到本地的t_pro_supplier表
