@@ -142,7 +142,7 @@ object SchoolDetail {
     val t_pro_license = session.read.jdbc(url, edu_bd_pro_license, conn)
     t_pro_license.createTempView("t_pro_license")
 
-    val groupon_customerRDD: RDD[(String, String)] = session.sql("select school_id,catering_new_type from groupon_customer where stat=1").rdd.map(
+    val groupon_customerRDD: RDD[(String, String)] = session.sql("select school_id,catering_new_type from groupon_customer where stat=1 and is_deleted=0").rdd.map(
       row => {
         val school_id: String = row.getAs[String]("school_id")
         val catering_new_type = row.getAs[Int]("catering_new_type")+""

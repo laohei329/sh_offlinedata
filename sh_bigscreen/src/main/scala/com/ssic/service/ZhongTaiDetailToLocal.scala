@@ -439,9 +439,7 @@ object ZhongTaiDetailToLocal {
           version_no,platform_id,company_id,org_id,org_type,catering_new_type,process_type,people_num)
           ,(identity_card_name,identity_card_phone,status,school_id,supplier_id,school_name,contact,vote,pj_no,manager_status,proj_type)
           ,(level,meal_type,package_num,delivery_way,staff_count,worker_count,student_count,stat,relation,prov,prov_id,city,city_id,district_name,district_id,industry_type))
-    })
-      .
-      foreach({
+    }).foreach({
 
       x =>
         if ("insert".equals(x._1) || "update".equals(x._1)) {
