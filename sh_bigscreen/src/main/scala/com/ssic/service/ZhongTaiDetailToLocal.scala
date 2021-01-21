@@ -29,7 +29,7 @@ object ZhongTaiDetailToLocal {
       x =>
         val schoolBean = JSON.parseObject(x.data, classOf[School])
         val types = x.`type` //插入，删除，更新操作类型
-      val org_merchant_id = schoolBean.org_merchant_id
+        val org_merchant_id = schoolBean.org_merchant_id
         val org_parent_merchant_id = schoolBean.org_parent_merchant_id
         val uuid = schoolBean.uuid
         val school_parent_id = schoolBean.school_parent_id
