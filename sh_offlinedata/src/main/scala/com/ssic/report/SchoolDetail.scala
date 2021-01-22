@@ -214,13 +214,15 @@ object SchoolDetail {
 
     val schoolRDD: RDD[(String, String)] = session.sql("select * from t_edu_school where stat=1 and reviewed =1 ").rdd.map({
       row =>
-        //id;378e5034-d02a-4f3d-842b-2f1a064e498b;schoolname;上海市静安区余姚路幼儿园;
-        // isbranchschool;0;parentid;null;area;10;address;上海市静安区余姚路170号;
-        // socialcreditcode;123101064250388211;level;3;schoolnature;0;schoolnaturesub;null;departmentmasterid;3;
-        // departmentslaveid;e6ee4bd5-2c5b-11e6-b1e8-005056a5ed30;canteenmode;0;ledgertype;0;studentsamount;
-        // 190;staffamount;40;corporation;谭妍文;corporationway;62538710;corporationtelephone;null;departmenthead;蔡春军;
-        // departmentmobilephone;15921126225;departmenttelephone;62538710;departmentfax;0000000;departmentemail;ccjhhb162@126.com;
-        // foodsafetypersion;null;foodsafetymobilephone;null;foodsafetytelephone;null;gongcan;null;slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null
+/*        id;378e5034-d02a-4f3d-842b-2f1a064e498b;schoolname;上海市静安区余姚路幼儿园;
+         isbranchschool;0;parentid;null;area;10;address;上海市静安区余姚路170号;
+         socialcreditcode;123101064250388211;level;3;schoolnature;0;schoolnaturesub;null;departmentmasterid;3;
+         departmentslaveid;e6ee4bd5-2c5b-11e6-b1e8-005056a5ed30;canteenmode;0;ledgertype;0;studentsamount;
+         190;staffamount;40;corporation;谭妍文;corporationway;62538710;corporationtelephone;null;departmenthead;蔡春军;
+         departmentmobilephone;15921126225;departmenttelephone;62538710;departmentfax;0000000;departmentemail;ccjhhb162@126.com;
+         foodsafetypersion;null;foodsafetymobilephone;null;foodsafetytelephone;null;gongcan;null;catering_new_type;
+         slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;
+         clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null*/
 
         val id = row.getAs[String]("id")
         val schoolname = row.getAs[String]("school_name")

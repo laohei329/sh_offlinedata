@@ -61,6 +61,35 @@ select org_merchant_id,management_area_type from t_edu_competent_department
     result.rdd.map(x => (x.getAs[Long]("org_merchant_id").toString(), x.getAs[Int]("management_area_type").toString)).collect().toMap
 
   }
+/**
+ * @Description : TODO
+ * @author : Mr.Sun
+ * @date  2021/1/22  10:43
+ * @param session
+ * @return org.apache.spark.rdd.RDD<scala.Tuple2<java.lang.String,java.lang.Object>>
+   */
+  /*def getgroupon_customer(session: SparkSession) ={
+
+    val result = session.sql(
+      """
+        |SELECT
+        |school_id,catering_new_type
+        |from ods.ods_erp_order_db_groupon_customer
+        |where stat =1
+        |""".stripMargin)
+    result.rdd.map{
+      row =>{
+        val school_id: String = row.getAs[String]("school_id")
+        val catering_new_type: Long = row.getAs[Long]("catering_new_type")
+        (school_id,catering_new_type)
+      }
+    }
+
+
+  }*/
+
+
+
 
   /**
 
