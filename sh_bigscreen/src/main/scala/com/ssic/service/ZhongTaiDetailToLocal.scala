@@ -316,6 +316,314 @@ object ZhongTaiDetailToLocal {
 
   }
 
+  def SchoolDetailWithGrouponCustomer(filterData: (RDD[SchoolBean], Broadcast[Map[String, String]], Broadcast[Map[String, String]],Broadcast[Map[String,Long]])) = {
+
+    filterData._1.filter(x => x != null
+      && x.database.equals("ssl-user")
+      && x.table.equals("t_edu_school")).map({
+      x =>
+        val schoolBean = JSON.parseObject(x.data, classOf[School])
+        val types = x.`type` //插入，删除，更新操作类型
+        val org_merchant_id = schoolBean.org_merchant_id
+        val org_parent_merchant_id = schoolBean.org_parent_merchant_id
+        val uuid = schoolBean.uuid
+        val school_parent_id = schoolBean.school_parent_id
+        val parent_id = schoolBean.parent_id
+        val school_id = schoolBean.school_id
+        val committee_org_merchant_id = schoolBean.committee_org_merchant_id
+        val master_id = filterData._2.value.getOrElse(committee_org_merchant_id, "null")
+        val department_master_id = NewSchoolToOldSchool.committeeToOldMasterId(master_id) //将中台的关于教属的映射转到以前老的教属的映射
+
+        val commite_name = filterData._3.value.getOrElse(committee_org_merchant_id, "null")
+
+        val department_slave_id = NewSchoolToOldSchool.committeeToOldSlaveId((master_id, commite_name)) //将中台的关于教属的映射转到以前老的教属的映射department_slave_id
+        val committee_id = schoolBean.committee_id
+        val school_name = schoolBean.school_name
+        val corporation = schoolBean.corporation
+        val corporation_way = schoolBean.corporation_way
+        val address = schoolBean.address
+        val level = schoolBean.level
+        val supplier_id = schoolBean.supplier_id
+        val reviewed = schoolBean.reviewed
+        val school_nature = schoolBean.school_nature
+        val stat = schoolBean.stat
+        val corporation_telephone = schoolBean.corporation_mobile
+        val is_branch_school = schoolBean.is_branch_school
+        val social_credit_code = schoolBean.social_credit_code
+        val school_nature_sub = schoolBean.school_nature_sub
+
+        val school_area_id = schoolBean.school_area_id
+        val remark = schoolBean.remark
+        var license_main_type = schoolBean.license_main_type
+        var license_main_child = schoolBean.license_main_child
+        val department_head = schoolBean.department_head
+        val department_mobilephone = schoolBean.department_mobilephone
+        val department_telephone = schoolBean.department_telephone
+        val department_fax = schoolBean.department_fax
+        val department_email = schoolBean.department_email
+        val food_safety_persion = schoolBean.food_safety_persion
+        val food_safety_mobilephone = schoolBean.food_safety_mobilephone
+        val food_safety_telephone = schoolBean.food_safety_telephone
+        val level2 = schoolBean.level2
+        val students_amount = schoolBean.students_amount
+        val staff_amount = schoolBean.staff_amount
+        val seat_province_id = schoolBean.seat_province_id
+        val seat_province_name = schoolBean.seat_province_name
+        val seat_city_id = schoolBean.seat_city_id
+        val seat_city_name = schoolBean.seat_city_name
+        //  将上海市各区的新的district_id映射 => 旧的area的映射
+        val district_id = NewSchoolToOldSchool.committeeToOldArea(schoolBean.seat_district_id)
+
+        val seat_district_name = schoolBean.seat_district_name
+        val creator = schoolBean.creator
+        val create_time = schoolBean.create_time
+        val updater = schoolBean.updater
+        val last_update_time = schoolBean.last_update_time
+        val canteen_mode = "0"
+        val ledger_type = "0"
+        val is_customer = schoolBean.is_customer
+        val customer_school_id = schoolBean.customer_school_id
+
+
+        var department_id = "21"
+        if ("e6ee4acf-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "1"
+        } else if ("e6ee4e97-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "2"
+        } else if ("e6ee4eec-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "3"
+        } else if ("e6ee4f43-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "4"
+        } else if ("e6ee4fa4-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "5"
+        } else if ("e6ee4ffa-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "6"
+        } else if ("e6ee5054-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "7"
+        } else if ("e6ee50ac-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "8"
+        } else if ("e6ee5101-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "9"
+        } else if ("e6ee4bd5-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "10"
+        } else if ("e6ee4c4f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "11"
+        } else if ("e6ee4cb2-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "12"
+        } else if ("e6ee4d17-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "13"
+        } else if ("e6ee4d78-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "14"
+        } else if ("e6ee4dd1-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "15"
+        } else if ("e6ee4e3f-2c5b-11e6-b1e8-005056a5ed30".equals(department_slave_id)) {
+          department_id = "16"
+        } else {
+          department_id
+        }
+
+        val schoolCatering_new_type: Map[String, Long] = filterData._4.value
+        val new_type= schoolCatering_new_type.getOrElse(school_id, -1)
+        if (0L == new_type ){
+          license_main_type = "0"
+        }else if (1L == new_type ){
+          license_main_type = "1"
+          license_main_child= "0"
+        }else if  (2L== new_type){
+          license_main_type = "1"
+          license_main_child= "1"
+        }else {
+          license_main_type = null
+          license_main_child= null
+        }
+
+        (types, (org_merchant_id, org_parent_merchant_id, uuid, school_parent_id, parent_id, school_id, committee_org_merchant_id, committee_id, school_name, corporation),
+          (corporation_way, address, level, supplier_id, reviewed, school_nature, stat, corporation_telephone, is_branch_school, social_credit_code),
+          (school_nature_sub, department_master_id, department_slave_id, school_area_id, remark, license_main_type, license_main_child, department_head, department_mobilephone, department_telephone),
+          (department_fax, department_email, food_safety_persion, food_safety_mobilephone, food_safety_telephone, level2, students_amount, staff_amount, seat_province_id, seat_province_name),
+          (seat_city_id, seat_city_name, district_id, seat_district_name, creator, create_time, updater, last_update_time, canteen_mode, ledger_type, department_id),
+          (is_customer, customer_school_id))
+
+    }).foreach({
+      x =>
+        if ("insert".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement("replace into t_edu_school (org_merchant_id,org_parent_merchant_id,id,school_parent_id,parent_id,school_id,committee_org_merchant_id,committee_id,school_name,corporation,corporation_way,address,level,supplier_id,reviewed,school_nature,stat,corporation_telephone,is_branch_school,social_credit_code,school_nature_sub,department_master_id,department_slave_id,school_area_id,remark,license_main_type,license_main_child,department_head,department_mobilephone,department_telephone,department_fax,department_email,food_safety_persion,food_safety_mobilephone,food_safety_telephone,level2,students_amount,staff_amount,seat_province_id,seat_province_name,seat_city_id,seat_city_name,area,seat_district_name,creator,create_time,updater,last_update_time,canteen_mode,ledger_type,department_id,is_customer,customer_school_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+          statement.setString(1, x._2._1)
+          statement.setString(2, x._2._2)
+          statement.setString(3, x._2._3)
+          statement.setString(4, x._2._4)
+          statement.setString(5, x._2._5)
+          statement.setString(6, x._2._6)
+          statement.setString(7, x._2._7)
+          statement.setString(8, x._2._8)
+          statement.setString(9, x._2._9)
+          statement.setString(10, x._2._10)
+          statement.setString(11, x._3._1)
+          statement.setString(12, x._3._2)
+          statement.setString(13, x._3._3)
+          statement.setString(14, x._3._4)
+          statement.setString(15, x._3._5)
+          statement.setString(16, x._3._6)
+          statement.setString(17, x._3._7)
+          statement.setString(18, x._3._8)
+          statement.setString(19, x._3._9)
+          statement.setString(20, x._3._10)
+          statement.setString(21, x._4._1)
+          statement.setString(22, x._4._2)
+          statement.setString(23, x._4._3)
+          statement.setString(24, x._4._4)
+          statement.setString(25, x._4._5)
+          statement.setString(26, x._4._6)
+          statement.setString(27, x._4._7)
+          statement.setString(28, x._4._8)
+          statement.setString(29, x._4._9)
+          statement.setString(30, x._4._10)
+          statement.setString(31, x._5._1)
+          statement.setString(32, x._5._2)
+          statement.setString(33, x._5._3)
+          statement.setString(34, x._5._4)
+          statement.setString(35, x._5._5)
+          statement.setString(36, x._5._6)
+          statement.setString(37, x._5._7)
+          statement.setString(38, x._5._8)
+          statement.setString(39, x._5._9)
+          statement.setString(40, x._5._10)
+          statement.setString(41, x._6._1)
+          statement.setString(42, x._6._2)
+          statement.setString(43, x._6._3)
+          statement.setString(44, x._6._4)
+          statement.setString(45, x._6._5)
+          statement.setString(46, x._6._6)
+          statement.setString(47, x._6._7)
+          statement.setString(48, x._6._8)
+          statement.setString(49, x._6._9)
+          statement.setString(50, x._6._10)
+          statement.setString(51, x._6._11)
+          statement.setString(52, x._7._1)
+          statement.setString(53, x._7._2)
+          statement.execute()
+          conn.close()
+        } else if ("update".equals(x._1)) {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(
+            s"""
+               |update t_edu_school
+               |set org_parent_merchant_id =? ,
+               |id = ? ,
+               |school_parent_id =? ,
+               |parent_id =? ,
+               |school_id=? ,
+               |committee_org_merchant_id =? ,
+               |committee_id=? ,
+               |school_name=? ,
+               |corporation=? ,
+               |corporation_way = ? ,
+               |address =? ,
+               |level = ? ,
+               |supplier_id =? ,
+               |reviewed =? ,
+               |school_nature = ? ,
+               |stat = ? ,
+               |corporation_telephone =? ,
+               |is_branch_school =? ,
+               |social_credit_code =? ,
+               |school_nature_sub =? ,
+               |department_master_id =? ,
+               |department_slave_id =? ,
+               |school_area_id =? ,
+               |remark =? ,
+               |license_main_type =? ,
+               |license_main_child =? ,
+               |department_head =? ,
+               |department_mobilephone =? ,
+               |department_telephone =? ,
+               |department_fax =? ,
+               |department_email =? ,
+               |food_safety_persion =? ,
+               |food_safety_mobilephone =? ,
+               |food_safety_telephone =? ,
+               |level2 =? ,
+               |students_amount =? ,
+               |staff_amount =? ,
+               |seat_province_id =? ,
+               |seat_province_name =? ,
+               |seat_city_id =? ,
+               |seat_city_name =? ,
+               |area =? ,
+               |seat_district_name =? ,
+               |creator =? ,
+               |create_time =? ,
+               |updater =? ,
+               |last_update_time =? ,
+               |canteen_mode =? ,
+               |ledger_type =?,
+               |is_customer =?,
+               |customer_school_id = ?
+               |where org_merchant_id = '${x._2._1}'
+             """.stripMargin)
+          statement.setString(1, x._2._2)
+          statement.setString(2, x._2._3)
+          statement.setString(3, x._2._4)
+          statement.setString(4, x._2._5)
+          statement.setString(5, x._2._6)
+          statement.setString(6, x._2._7)
+          statement.setString(7, x._2._8)
+          statement.setString(8, x._2._9)
+          statement.setString(9, x._2._10)
+          statement.setString(10, x._3._1)
+          statement.setString(11, x._3._2)
+          statement.setString(12, x._3._3)
+          statement.setString(13, x._3._4)
+          statement.setString(14, x._3._5)
+          statement.setString(15, x._3._6)
+          statement.setString(16, x._3._7)
+          statement.setString(17, x._3._8)
+          statement.setString(18, x._3._9)
+          statement.setString(19, x._3._10)
+          statement.setString(20, x._4._1)
+          statement.setString(21, x._4._2)
+          statement.setString(22, x._4._3)
+          statement.setString(23, x._4._4)
+          statement.setString(24, x._4._5)
+          statement.setString(25, x._4._6)
+          statement.setString(26, x._4._7)
+          statement.setString(27, x._4._8)
+          statement.setString(28, x._4._9)
+          statement.setString(29, x._4._10)
+          statement.setString(30, x._5._1)
+          statement.setString(31, x._5._2)
+          statement.setString(32, x._5._3)
+          statement.setString(33, x._5._4)
+          statement.setString(34, x._5._5)
+          statement.setString(35, x._5._6)
+          statement.setString(36, x._5._7)
+          statement.setString(37, x._5._8)
+          statement.setString(38, x._5._9)
+          statement.setString(39, x._5._10)
+          statement.setString(40, x._6._1)
+          statement.setString(41, x._6._2)
+          statement.setString(42, x._6._3)
+          statement.setString(43, x._6._4)
+          statement.setString(44, x._6._5)
+          statement.setString(45, x._6._6)
+          statement.setString(46, x._6._7)
+          statement.setString(47, x._6._8)
+          statement.setString(48, x._6._9)
+          statement.setString(49, x._6._10)
+          statement.setString(50, x._7._1)
+          statement.setString(51, x._7._2)
+          statement.execute()
+          conn.close()
+        } else {
+          val conn = MysqlUtils.open
+          val statement = conn.prepareStatement(s"delete from t_edu_school where org_merchant_id='${x._2._1}'")
+          statement.execute()
+          conn.close()
+        }
+    })
+
+  }
 
   /**
     *   将中台的学校与团餐公司的关联表信息，转到本地

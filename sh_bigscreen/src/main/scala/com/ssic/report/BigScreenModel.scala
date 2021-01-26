@@ -65,6 +65,7 @@ object BigScreenModel {
     val supplierid2area = ssc.sparkContext.broadcast(NewTools.supplierid2area(session))
     val schoolid2masterid = ssc.sparkContext.broadcast(NewTools.schoolid2masterid(session))
     val schoolsupplierid2schoolid = ssc.sparkContext.broadcast(NewTools.schoolsupplierid2schoolid(session))
+    //val getgroupon_customer = ssc.sparkContext.broadcast(NewTools.getgroupon_customer(session))
 
 
 
@@ -135,6 +136,7 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.SupplierInfo(filterData)
         //将中台的学校信息 迁移到 本地的t_edu_school表
         ZhongTaiDetailToLocal.SchoolDetail(filterData, school2commitee, school2commiteename)
+        //ZhongTaiDetailToLocal.SchoolDetailWithGrouponCustomer(filterData, school2commitee, school2commiteename,getgroupon_customer)
         //将华为云上的t_edu_calendar 迁移到 本地的t_edu_calendar表\
         ZhongTaiDetailToLocal.EduCalendar(filterData)
         //将华为云上的t_edu_schoolterm 迁移到 本地的t_edu_schoolterm表

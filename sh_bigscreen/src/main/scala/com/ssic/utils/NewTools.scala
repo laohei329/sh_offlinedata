@@ -24,6 +24,7 @@ object NewTools {
   val pro_supplier = config.getString("db.default.pro_supplier")
   val default_edu_area = config.getString("db.default.area")
   val default_committee = config.getString("db.default.committee")
+  val default_groupon_customer = config.getString("db.default.groupon_customer")
 
   val conn = new Properties()
   conn.setProperty("user", user)
@@ -45,6 +46,7 @@ object NewTools {
     val supplier = session.read.jdbc(url, pro_supplier, conn)
     val edu_area = session.read.jdbc(url, default_edu_area, conn)
     val committee = session.read.jdbc(url,default_committee,conn)
+    val groupon_customer = session.read.jdbc(url,default_groupon_customer,conn)
 
     competent_department.createTempView("t_edu_competent_department")
     school.createTempView("t_edu_school")
@@ -52,6 +54,7 @@ object NewTools {
     supplier.createTempView("t_pro_supplier")
     edu_area.createTempView("area")
     committee.createTempView("t_edu_committee")
+    groupon_customer.createTempView("groupon_customer")
 
     val result = session.sql(
       """
@@ -68,7 +71,7 @@ select org_merchant_id,management_area_type from t_edu_competent_department
  * @param session
  * @return org.apache.spark.rdd.RDD<scala.Tuple2<java.lang.String,java.lang.Object>>
    */
-  /*def getgroupon_customer(session: SparkSession) ={
+  def getgroupon_customer(session: SparkSession) ={
 
     val result = session.sql(
       """
@@ -83,10 +86,8 @@ select org_merchant_id,management_area_type from t_edu_competent_department
         val catering_new_type: Long = row.getAs[Long]("catering_new_type")
         (school_id,catering_new_type)
       }
-    }
-
-
-  }*/
+    }.collect().toMap
+  }
 
 
 

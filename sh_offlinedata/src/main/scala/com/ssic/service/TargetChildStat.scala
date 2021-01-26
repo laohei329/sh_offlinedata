@@ -80,8 +80,13 @@ class TargetChildStat extends TargetChildFunc {
   /**
    * 配送计划的子页面，没有产生配送计划的学校也要放入到子页面中
    *
-   * @param platoonData           学校的供餐数据
-   * @param disValue              配送计划的子页面数据
+   * @param platoonData 学校的供餐数据
+   *                    Field:区号_学校id
+   *                    Value: 供餐_已排菜_create-time_创建时间_reason_原因_plastatus_排菜操作状态
+   *                    排菜操作状态：1 表示规范录入 2  表示补录  3 表示逾期补录   4 表示无数据   5 表示不供餐
+   *                      上海市宝山区大华第二幼儿园  发现这个学校的数据供 _platoon-feed 的接口没有数据
+   *                    hget 2021-01-26_platoon-feed 3_8f301ef9-8df9-475d-9654-57102930c034   供餐_已排菜_create-time_null_reason_null_plastatus_4
+   * @param disValue    配送计划的子页面数据   (区号_学校id,状态_规范状态_valuedata + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null")
    * @param date                  时间
    * @param distributionChildData 已存在的配送计划子页面数据
    */
