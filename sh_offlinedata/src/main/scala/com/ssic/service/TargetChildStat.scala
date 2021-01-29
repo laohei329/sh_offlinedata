@@ -84,8 +84,9 @@ class TargetChildStat extends TargetChildFunc {
    *                    Field:区号_学校id
    *                    Value: 供餐_已排菜_create-time_创建时间_reason_原因_plastatus_排菜操作状态
    *                    排菜操作状态：1 表示规范录入 2  表示补录  3 表示逾期补录   4 表示无数据   5 表示不供餐
-   *                      上海市宝山区大华第二幼儿园  发现这个学校的数据供 _platoon-feed 的接口没有数据
    *                    hget 2021-01-26_platoon-feed 3_8f301ef9-8df9-475d-9654-57102930c034   供餐_已排菜_create-time_null_reason_null_plastatus_4
+   *                    供餐_已排菜_create-time_2021-01-21 13:29:49_reason_null_plastatus_1
+   *
    * @param disValue    配送计划的子页面数据   (区号_学校id,状态_规范状态_valuedata + "_" + "disstatus" + "_" + disstatus+ "_" + "purchaseDate" + "_" + "null" + "_" + "deliveryReDate" + "_" + "null")
    * @param date                  时间
    * @param distributionChildData 已存在的配送计划子页面数据
@@ -127,6 +128,8 @@ class TargetChildStat extends TargetChildFunc {
       *  如果排了菜，一条用料计划也不确认， 或生单后全部取消的情况，即生单后全部取消，阳光午餐端会触发未验收预警（教委五级预警中的一种）
       *  而大数据侧会在“业务监管-》业务操作状态”功能中显示该校为正常状态，这样两端的UED交互逻辑会不一致。
       *  这块后续需要运营、产品、测试端同事共同商讨一个产品方案。
+     *
+     *  (x._1, status, disstatus, deliveryDate)
       */
     val allSchoolUseTotal = allSchoolUse.filter(!_._2.equals("4")).map(x => (x._1, 1)).reduceByKey(_ + _) //每个学校的配送订单总数
     val allSchoolUseStatusTotal = allSchoolUse.map(x => ((x._1, x._2), 1)).reduceByKey(_ + _).map(x => (x._1._1, (x._1._2, x._2))) //每个学校的每个验收状态的订单总数
@@ -134,8 +137,19 @@ class TargetChildStat extends TargetChildFunc {
     val allSchooldeliveryDateTotal = allSchoolUse.map(x => (x._1, x._4)).coalesce(1).sortBy(x => x._2).groupByKey().mapValues(x => x.toList.reverse(0)) //每个学校的每个配送上报时间的倒序，取第一个值
 
     //RDD[(String, (((Int, Option[(String, Int)]), Option[String]), Option[String]))]
-    allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).leftOuterJoin(allSchoolUseDisStatusTotal).leftOuterJoin(allSchooldeliveryDateTotal)
-      .map(x => (x._1, (x._2._1._1._1, x._2._1._1._2.getOrElse("null", -1), x._2._1._2.getOrElse("null"), x._2._2.getOrElse("-1")))).filter(x => x._2._2._2 != -1).filter(x => !"null".equals(x._2._3)).filter(x => !"-1".equals(x._2._4)).map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), (x._2._1, x._2._2, x._2._3, x._2._4))).sortBy(x => x._2._2._1, false).foreachPartition({
+    val value1: RDD[(String, (Int, (String, Int), String, String))] = allSchoolUseTotal.leftOuterJoin(allSchoolUseStatusTotal).leftOuterJoin(allSchoolUseDisStatusTotal).leftOuterJoin(allSchooldeliveryDateTotal)
+    //(key ,(((allSchoolUseTotal,allSchoolUseTotal),allSchoolUseDisStatusTotal),allSchooldeliveryDateTotal))
+      .map(x => (x._1, (x._2._1._1._1, x._2._1._1._2.getOrElse("null", -1), x._2._1._2.getOrElse("null"), x._2._2.getOrElse("-1"))))
+      //(key ,((allSchoolUseTotal,allSchoolUseTotal 或 -1 ,allSchoolUseDisStatusTotal,allSchooldeliveryDateTotal))
+      .filter(x => x._2._2._2 != -1)
+      .filter(x => !"null".equals(x._2._3))
+      .filter(x => !"-1".equals(x._2._4))
+
+      .map(x => ("area" + "_" + x._1.split("_")(0) + "_" + "id" + "_" + x._1.split("_")(1), (x._2._1, x._2._2, x._2._3, x._2._4)))
+
+      .sortBy(x => x._2._2._1, false)
+    value1
+      .foreachPartition({
       itr =>
         val jedis = JPools.getJedis
         itr.foreach({

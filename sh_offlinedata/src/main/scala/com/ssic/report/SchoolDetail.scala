@@ -300,7 +300,10 @@ object SchoolDetail {
             if (None.equals(lic)){
               jedis.hset("schoolDetail",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
                 + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
+              jedis.hset("schoolDetail_new",id,school+"slictype;null;slicpic;null;slicjob;null;slicno;null;soperation;null;slicdate;null;senddate;null;"
+                + "clictype;null;clicpic;null;clicjob;null;clicno;null;coperation;null;clicdate;null;cenddate;null")
             }else{
+              jedis.hset("schoolDetail_new",id,school+lic.get)
               jedis.hset("schoolDetail",id,school+lic.get)
             }
         }
