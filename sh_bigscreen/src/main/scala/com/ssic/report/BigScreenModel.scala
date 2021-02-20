@@ -14,6 +14,8 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
 import org.apache.commons.lang3._
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.kafka.common.TopicPartition
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{SQLContext, SparkSession}
@@ -27,6 +29,9 @@ object BigScreenModel {
   private val logger = LoggerFactory.getLogger(this.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
 
+  //SparkStreaming程序临时停止的HDFS标志文件
+  val HDFS_SHUTDOWN_MARKER = "hdfs:///tmp/streaming_stop_watermark/shutdownmarker"
+  var stopFlag:Boolean = false
 
   def main(args: Array[String]): Unit = {
 
@@ -35,6 +40,8 @@ object BigScreenModel {
     sparkConf.set("spark.streaming.kafka.maxRatePerPartition", "500")
     sparkConf.set("spark.driver.allowMultipleContexts", "true")
     sparkConf.set("spark.debug.maxToStringFields", "200")
+    sparkConf.set("spark.streaming.stopGracefullyOnShutdown","true")//优雅的关闭
+
     val session: SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
     val ssc = new StreamingContext(session.sparkContext, Seconds(8))
 
@@ -274,7 +281,45 @@ object BigScreenModel {
     })
 
     ssc.start()
-    ssc.awaitTermination()
+    //ssc.awaitTermination()
+
+    var isStopped: Boolean = false
+    val checkIntervalMilliscond = 30*1000
+
+    while(!isStopped){
+      logger.info("calling awaitTerminationOrTimeout")
+      isStopped = ssc.awaitTerminationOrTimeout(checkIntervalMilliscond)
+      logger.info(">>> isStopped="+isStopped)
+      if (isStopped) {
+        logger.info("Confirmed! The streaming context is stopped. Exiting application...")
+      } else {
+        logger.info("Streaming App is still running. Timeout...")
+      }
+
+      //Check if it's time to stop this SparkStreaming program.
+      checkShutdownMarker()
+
+      if (!isStopped && stopFlag) {
+        logger.info("Already found shutdownMarker file, will Stopping ssc gracefully right now")
+        ssc.stop(true, true)
+        logger.info("SSC is stopped gracefully!!!!!!!")
+
+        val isDeleted: Boolean = FileSystem.get(new Configuration()).delete(new Path(HDFS_SHUTDOWN_MARKER), true)
+        if(isDeleted){
+          logger.info(">>> ShutdownMarker marker file is deleted!")
+        }
+      }
+    }
+  }
+
+  /**
+    * 检查sparkStreaming 关闭标志文件是否已存在
+    */
+  def checkShutdownMarker() = {
+    if(!stopFlag){
+      val hadoopFS = FileSystem.get(new Configuration())
+      stopFlag = hadoopFS.exists(new Path(HDFS_SHUTDOWN_MARKER))
+    }
   }
 
 }
