@@ -16,6 +16,7 @@ class SupplierInfo(
                     var registered_capital: String,
                     var legal_representative: String,
                     var business_license:String,
+                    var social_credit_code:String,
                     var create_username: String,
                     var create_time: String,
                     var update_username: String,
