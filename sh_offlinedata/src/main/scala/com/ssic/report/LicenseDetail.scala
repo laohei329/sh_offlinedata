@@ -171,9 +171,9 @@ object LicenseDetail {
         |d.lic_no as shipin_liutong_no,
         |e.lic_no as shipin_shengchang_no
         |from
-        |(select id ,supplier_name,business_license,supplier_classify,address
+        |(select id ,supplier_name,social_credit_code as business_license,supplier_classify,address
         |	from app_saas_v1.t_pro_supplier
-        |	where supplier_type =2 and business_license is not null and trim(business_license) <> "") as a
+        |	where supplier_type =2 and social_credit_code is not null and trim(social_credit_code) <> "") as a
         |left outer join
         |(select * from app_saas_v1.supplier_tab where tab[0] = 1) as b
         |on a.id = b.supplier_id
