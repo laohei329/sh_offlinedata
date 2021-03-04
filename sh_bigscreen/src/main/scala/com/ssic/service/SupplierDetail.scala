@@ -21,7 +21,7 @@ object SupplierDetail {
 
   def supplierDetail(filterData: RDD[SchoolBean]) = {
     val supplietData = filterData.filter(x => x != null
-      && x.database.equals("opms")
+      && x.database.equals("ssl-user")
       && x.table.equals("supplier_info"))
       .map(x => (x.`type`, JSON.parseObject(x.data, classOf[SupplierInfo]), JSON.parseObject(x.old, classOf[SupplierInfo])))
     val supplierDetail = supplietData.distinct().map({
