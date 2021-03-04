@@ -72,6 +72,7 @@ object BigScreenModel {
     val supplierid2area = ssc.sparkContext.broadcast(NewTools.supplierid2area(session))
     val schoolid2masterid = ssc.sparkContext.broadcast(NewTools.schoolid2masterid(session))
     val schoolsupplierid2schoolid = ssc.sparkContext.broadcast(NewTools.schoolsupplierid2schoolid(session))
+    //TODO grouponCustomer实时流通过后可以放开
     //val getgroupon_customer = ssc.sparkContext.broadcast(NewTools.getgroupon_customer(session))
 
 
@@ -137,12 +138,13 @@ object BigScreenModel {
         ZhongTaiDetailToLocal.SchoolSupplier(filterData)
         //将中台的团餐公司信息 迁移到 本地的t_pro_supplier表
         ZhongTaiDetailToLocal.GroupSupplier(filterData)
-        //将中台的团餐公司信息 迁移到 本地的grouponCustomer表
-        ZhongTaiDetailToLocal.grouponCustomer(filterData)
+        //todo 将中台的团餐公司信息 迁移到 本地的grouponCustomer表 测试后可以放开
+        //ZhongTaiDetailToLocal.grouponCustomer(filterData)
         //将中台的供应商公司信息 迁移到 本地的t_pro_supplier表
         ZhongTaiDetailToLocal.SupplierInfo(filterData)
         //将中台的学校信息 迁移到 本地的t_edu_school表
         ZhongTaiDetailToLocal.SchoolDetail(filterData, school2commitee, school2commiteename)
+        //TODO grouponCustomer实时流写入通过后可以放开
         //ZhongTaiDetailToLocal.SchoolDetailWithGrouponCustomer(filterData, school2commitee, school2commiteename,getgroupon_customer)
         //将华为云上的t_edu_calendar 迁移到 本地的t_edu_calendar表\
         ZhongTaiDetailToLocal.EduCalendar(filterData)

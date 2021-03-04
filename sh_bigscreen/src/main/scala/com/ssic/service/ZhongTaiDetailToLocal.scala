@@ -752,7 +752,7 @@ object ZhongTaiDetailToLocal {
       x =>
         if ("insert".equals(x._1) || "update".equals(x._1)) {
           val conn = MysqlUtils.open
-          val statement = conn.prepareStatement("replace into groupon_customer (types,id,org_merchant_id,uuid,customer_name," +
+          val statement = conn.prepareStatement("replace into groupon_customer (id,org_merchant_id,uuid,customer_name," +
             "customer_type,contact_mobile,address,merchant_id,is_available,is_deleted,version_no,platform_id,company_id," +
             "org_id,org_type,catering_new_type,process_type,people_num,identity_card_name,identity_card_phone,status," +
             "school_id,supplier_id,school_name,contact,vote,pj_no,manager_status,proj_type,level,meal_type,package_num," +
