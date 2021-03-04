@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="sh_offlinedata:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9e4cabee-6eb9-48a5-82f6-f798f78ca571" name="Default" comment="修改 uat分支的supplier_detail 的离线和实时">
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sh_bigscreen/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__aopalliance_aopalliance_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__asm_asm_3_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__classworlds_classworlds_1_1_alpha_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_alibaba_fastjson_1_2_36.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_carrotsearch_hppc_0_7_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_clearspring_analytics_stream_2_7_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_esotericsoftware_kryo_shaded_3_0_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_esotericsoftware_minlog_1_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_6_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_6_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_6_7_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_paranamer_2_7_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_scala_2_11_2_6_7_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_github_luben_zstd_jni_1_3_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_google_code_findbugs_jsr305_1_3_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_google_code_gson_gson_2_2_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_google_guava_guava_16_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_google_inject_extensions_guice_servlet_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_google_inject_guice_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_google_protobuf_protobuf_java_2_5_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_jamesmurty_utils_java_xmlbuilder_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_ning_compress_lzf_1_0_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_sun_jersey_contribs_jersey_guice_1_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_sun_jersey_jersey_client_1_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_sun_jersey_jersey_core_1_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_sun_jersey_jersey_json_1_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_sun_jersey_jersey_server_1_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_sun_xml_bind_jaxb_impl_2_2_3_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_thoughtworks_paranamer_paranamer_2_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_twitter_chill_2_11_0_8_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_twitter_chill_java_0_8_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_typesafe_config_1_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_typesafe_sbt_compiler_interface_sources_0_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_typesafe_sbt_incremental_compiler_0_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_typesafe_sbt_sbt_interface_0_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_typesafe_zinc_zinc_0_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_univocity_univocity_parsers_2_5_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__com_vlkan_flatbuffers_1_2_0_3f79e055.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_beanutils_commons_beanutils_1_7_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_beanutils_commons_beanutils_core_1_8_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_cli_commons_cli_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_codec_commons_codec_1_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_collections_commons_collections_3_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_configuration_commons_configuration_1_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_digester_commons_digester_1_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_httpclient_commons_httpclient_3_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_io_commons_io_2_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_lang_commons_lang_2_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_logging_commons_logging_1_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__commons_net_commons_net_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_airlift_aircompressor_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_dropwizard_metrics_metrics_core_3_1_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_dropwizard_metrics_metrics_graphite_3_1_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_dropwizard_metrics_metrics_json_3_1_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_dropwizard_metrics_metrics_jvm_3_1_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_netty_netty_3_9_9_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__io_netty_netty_all_4_1_17_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_activation_activation_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_annotation_javax_annotation_api_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_inject_javax_inject_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_servlet_javax_servlet_api_3_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_validation_validation_api_1_1_0_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_ws_rs_javax_ws_rs_api_2_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_xml_bind_jaxb_api_2_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__javax_xml_stream_stax_api_1_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__joda_time_joda_time_2_9_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__junit_junit_3_8_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__mysql_mysql_connector_java_5_1_32.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__net_alchim31_maven_scala_maven_plugin_3_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__net_iharder_base64_2_3_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__net_java_dev_jets3t_jets3t_0_9_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__net_jpountz_lz4_lz4_1_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__net_razorvine_pyrolite_4_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__net_sf_py4j_py4j_0_10_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_antlr_antlr4_runtime_4_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_arrow_arrow_format_0_8_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_arrow_arrow_memory_0_8_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_arrow_arrow_vector_0_8_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_avro_avro_1_7_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_avro_avro_ipc_1_7_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_avro_avro_ipc_tests_1_7_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_avro_avro_mapred_hadoop2_1_7_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_commons_commons_compress_1_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_commons_commons_crypto_1_0_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_commons_commons_exec_1_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_commons_commons_math3_3_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_commons_commons_pool2_2_4_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_curator_curator_client_2_6_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_curator_curator_framework_2_6_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_curator_curator_recipes_2_6_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_directory_api_api_asn1_api_1_0_0_M20.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_directory_api_api_util_1_0_0_M20.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_directory_server_apacheds_i18n_2_0_0_M15.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_directory_server_apacheds_kerberos_codec_2_0_0_M15.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_annotations_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_auth_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_client_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_common_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_hdfs_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_mapreduce_client_app_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_mapreduce_client_common_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_mapreduce_client_core_2_6_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_mapreduce_client_jobclient_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_mapreduce_client_shuffle_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_yarn_api_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_yarn_client_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_yarn_common_2_6_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_hadoop_hadoop_yarn_server_common_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_ivy_ivy_2_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_kafka_kafka_clients_0_10_0_kafka_2_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_kafka_kafka_clients_0_11_0_kafka_3_0_0_cdh_3_0_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_doxia_doxia_logging_api_1_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_doxia_doxia_sink_api_1_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_aether_provider_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_archiver_2_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_artifact_2_2_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_artifact_manager_2_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_core_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_model_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_model_builder_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_plugin_api_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_plugin_registry_2_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_profile_2_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_project_2_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_repository_metadata_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_settings_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_maven_settings_builder_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_reporting_maven_reporting_api_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_shared_maven_dependency_tree_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_shared_maven_invoker_2_0_11.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_maven_wagon_wagon_provider_api_1_0_beta_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_orc_orc_core_nohive_1_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_orc_orc_mapreduce_nohive_1_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_parquet_parquet_column_1_8_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_parquet_parquet_common_1_8_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_parquet_parquet_encoding_1_8_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_parquet_parquet_format_2_3_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_parquet_parquet_hadoop_1_8_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_parquet_parquet_jackson_1_8_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_catalyst_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_core_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_kvstore_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_launcher_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_network_common_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_network_shuffle_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_sketch_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_sql_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_streaming_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_streaming_kafka_0_10_2_11_2_3_0_cloudera3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_tags_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_spark_spark_unsafe_2_11_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_xbean_xbean_asm5_shaded_4_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_apache_zookeeper_zookeeper_3_4_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_bouncycastle_bcprov_jdk15on_1_52.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_jackson_jackson_core_asl_1_6_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_jackson_jackson_jaxrs_1_9_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_jackson_jackson_mapper_asl_1_6_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_jackson_jackson_xc_1_9_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_janino_commons_compiler_3_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_janino_janino_3_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_jettison_jettison_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_archiver_2_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_classworlds_2_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_component_annotations_1_5_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_container_default_1_0_alpha_9_stable_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_interpolation_1_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_io_2_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_codehaus_plexus_plexus_utils_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_fusesource_leveldbjni_leveldbjni_all_1_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_hk2_external_aopalliance_repackaged_2_4_0_b34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_hk2_external_javax_inject_2_4_0_b34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_hk2_hk2_api_2_4_0_b34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_hk2_hk2_locator_2_4_0_b34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_hk2_hk2_utils_2_4_0_b34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_hk2_osgi_resource_locator_1_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_bundles_repackaged_jersey_guava_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_containers_jersey_container_servlet_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_containers_jersey_container_servlet_core_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_client_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_common_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_server_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_glassfish_jersey_media_jersey_media_jaxb_2_22_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_htrace_htrace_core_3_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_javassist_javassist_3_18_1_GA.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_json4s_json4s_ast_2_11_3_2_11.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_json4s_json4s_core_2_11_3_2_11.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_json4s_json4s_jackson_2_11_3_2_11.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_lz4_lz4_java_1_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_mortbay_jetty_jetty_util_6_1_26.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_objenesis_objenesis_2_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_roaringbitmap_RoaringBitmap_0_5_11.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_scala_lang_modules_scala_parser_combinators_2_11_1_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_scala_lang_scala_compiler_2_9_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_scala_lang_scala_library_2_11_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_scala_lang_scala_reflect_2_11_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_scala_lang_scalap_2_11_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_slf4j_jcl_over_slf4j_1_7_16.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_16.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_16.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_slf4j_slf4j_log4j12_1_7_16.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_aether_aether_api_1_13_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_aether_aether_impl_1_13_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_aether_aether_spi_1_13_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_aether_aether_util_1_13_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_plexus_plexus_cipher_1_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_plexus_plexus_sec_dispatcher_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_sisu_sisu_guava_0_9_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_sisu_sisu_guice_no_aop_3_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_sisu_sisu_inject_bean_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_sonatype_sisu_sisu_inject_plexus_2_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_spark_project_spark_unused_1_0_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_tukaani_xz_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__org_xerial_snappy_snappy_java_1_1_2_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__oro_oro_2_0_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__redis_clients_jedis_2_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__xerces_xercesImpl_2_9_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__xml_apis_xml_apis_1_3_04.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/libraries/Maven__xmlenc_xmlenc_0_52.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sh_bigscreen/.idea/scala_compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sh_bigscreen/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/src/main/scala/com/ssic/beans/SupplierInfo.scala" beforeDir="false" afterPath="$PROJECT_DIR$/../sh_bigscreen/src/main/scala/com/ssic/beans/SupplierInfo.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sh_bigscreen/src/main/scala/com/ssic/service/SupplierDetail.scala" beforeDir="false" afterPath="$PROJECT_DIR$/../sh_bigscreen/src/main/scala/com/ssic/service/SupplierDetail.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_scala_lang_scala_library_2_11_8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_scala_lang_scala_library_2_11_8.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sh_offlinedata.iml" beforeDir="false" afterPath="$PROJECT_DIR$/sh_offlinedata.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/com/ssic/report/LicenseDetail.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/com/ssic/report/LicenseDetail.scala" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <expand />
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--follow-tags" />
+        <option name="title" value="Current Branch" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="test" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="D:\development\RepMaven" />
+        <option name="userSettingsFile" value="D:\development\maven\apache-maven-3.5.4-bin\apache-maven-3.5.4\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1p0jNy7D0eFsq8sSQ45ffFsm2eX" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="D:/ideaProject-02/BdBiProcSrvShEduOmc" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/src/main/java/META-INF" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ssic.report" />
+      <recent name="com.ssic.utils" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\testout\sh_offlinedata\src\main\scala\com\ssic" />
+      <recent name="D:\testout\sh_offlinedata\src\main\resources" />
+      <recent name="D:\testout\sh_offlinedata\src\main\scala\com\ssic\beans" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.MinzhengExcel">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Demo" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.ssic.report.SchoolDetail" />
+      <module name="sh_offlinedata" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ssic.yesreport.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MinzhengExcel" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.ssic.minzheng.MinzhengExcel" />
+      <module name="sh_offlinedata" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ssic.minzheng.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Demo" />
+      <item itemvalue="Application.MinzhengExcel" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MinzhengExcel" />
+        <item itemvalue="Application.Demo" />
+        <item itemvalue="Application.MinzhengExcel" />
+        <item itemvalue="Application.Demo" />
+        <item itemvalue="Application.MinzhengExcel" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9e4cabee-6eb9-48a5-82f6-f798f78ca571" name="Default" comment="" />
+      <created>1539742957590</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1539742957590</updated>
+      <workItem from="1539742960704" duration="24974000" />
+      <workItem from="1539825518478" duration="13584000" />
+      <workItem from="1539926870137" duration="5251000" />
+      <workItem from="1540172626157" duration="23063000" />
+      <workItem from="1540257095043" duration="13814000" />
+      <workItem from="1540345504183" duration="3261000" />
+      <workItem from="1540430350303" duration="12948000" />
+      <workItem from="1540449971043" duration="1879000" />
+      <workItem from="1540535903907" duration="11111000" />
+      <workItem from="1540799763432" duration="2155000" />
+      <workItem from="1540862303133" duration="7390000" />
+      <workItem from="1540947901216" duration="6970000" />
+      <workItem from="1541037290619" duration="6199000" />
+      <workItem from="1541145363231" duration="3542000" />
+      <workItem from="1541381785013" duration="9106000" />
+      <workItem from="1541497713185" duration="1494000" />
+      <workItem from="1541641346228" duration="7964000" />
+      <workItem from="1543202935489" duration="614000" />
+      <workItem from="1545284460395" duration="16000" />
+      <workItem from="1547448329152" duration="3154000" />
+      <workItem from="1550210997477" duration="15000" />
+      <workItem from="1553584654834" duration="1101000" />
+      <workItem from="1553587058119" duration="13000" />
+      <workItem from="1569395553773" duration="1205000" />
+      <workItem from="1574488443991" duration="3418000" />
+      <workItem from="1574747568698" duration="22979000" />
+      <workItem from="1575007167046" duration="1059000" />
+      <workItem from="1575008288017" duration="523000" />
+      <workItem from="1575009802083" duration="771000" />
+      <workItem from="1575014941809" duration="1483000" />
+      <workItem from="1575018165241" duration="799000" />
+      <workItem from="1575024952775" duration="1618000" />
+      <workItem from="1575031301512" duration="835000" />
+      <workItem from="1575364170990" duration="2544000" />
+      <workItem from="1575428970226" duration="7665000" />
+      <workItem from="1575940084880" duration="9702000" />
+      <workItem from="1576738582249" duration="2174000" />
+      <workItem from="1577089500360" duration="15637000" />
+      <workItem from="1577669637474" duration="4756000" />
+      <workItem from="1578276589401" duration="15661000" />
+      <workItem from="1578637668291" duration="1272000" />
+      <workItem from="1578638949774" duration="2327000" />
+      <workItem from="1578642252572" duration="50000" />
+      <workItem from="1578642308958" duration="9921000" />
+      <workItem from="1578878200136" duration="26152000" />
+      <workItem from="1579340959431" duration="1847000" />
+      <workItem from="1579396571819" duration="8246000" />
+      <workItem from="1581296408107" duration="51141000" />
+      <workItem from="1582075622939" duration="11149000" />
+      <workItem from="1583285509589" duration="25985000" />
+      <workItem from="1583719194583" duration="29794000" />
+      <workItem from="1584671118112" duration="598000" />
+      <workItem from="1584707933586" duration="990000" />
+      <workItem from="1585115495669" duration="55801000" />
+      <workItem from="1585721797939" duration="29382000" />
+      <workItem from="1585880752317" duration="4962000" />
+      <workItem from="1585894613870" duration="8907000" />
+      <workItem from="1586141232998" duration="12543000" />
+      <workItem from="1586163965165" duration="55751000" />
+      <workItem from="1586741817698" duration="29328000" />
+      <workItem from="1587433661137" duration="14024000" />
+      <workItem from="1588068532475" duration="916000" />
+      <workItem from="1588899871231" duration="3025000" />
+      <workItem from="1589273289998" duration="711000" />
+      <workItem from="1589939273529" duration="18038000" />
+      <workItem from="1590111177917" duration="10692000" />
+      <workItem from="1590387658782" duration="1568000" />
+      <workItem from="1590457062925" duration="70693000" />
+      <workItem from="1590806893478" duration="1907000" />
+      <workItem from="1590977007843" duration="56122000" />
+      <workItem from="1591665171575" duration="35372000" />
+      <workItem from="1591870470727" duration="14000" />
+      <workItem from="1592014607960" duration="3187000" />
+      <workItem from="1592184233452" duration="24649000" />
+      <workItem from="1592880285521" duration="29085000" />
+      <workItem from="1593307567123" duration="74447000" />
+      <workItem from="1594014407206" duration="33334000" />
+      <workItem from="1594775850462" duration="31097000" />
+      <workItem from="1595236490958" duration="12000" />
+      <workItem from="1595473731163" duration="68000" />
+      <workItem from="1596090324171" duration="2168000" />
+      <workItem from="1596418683351" duration="12291000" />
+      <workItem from="1596764349074" duration="5910000" />
+      <workItem from="1597022337577" duration="12377000" />
+      <workItem from="1597629749117" duration="13865000" />
+      <workItem from="1597739565522" duration="25432000" />
+      <workItem from="1598232128559" duration="24254000" />
+      <workItem from="1598670306144" duration="5779000" />
+      <workItem from="1598691501006" duration="2396000" />
+      <workItem from="1598925071384" duration="5209000" />
+      <workItem from="1598938613429" duration="4512000" />
+      <workItem from="1599446736324" duration="16765000" />
+      <workItem from="1600076245339" duration="1330000" />
+      <workItem from="1614326870660" duration="4597000" />
+      <workItem from="1614560651164" duration="231000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="修改 uat分支的supplier_detail 的离线和实时" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改 uat分支的supplier_detail 的离线和实时" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>sh_offlinedata:jar</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>scala-sdk-2.10.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>sh_offlinedata</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: com.101tec:zkclient:0.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
