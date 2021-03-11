@@ -48,13 +48,11 @@ object MinzhengExcel {
     val fileSystem = FileSystem.get(new URI("hdfs://172.18.14.30:8020/"), new Configuration())
     val localPath = "/data/"
     val hdfsPath = "/minzheng_day_report/shanghai/" + date + "/"
-    val wujiHdfsPath = "/minzheng_day_report/shanghai/" + date + "/" +"五级预警"+"/"
+
     if (fileSystem.exists(new Path(hdfsPath)).equals(false)) {
       fileSystem.mkdirs(new Path(hdfsPath))
     }
-    if (fileSystem.exists(new Path(wujiHdfsPath)).equals(false)) {
-      fileSystem.mkdirs(new Path(wujiHdfsPath))
-    }
+
 
 
     //排菜数据日统计分析报表
