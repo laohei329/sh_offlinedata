@@ -45,13 +45,13 @@ object HospitalWeekToExcel {
     val sunday2 = Rule.timeToStamp("yyyy.MM.dd", -2) //format4.format(time1)
 
 
-
     val nowday = Rule.timeToStamp("yyyy-MM-dd", 0) //format.format(time2)
     val nowday1 = Rule.timeToStamp("yyyyMMdd", 0) //format3.format(time2)
 
     //医院周基础数据
     val hospital_data = hiveContext
-      .sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='${monday}' and end_use_date='${sunday3}'")
+      //      .sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='${monday}' and end_use_date='${sunday3}'")
+      .sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='2021-03-01' and end_use_date='2021-03-07'")
       .rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
@@ -64,7 +64,8 @@ object HospitalWeekToExcel {
 
     //医院排菜，验收数据
     val platoon_data = hiveContext
-      .sql(s"select use_date,hospital_id,have_platoon,haul_status,driver_app_day from saas_v1_dw.dw_t_hospital_platoon_detail where use_date >= '${monday}' and use_date <= '${sunday}' ").rdd.map({
+      //      .sql(s"select use_date,hospital_id,have_platoon,haul_status,driver_app_day from saas_v1_dw.dw_t_hospital_platoon_detail where use_date >= '${monday}' and use_date <= '${sunday}' ").rdd.map({
+      .sql(s"select use_date,hospital_id,have_platoon,haul_status,driver_app_day from saas_v1_dw.dw_t_hospital_platoon_detail where use_date >='2021-03-01'  and use_date <='2021-03-07'").rdd.map({
       row =>
         val use_date = row.getAs[String]("use_date")
         val hospital_id = row.getAs[String]("hospital_id")
@@ -76,7 +77,8 @@ object HospitalWeekToExcel {
 
     //医院菜品数
     val hospital_dish = hiveContext
-      .sql(s" select * from app_saas_v1.app_t_hospital_dish_menu where  supply_date >='${monday}' and supply_date <='${sunday}' ").rdd.map({
+      //      .sql(s"select * from app_saas_v1.app_t_hospital_dish_menu where  supply_date >='${monday}' and supply_date <='${sunday}' ").rdd.map({
+      .sql(s"select * from app_saas_v1.app_t_hospital_dish_menu where date_format(supply_date,'yyyy-MM-dd')>='2021-03-01'  and   date_format(supply_date,'yyyy-MM-dd')<='2021-03-07' ").rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
         val hospital_name = row.getAs[String]("hospital_name")
@@ -87,7 +89,8 @@ object HospitalWeekToExcel {
 
     //医院原料数.
     val hospital_material = hiveContext
-      .sql(s"select * from app_saas_v1.app_t_hospital_ledege_detail where use_date >='${monday}' and use_date <='${sunday}' ").rdd.map({
+      //      .sql(s"select * from app_saas_v1.app_t_hospital_ledege_detail where use_date >='${monday}' and use_date <='${sunday}' ").rdd.map({
+      .sql(s"select * from app_saas_v1.app_t_hospital_ledege_detail where date_format(use_date,'yyyy-MM-dd')>='2021-03-01'  and   date_format(use_date,'yyyy-MM-dd')<='2021-03-07'  ").rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
         val hospital_name = row.getAs[String]("hospital_name")
@@ -98,27 +101,27 @@ object HospitalWeekToExcel {
 
 
     //已排菜天数
-    val have_platoon_total = platoon_data.filter(x => x._3 == 1).map(x => (x._2, 1)).reduceByKey(_ + _) //7条数据
+    val have_platoon_total = platoon_data.filter(x => x._3 == 1).map(x => (x._2, 1)).reduceByKey(_ + _)
     //配送天数
-    val ledger_day = platoon_data.filter(x => x._4 != -5).map(x => (x._2, 1)).reduceByKey(_ + _) //7条数据
+    val ledger_day = platoon_data.filter(x => x._4 != -5).map(x => (x._2, 1)).reduceByKey(_ + _)
     //已验收天数
-    val have_ledger_total = platoon_data.filter(x => x._4 == 3).map(x => (x._2, 1)).reduceByKey(_ + _) //7条数据
+    val have_ledger_total = platoon_data.filter(x => x._4 == 3).map(x => (x._2, 1)).reduceByKey(_ + _)
     //医院菜品总数
-    val hospital_dish_total = hospital_dish.map(x => (x._1, 1)).reduceByKey(_ + _) //168条数据
+    val hospital_dish_total = hospital_dish.map(x => (x._1, 1)).reduceByKey(_ + _)
     //医院准确菜品总数
-    val hospital_dish_exact_total = hospital_dish.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _) //0
+    val hospital_dish_exact_total = hospital_dish.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _)
     //医院不准确菜品总数
-    val hospital_dish_noexact_total = hospital_dish.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _) //168条
+    val hospital_dish_noexact_total = hospital_dish.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _)
     //医院原料总数
-    val hospital_material_total = hospital_material.map(x => (x._1, 1)).reduceByKey(_ + _) //167条
+    val hospital_material_total = hospital_material.map(x => (x._1, 1)).reduceByKey(_ + _)
     //医院原料准确总数
-    val hospital_material_exact_total = hospital_material.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _) //167
+    val hospital_material_exact_total = hospital_material.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _)
     //医院不准确原料总数
-    val hospital_material_noexact_total = hospital_material.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _) //1
+    val hospital_material_noexact_total = hospital_material.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _)
     //医院使用司机app的天数
-    val driver_app_use_day = platoon_data.filter(x => x._5 == 1).map(x => (x._2, 1)).reduceByKey(_ + _) //6
+    val driver_app_use_day = platoon_data.filter(x => x._5 == 1).map(x => (x._2, 1)).reduceByKey(_ + _)
     //医院已留样菜品数
-    val hospital_reserve = hospital_dish.filter(x => x._3 == 1).map(x => (x._1, 1)).reduceByKey(_ + _) //168条
+    val hospital_reserve = hospital_dish.filter(x => x._3 == 1).map(x => (x._1, 1)).reduceByKey(_ + _)
 
     val data = hospital_data.leftOuterJoin(have_platoon_total).leftOuterJoin(have_ledger_total).leftOuterJoin(hospital_dish_total).leftOuterJoin(hospital_dish_exact_total).leftOuterJoin(hospital_dish_noexact_total).leftOuterJoin(hospital_material_total).leftOuterJoin(hospital_material_exact_total).leftOuterJoin(hospital_material_noexact_total).leftOuterJoin(driver_app_use_day).leftOuterJoin(ledger_day)
       .map({
@@ -127,7 +130,7 @@ object HospitalWeekToExcel {
           val hospital_name = x._2._1._1._1._1._1._1._1._1._1._1._1 //医院名字
           val level_name = x._2._1._1._1._1._1._1._1._1._1._1._2 //是否公立
           val have_class_day = x._2._1._1._1._1._1._1._1._1._1._1._3 //应排菜天数
-          // todo 这个地方有问题
+          //todo 这个地方有问题
           val have_platoon_total = x._2._1._1._1._1._1._1._1._1._1._2.getOrElse(0) //已排菜天数
           val have_ledger_total = x._2._1._1._1._1._1._1._1._1._2.getOrElse(0) //已验收天数
           val hospital_dish_total = x._2._1._1._1._1._1._1._1._2.getOrElse(0) //菜品总数
@@ -274,7 +277,7 @@ object HospitalWeekToExcel {
     workbook.write(stream)
     stream.close()
 
-    val fileSystem = FileSystem.get(new URI("hdfs://172.18.14.30:8020/"), new Configuration())
+    val fileSystem = FileSystem.get(new URI("hdfs://172.20.105.112:8020/"), new Configuration())
     fileSystem.moveFromLocalFile(new Path("/data/" + filename), new Path("/hospital_week_report/shanghai/" + filename))
 
     sc.stop()
