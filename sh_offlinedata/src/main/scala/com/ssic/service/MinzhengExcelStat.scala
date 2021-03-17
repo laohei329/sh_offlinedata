@@ -909,7 +909,7 @@ class MinzhengExcelStat {
       s"""
          |select a.written_name,a.lic_type,a.lic_no,a.give_lic_date,a.lic_end_date,a.supplier_id relation_id,b.supplier_name
          |from
-         |(select written_name,lic_type,lic_no,give_lic_date,lic_end_date,relation_id from saas_v1.t_pro_license where reviewed = 1
+         |(select written_name,lic_type,lic_no,give_lic_date,lic_end_date,supplier_id from saas_v1.t_pro_license where reviewed = 1
          |and stat =1
          |and (lic_type =20 or lic_type =22 or lic_type =23 or lic_type =24 or lic_type = 25)
          |and supplier_id ='${ygSupplieId}') as a
