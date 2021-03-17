@@ -2,18 +2,16 @@ package com.ssic.report
 
 import java.io.{File, FileOutputStream}
 import java.net.URI
-import java.util.{Calendar, Date}
 
 import com.ssic.service.ExceltitleStat
 import com.ssic.utils.Rule
-import org.apache.commons.lang3.time.FastDateFormat
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.{BorderStyle, HorizontalAlignment}
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * 医院的周报表
@@ -21,11 +19,11 @@ import org.apache.spark.sql.hive.HiveContext
 
 
 object HospitalWeekToExcel {
-//  private val format = FastDateFormat.getInstance("yyyy-MM-dd")
-//  private val format1 = FastDateFormat.getInstance("M")
-//  private val format2 = FastDateFormat.getInstance("yyyy")
-//  private val format3 = FastDateFormat.getInstance("yyyyMMdd")
-//  private val format4 = FastDateFormat.getInstance("yyyy.MM.dd")
+  //  private val format = FastDateFormat.getInstance("yyyy-MM-dd")
+  //  private val format1 = FastDateFormat.getInstance("M")
+  //  private val format2 = FastDateFormat.getInstance("yyyy")
+  //  private val format3 = FastDateFormat.getInstance("yyyyMMdd")
+  //  private val format4 = FastDateFormat.getInstance("yyyy.MM.dd")
 
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf().setAppName("医院周报表数据")
@@ -37,34 +35,35 @@ object HospitalWeekToExcel {
     val sqlContext = new SQLContext(sc)
     val hiveContext: HiveContext = new HiveContext(sc)
 
-//    val calendar = Calendar.getInstance()
-//    calendar.setTime(new Date())
-//    calendar.add(Calendar.DAY_OF_MONTH, -8)
-//    val time = calendar.getTime
+    //    val calendar = Calendar.getInstance()
+    //    calendar.setTime(new Date())
+    //    calendar.add(Calendar.DAY_OF_MONTH, -8)
+    //    val time = calendar.getTime
     val monday = Rule.timeToStamp("yyyy-MM-dd", -8) //format.format(time)
     val month = Rule.timeToStamp("M", -8) //format1.format(time)
-    val year = Rule.timeToStamp("yyyy",-8) //format2.format(time)
-    val monday1 = Rule.timeToStamp("yyyyMMdd",-8) //format3.format(time)
-    val monday2 = Rule.timeToStamp("yyyy.MM.dd",-8) //format4.format(time)
+    val year = Rule.timeToStamp("yyyy", -8) //format2.format(time)
+    val monday1 = Rule.timeToStamp("yyyyMMdd", -8) //format3.format(time)
+    val monday2 = Rule.timeToStamp("yyyy.MM.dd", -8) //format4.format(time)
 
-//    val calendar1 = Calendar.getInstance()
-//    calendar1.setTime(new Date())
-//    calendar1.add(Calendar.DAY_OF_MONTH, -2)
-//    val time1 = calendar1.getTime
-    val sunday = Rule.timeToStamp("yyyy-MM-dd",-2) //format.format(time1)
-    val sunday1 = Rule.timeToStamp("yyyyMMdd",-2) //format3.format(time1)
-    val sunday2 = Rule.timeToStamp("yyyy.MM.dd",-2) //format4.format(time1)
+    //    val calendar1 = Calendar.getInstance()
+    //    calendar1.setTime(new Date())
+    //    calendar1.add(Calendar.DAY_OF_MONTH, -2)
+    //    val time1 = calendar1.getTime
+    val sunday = Rule.timeToStamp("yyyy-MM-dd", -1) //format.format(time1)
+    val sunday1 = Rule.timeToStamp("yyyyMMdd", -2) //format3.format(time1)
+    val sunday2 = Rule.timeToStamp("yyyy.MM.dd", -2) //format4.format(time1)
+    val sunday3 = Rule.timeToStamp("yyyy.MM.dd", -2) //format4.format(time1)
 
-//    val calendar2 = Calendar.getInstance()
-//    calendar2.setTime(new Date())
-//    calendar2.add(Calendar.DAY_OF_MONTH, 0)
-//    val time2 = calendar2.getTime
-    val nowday = Rule.timeToStamp("yyyy-MM-dd",0) //format.format(time2)
-    val nowday1 = Rule.timeToStamp("yyyyMMdd",0) //format3.format(time2)
+    //    val calendar2 = Calendar.getInstance()
+    //    calendar2.setTime(new Date())
+    //    calendar2.add(Calendar.DAY_OF_MONTH, 0)
+    //    val time2 = calendar2.getTime
+    val nowday = Rule.timeToStamp("yyyy-MM-dd", 0) //format.format(time2)
+    val nowday1 = Rule.timeToStamp("yyyyMMdd", 0) //format3.format(time2)
 
     //医院周基础数据
     val hospital_data = hiveContext
-      .sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='${monday}' and end_use_date='${sunday}'")
+      .sql(s"select * from app_saas_v1.t_med_hospital_w where year='${year}' and month ='${month}' and start_use_date ='${monday}' and end_use_date='${sunday3}'")
       .rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
@@ -89,7 +88,7 @@ object HospitalWeekToExcel {
 
     //医院菜品数
     val hospital_dish = hiveContext
-      .sql(s"select * from app_saas_v1.app_t_hospital_dish_menu where  supply_date >='${monday}' and supply_date <='${sunday}' ").rdd.map({
+      .sql(s" select * from app_saas_v1.app_t_hospital_dish_menu where  supply_date >='${monday}' and supply_date <='${sunday}' ").rdd.map({
       row =>
         val hospital_id = row.getAs[String]("hospital_id")
         val hospital_name = row.getAs[String]("hospital_name")
@@ -111,47 +110,47 @@ object HospitalWeekToExcel {
 
 
     //已排菜天数
-    val have_platoon_total = platoon_data.filter(x => x._3 == 1).map(x => (x._2, 1)).reduceByKey(_ + _)
+    val have_platoon_total = platoon_data.filter(x => x._3 == 1).map(x => (x._2, 1)).reduceByKey(_ + _) //7条数据
     //配送天数
-    val ledger_day = platoon_data.filter(x => x._4 != -5).map(x => (x._2, 1)).reduceByKey(_ + _)
+    val ledger_day = platoon_data.filter(x => x._4 != -5).map(x => (x._2, 1)).reduceByKey(_ + _) //7条数据
     //已验收天数
-    val have_ledger_total = platoon_data.filter(x => x._4 == 3).map(x => (x._2, 1)).reduceByKey(_ + _)
+    val have_ledger_total = platoon_data.filter(x => x._4 == 3).map(x => (x._2, 1)).reduceByKey(_ + _) //7条数据
     //医院菜品总数
-    val hospital_dish_total = hospital_dish.map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_dish_total = hospital_dish.map(x => (x._1, 1)).reduceByKey(_ + _) //168条数据
     //医院准确菜品总数
-    val hospital_dish_exact_total = hospital_dish.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_dish_exact_total = hospital_dish.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _) //0
     //医院不准确菜品总数
-    val hospital_dish_noexact_total = hospital_dish.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_dish_noexact_total = hospital_dish.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _) //168条
     //医院原料总数
-    val hospital_material_total = hospital_material.map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_material_total = hospital_material.map(x => (x._1, 1)).reduceByKey(_ + _) //167条
     //医院原料准确总数
-    val hospital_material_exact_total = hospital_material.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_material_exact_total = hospital_material.filter(x => x._2 == 1).map(x => (x._1, 1)).reduceByKey(_ + _) //167
     //医院不准确原料总数
-    val hospital_material_noexact_total = hospital_material.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_material_noexact_total = hospital_material.filter(x => x._2 == 0).map(x => (x._1, 1)).reduceByKey(_ + _) //1
     //医院使用司机app的天数
-    val driver_app_use_day = platoon_data.filter(x => x._5 == 1).map(x => (x._2, 1)).reduceByKey(_ + _)
+    val driver_app_use_day = platoon_data.filter(x => x._5 == 1).map(x => (x._2, 1)).reduceByKey(_ + _) //6
     //医院已留样菜品数
-    val hospital_reserve = hospital_dish.filter(x => x._3 == 1).map(x => (x._1, 1)).reduceByKey(_ + _)
+    val hospital_reserve = hospital_dish.filter(x => x._3 == 1).map(x => (x._1, 1)).reduceByKey(_ + _) //168条
 
     val data = hospital_data.leftOuterJoin(have_platoon_total).leftOuterJoin(have_ledger_total).leftOuterJoin(hospital_dish_total).leftOuterJoin(hospital_dish_exact_total).leftOuterJoin(hospital_dish_noexact_total).leftOuterJoin(hospital_material_total).leftOuterJoin(hospital_material_exact_total).leftOuterJoin(hospital_material_noexact_total).leftOuterJoin(driver_app_use_day).leftOuterJoin(ledger_day)
       .map({
         x =>
           val hospital_id = x._1 //医院id
-        val hospital_name = x._2._1._1._1._1._1._1._1._1._1._1._1 //医院名字
-        val level_name = x._2._1._1._1._1._1._1._1._1._1._1._2 //是否公立
-        val have_class_day = x._2._1._1._1._1._1._1._1._1._1._1._3 //应排菜天数
-          //todo 这个地方有问题
-        val have_platoon_total = x._2._1._1._1._1._1._1._1._1._1._2.getOrElse(0) //已排菜天数
-        val have_ledger_total = x._2._1._1._1._1._1._1._1._1._2.getOrElse(0) //已验收天数
-        val hospital_dish_total = x._2._1._1._1._1._1._1._1._2.getOrElse(0) //菜品总数
-        val hospital_dish_exact_total = x._2._1._1._1._1._1._1._2.getOrElse(0) //菜品准确总数
-        val hospital_dish_noexact_total = x._2._1._1._1._1._1._2.getOrElse(0) //菜品未准确总数
-        val hospital_material_total = x._2._1._1._1._1._2.getOrElse(0) //原料总数
-        val hospital_material_exact_total = x._2._1._1._1._2.getOrElse(0) //原料准确总数
-        val hospital_material_noexact_total = x._2._1._1._2.getOrElse(0) //原料不准确总数
-        val driver_app_use_day = x._2._1._2.getOrElse(0) //司机app使用天数
-        val ledger_day = x._2._2.getOrElse(0) //配送天数
-        val platoon_lv = (have_platoon_total.toDouble / have_class_day.toDouble) * 100
+          val hospital_name = x._2._1._1._1._1._1._1._1._1._1._1._1 //医院名字
+          val level_name = x._2._1._1._1._1._1._1._1._1._1._1._2 //是否公立
+          val have_class_day = x._2._1._1._1._1._1._1._1._1._1._1._3 //应排菜天数
+          // todo 这个地方有问题
+          val have_platoon_total = x._2._1._1._1._1._1._1._1._1._1._2.getOrElse(0) //已排菜天数
+          val have_ledger_total = x._2._1._1._1._1._1._1._1._1._2.getOrElse(0) //已验收天数
+          val hospital_dish_total = x._2._1._1._1._1._1._1._1._2.getOrElse(0) //菜品总数
+          val hospital_dish_exact_total = x._2._1._1._1._1._1._1._2.getOrElse(0) //菜品准确总数
+          val hospital_dish_noexact_total = x._2._1._1._1._1._1._2.getOrElse(0) //菜品未准确总数
+          val hospital_material_total = x._2._1._1._1._1._2.getOrElse(0) //原料总数
+          val hospital_material_exact_total = x._2._1._1._1._2.getOrElse(0) //原料准确总数
+          val hospital_material_noexact_total = x._2._1._1._2.getOrElse(0) //原料不准确总数
+          val driver_app_use_day = x._2._1._2.getOrElse(0) //司机app使用天数
+          val ledger_day = x._2._2.getOrElse(0) //配送天数
+          val platoon_lv = (have_platoon_total.toDouble / have_class_day.toDouble) * 100
           var dish_lv = 0.00
           if (hospital_dish_total == 0) {
             dish_lv
