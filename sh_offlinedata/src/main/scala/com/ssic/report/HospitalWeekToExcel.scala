@@ -19,11 +19,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 
 object HospitalWeekToExcel {
-  //  private val format = FastDateFormat.getInstance("yyyy-MM-dd")
-  //  private val format1 = FastDateFormat.getInstance("M")
-  //  private val format2 = FastDateFormat.getInstance("yyyy")
-  //  private val format3 = FastDateFormat.getInstance("yyyyMMdd")
-  //  private val format4 = FastDateFormat.getInstance("yyyy.MM.dd")
+
 
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf().setAppName("医院周报表数据")
@@ -35,29 +31,21 @@ object HospitalWeekToExcel {
     val sqlContext = new SQLContext(sc)
     val hiveContext: HiveContext = new HiveContext(sc)
 
-    //    val calendar = Calendar.getInstance()
-    //    calendar.setTime(new Date())
-    //    calendar.add(Calendar.DAY_OF_MONTH, -8)
-    //    val time = calendar.getTime
+
     val monday = Rule.timeToStamp("yyyy-MM-dd", -8) //format.format(time)
     val month = Rule.timeToStamp("M", -8) //format1.format(time)
     val year = Rule.timeToStamp("yyyy", -8) //format2.format(time)
     val monday1 = Rule.timeToStamp("yyyyMMdd", -8) //format3.format(time)
     val monday2 = Rule.timeToStamp("yyyy.MM.dd", -8) //format4.format(time)
 
-    //    val calendar1 = Calendar.getInstance()
-    //    calendar1.setTime(new Date())
-    //    calendar1.add(Calendar.DAY_OF_MONTH, -2)
-    //    val time1 = calendar1.getTime
+
     val sunday = Rule.timeToStamp("yyyy-MM-dd", -1) //format.format(time1)
+    val sunday3 = Rule.timeToStamp("yyyy-MM-dd", -2) //format.format(time1)
     val sunday1 = Rule.timeToStamp("yyyyMMdd", -2) //format3.format(time1)
     val sunday2 = Rule.timeToStamp("yyyy.MM.dd", -2) //format4.format(time1)
-    val sunday3 = Rule.timeToStamp("yyyy.MM.dd", -2) //format4.format(time1)
 
-    //    val calendar2 = Calendar.getInstance()
-    //    calendar2.setTime(new Date())
-    //    calendar2.add(Calendar.DAY_OF_MONTH, 0)
-    //    val time2 = calendar2.getTime
+
+
     val nowday = Rule.timeToStamp("yyyy-MM-dd", 0) //format.format(time2)
     val nowday1 = Rule.timeToStamp("yyyyMMdd", 0) //format3.format(time2)
 
